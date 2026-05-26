@@ -1,8 +1,9 @@
-import { Component, inject, ElementRef, NgZone, OnDestroy } from '@angular/core';
+import { Component, inject, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
 declare const hljs: any;
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SettingsService } from '../../services/settings.service';
@@ -40,13 +41,27 @@ interface PatternAvailable {
   templateUrl: './gof.component.html',
   styleUrl: './gof.component.css'
 })
-export class GofComponent implements OnDestroy {
+export class GofComponent implements OnInit, OnDestroy {
 
   private http      = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
   private el        = inject(ElementRef);
   private ngZone    = inject(NgZone);
   private settings  = inject(SettingsService);
+  private route     = inject(ActivatedRoute);
+
+  private scrollAfterLoad = false;
+
+  ngOnInit(): void {
+    const name = this.route.snapshot.queryParamMap.get('p');
+    if (name) {
+      const pattern = this.groups.flatMap(g => g.patterns).find(p => p.name === name);
+      if (pattern) {
+        this.scrollAfterLoad = true;
+        this.selectPattern(pattern);
+      }
+    }
+  }
 
   readonly langs = ['typescript', 'java', 'csharp', 'python', 'ruby'] as const;
 
@@ -190,6 +205,14 @@ export class GofComponent implements OnDestroy {
         this.loadCode();
       } else {
         this.notFound = true;
+      }
+
+      if (this.scrollAfterLoad) {
+        this.scrollAfterLoad = false;
+        setTimeout(() => {
+          (this.el.nativeElement.querySelector('.viewer-section') as HTMLElement)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
       }
     });
   }

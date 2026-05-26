@@ -2,6 +2,7 @@
 .neon-cursor-active,
 .neon-cursor-active * { cursor: none !important; }
 
+
 /* Fixed dot — never resizes */
 .neon-cursor {
   position: fixed;

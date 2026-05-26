@@ -28,9 +28,15 @@ interface Category {
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
+  // ── Typewriter tagline ────────────────────────────────────────────────────
+  private readonly TAGLINE = 'A Codex';
+  tagline       = '';
+  taglineTyping = true;
+
   constructor(private http: HttpClient, public settings: SettingsService) {}
 
   ngOnInit(): void {
+    this.startTypewriter();
     this.animateCount(5, v => this.displayLanguages  = v, 0);
     this.animateCount(3, v => this.displayCategories = v, 120);
 
@@ -50,6 +56,21 @@ export class HomeComponent implements OnInit, OnDestroy {
   displayPatterns     = 0;
   displayLanguages    = 0;
   displayCategories   = 0;
+
+  private startTypewriter(): void {
+    let i = 0;
+    const type = () => {
+      this.tagline = this.TAGLINE.slice(0, i);
+      if (i < this.TAGLINE.length) {
+        i++;
+        this.timeouts.push(setTimeout(type, 80));
+      } else {
+        // blink cursor for 1.4s then hide it
+        this.timeouts.push(setTimeout(() => { this.taglineTyping = false; }, 1400));
+      }
+    };
+    this.timeouts.push(setTimeout(type, 400));
+  }
 
   private animateCount(target: number, setter: (v: number) => void, delay = 0): void {
     const duration = 1400;
@@ -124,6 +145,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       ]
     }
   ];
+
+  // ── Pattern of the day (must be declared AFTER categories) ──────────────
+  readonly potdId: string = (() => {
+    const s    = new Date().toDateString();
+    const seed = s.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const all  = this.categories.flatMap(c => c.patterns);
+    return all[seed % all.length].id;
+  })();
 
   patRolling = false;
   patLabel = 'press to roll';

@@ -4,7 +4,7 @@
   <section class="hero">
     <p class="hero-eyebrow">Self-directed study series</p>
     <h1>Design Patterns <span class="accent">Across</span> Languages:</h1>
-    <p class="hero-tagline">A Codex</p>
+    <p class="hero-tagline">{{ tagline }}@if (taglineTyping) {<span class="tagline-cursor">|</span>}</p>
     <p class="hero-sub">
       A personal deep-dive into all <strong>23 Gang of Four design patterns</strong><br>
       Implemented in Java, C#, TypeScript, Python, and Ruby.
@@ -102,16 +102,20 @@
           <p class="cat-desc">{{ cat.desc }}</p>
           <div class="cat-patterns">
             @for (p of cat.patterns; track p.id) {
-              <div class="pat-row"
-                   [class.pat-lit]="litPatternId === p.id"
-                   [class.pat-won]="wonPatternId === p.id">
-                <span class="pat-name" [class.done]="p.done">{{ p.name }}</span>
+              <a class="pat-row"
+                 [class.pat-lit]="litPatternId === p.id"
+                 [class.pat-won]="wonPatternId === p.id"
+                 [class.potd]="p.id === potdId"
+                 [routerLink]="['/gof']"
+                 [queryParams]="{ p: p.name }"
+                 (click)="settings.playUiClick()">
+                <span class="pat-name" [class.done]="p.done">{{ p.name }}@if (p.id === potdId) {<span class="potd-star" title="Pattern of the day">★</span>}</span>
                 <span class="pat-status"
                       [class.status-done]="p.done"
                       [class.status-pending]="!p.done">
                   {{ p.done ? 'done' : 'upcoming' }}
                 </span>
-              </div>
+              </a>
             }
           </div>
         </div>
@@ -120,8 +124,10 @@
 
     <div class="lang-grid" style="margin-top:1.2rem">
 
-      <div class="lang-card java"
+      <a class="lang-card java"
            style="--lang-glow:#f89820"
+           routerLink="/java"
+           (click)="settings.playUiClick()"
            [class.lit-card]="langCardState['java'] === 'lit'"
            [class.won-card]="langCardState['java'] === 'won'">
         <div class="lang-card-bar"
@@ -131,10 +137,12 @@
         <div class="lang-card-name">Java</div>
         <div class="lang-card-sub">JDK 21</div>
         <div class="lang-card-snippet"><span class="hi-java">public static void</span> <span class="hi-fn">main</span>(String[] args) &#123;</div>
-      </div>
+      </a>
 
-      <div class="lang-card csharp"
+      <a class="lang-card csharp"
            style="--lang-glow:#9b59f5"
+           routerLink="/csharp"
+           (click)="settings.playUiClick()"
            [class.lit-card]="langCardState['csharp'] === 'lit'"
            [class.won-card]="langCardState['csharp'] === 'won'">
         <div class="lang-card-bar"
@@ -144,10 +152,12 @@
         <div class="lang-card-name">C#</div>
         <div class="lang-card-sub">.NET 8</div>
         <div class="lang-card-snippet"><span class="hi-csharp">static void</span> <span class="hi-fn">Main</span>(string[] args) &#123;</div>
-      </div>
+      </a>
 
-      <div class="lang-card ts"
+      <a class="lang-card ts"
            style="--lang-glow:#4a9eff"
+           routerLink="/typescript"
+           (click)="settings.playUiClick()"
            [class.lit-card]="langCardState['ts'] === 'lit'"
            [class.won-card]="langCardState['ts'] === 'won'">
         <div class="lang-card-bar"
@@ -157,10 +167,12 @@
         <div class="lang-card-name">TypeScript</div>
         <div class="lang-card-sub">TS 5</div>
         <div class="lang-card-snippet"><span class="hi-ts">const</span> <span class="hi-fn">main</span> = <span class="hi-ts">async</span> (): <span class="hi-ts">Promise</span>&lt;<span class="hi-ts">void</span>&gt; =&gt; &#123;</div>
-      </div>
+      </a>
 
-      <div class="lang-card python"
+      <a class="lang-card python"
            style="--lang-glow:#ffd43b"
+           routerLink="/python"
+           (click)="settings.playUiClick()"
            [class.lit-card]="langCardState['python'] === 'lit'"
            [class.won-card]="langCardState['python'] === 'won'">
         <div class="lang-card-bar"
@@ -170,10 +182,12 @@
         <div class="lang-card-name">Python</div>
         <div class="lang-card-sub">Python 3.12</div>
         <div class="lang-card-snippet"><span class="hi-py">if</span> __name__ == <span class="hi-str">"__main__"</span>:</div>
-      </div>
+      </a>
 
-      <div class="lang-card ruby"
+      <a class="lang-card ruby"
            style="--lang-glow:#cc342d"
+           routerLink="/ruby"
+           (click)="settings.playUiClick()"
            [class.lit-card]="langCardState['ruby'] === 'lit'"
            [class.won-card]="langCardState['ruby'] === 'won'">
         <div class="lang-card-bar"
@@ -183,7 +197,7 @@
         <div class="lang-card-name">Ruby</div>
         <div class="lang-card-sub">Ruby 3.3</div>
         <div class="lang-card-snippet"><span class="hi-ruby">if</span> __FILE__ == $PROGRAM_NAME</div>
-      </div>
+      </a>
 
     </div>
   </section>

@@ -114,6 +114,30 @@
   color: var(--gold);
   line-height: 1;
   margin-bottom: 2rem;
+  min-height: 1.2em; /* prevent layout jump while typing */
+}
+
+.tagline-cursor {
+  display: inline-block;
+  color: var(--gold);
+  opacity: 0.75;
+  animation: tagline-blink 0.65s step-end infinite;
+  margin-left: 1px;
+}
+
+@keyframes tagline-blink {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 0; }
+}
+
+.potd-star {
+  font-size: 0.6rem;
+  color: #f0a500;
+  margin-left: 5px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  opacity: 0.85;
 }
 
 .hero h1 .accent { color: var(--gold); }
@@ -414,9 +438,15 @@
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  transition: outline-color 0.1s, box-shadow 0.1s;
+  transition: outline-color 0.15s, box-shadow 0.15s;
   outline: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
+
+.lang-card:hover { outline-color: var(--lang-glow); }
 
 /* top accent line per language */
 .lang-card::before {
@@ -576,6 +606,36 @@
 .pat-row.pat-lit { background: #f0a50028; border-left: 2px solid #f0a500aa; margin: 0 -1.2rem; padding-left: calc(1.2rem - 2px); padding-right: 1.2rem; }
 .pat-row.pat-won { background: #f0a50010; margin: 0 -1.2rem; padding-left: 1.2rem; padding-right: 1.2rem; }
 .pat-row.pat-won .pat-name { color: var(--gold); }
+
+/* clickable rows */
+.pat-row { cursor: pointer; text-decoration: none; color: inherit; }
+.pat-row:hover { background: #ffffff08; }
+
+/* pattern of the day */
+.pat-row.potd {
+  border-left: 2px solid #f0a500cc;
+  margin: 0 -1.2rem;
+  padding-left: calc(1.2rem - 2px);
+  padding-right: 1.2rem;
+  background: #f0a50010;
+}
+
+.potd-star {
+  display: inline-block;
+  font-size: 0.7rem;
+  color: #f0a500;
+  margin-left: 5px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  text-shadow: 0 0 6px #f0a500aa;
+  animation: potd-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes potd-pulse {
+  0%, 100% { opacity: 1;    text-shadow: 0 0 6px #f0a500aa; }
+  50%       { opacity: 0.6; text-shadow: 0 0 12px #f0a500; }
+}
 
 .pat-name { color: #a8a5b4; }
 .pat-name.done { color: var(--text); }

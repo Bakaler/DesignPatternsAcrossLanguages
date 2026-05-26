@@ -22,7 +22,29 @@ export class AppComponent implements OnInit, OnDestroy {
   private lastMx     = 0;
   private lastMy     = 0;
 
+  private isOverScrollbar(e: MouseEvent): boolean {
+    // Main page scrollbar: cursor beyond the document's content width/height
+    if (e.clientX >= document.documentElement.clientWidth)  return true;
+    if (e.clientY >= document.documentElement.clientHeight) return true;
+
+    // Internal element scrollbar (e.g. code viewer, readme panel)
+    const t = e.target as HTMLElement;
+    if (t && t !== document.documentElement && t !== document.body && t.getBoundingClientRect) {
+      const r = t.getBoundingClientRect();
+      if (e.clientX > r.left + t.clientWidth  + 1) return true;
+      if (e.clientY > r.top  + t.clientHeight + 1) return true;
+    }
+    return false;
+  }
+
   private readonly onMouseMove = (e: MouseEvent) => {
+    if (this.isOverScrollbar(e)) {
+      // Hide neon cursor so only the system scrollbar cursor shows
+      if (this.dot)  this.dot.style.left  = '-200px';
+      if (this.glow) this.glow.style.left = '-200px';
+      return;
+    }
+
     const px = e.clientX + 'px';
     const py = e.clientY + 'px';
     if (this.dot)  { this.dot.style.left  = px; this.dot.style.top  = py; }
@@ -43,7 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.dot.className = 'neon-cursor';
     document.body.appendChild(this.dot);
 
-    document.body.classList.add('neon-cursor-active');
+    document.documentElement.classList.add('neon-cursor-active');
     document.addEventListener('mousemove', this.onMouseMove);
     this.animateCursor();
   }
@@ -53,7 +75,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.cursorRaf != null) cancelAnimationFrame(this.cursorRaf);
     this.dot?.remove();
     this.glow?.remove();
-    document.body.classList.remove('neon-cursor-active');
+    document.documentElement.classList.remove('neon-cursor-active');
   }
 
   private animateCursor(): void {
