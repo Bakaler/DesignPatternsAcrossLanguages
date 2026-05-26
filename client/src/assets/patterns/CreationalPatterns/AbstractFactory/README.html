@@ -1,0 +1,365 @@
+<div class="rm-wrap">
+
+  <!-- ── Hero ── -->
+  <div class="rm-hero">
+    <span class="rm-badge creational">Creational</span>
+    <h1 class="rm-hero-title">Abstract Factory</h1>
+    <div class="rm-hero-meta">
+      <span>GoF pg. 87</span>
+      <span>Also known as: Kit</span>
+    </div>
+  </div>
+  
+  <!-- ── Power Words ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Power Words</h2>
+    <div class="rm-powerword-block">
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word amber">Power Word: Compatibility</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word teal">Power Word: Constant</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word pink">Power Word: Familial</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Attributions ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Attributions</h2>
+
+    <div class="rm-attribution-book">
+      <div class="rm-attribution-book-title">Design Patterns: Elements of Reusable Object-Oriented Software</div>
+      <div class="rm-attribution-book-authors">Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides</div>
+      <div class="rm-attribution-book-forward">Forward by Grady Booch</div>
+    </div>
+
+    <ul class="rm-list plain" style="margin-top: 1rem;">
+      <li>
+        <a class="rm-link" href="https://maxim-gorin.medium.com/abstract-factory-one-pattern-many-clean-solutions-d1d4c55f4a04" target="_blank">
+          Medium; Abstract Factory: One Pattern, Many Clean Solutions
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://stackoverflow.com/questions/5739611/what-are-the-differences-between-abstract-factory-and-factory-design-patterns" target="_blank">
+          stackoverflow.com &rarr; Abstract Factory vs Factory Method
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://www.cs.unc.edu/~stotts/GOF/hires/pat3afso.htm" target="_blank">
+          cs.unc.edu &rarr; GoF Pattern Reference (Abstract Factory)
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://www.geeksforgeeks.org/system-design/abstract-factory-pattern/" target="_blank">
+          www.geeksforgeeks.org &rarr; Geeksforgeeks (Abstract Factory)
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://www.youtube.com/watch?v=u_o9p7D3aW0&list=PLWGY69Afe7QaO9KUWiMdzQX8d-Ea-N9an&index=4" target="_blank">
+          youtube.com &rarr; Levonog -Abstract Factory in 5 Minutes
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ── Intent ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Intent</h2>
+    <div class="rm-callout">
+      Provide an interface for creating <strong>families of related objects</strong>
+      without specifying their concrete classes.
+    </div>
+    <p class="rm-p">
+      Instead of constructing products directly, you ask a <strong>kit</strong> to produce them.
+      Every kit produces a compatible family: terrain that matches its enemies,
+      enemies that drop biome-appropriate loot, weather that belongs to that world.
+      Swap the kit and the entire world changes. The <strong>client that builds the world
+      never knows or cares</strong> which kit it's holding.
+    </p>
+  </section>
+
+  <!-- ── The Kit Convention ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Why "Kit" Not "Factory"</h2>
+    <p class="rm-p">
+      The GoF book's <em>Known Uses</em> section names this explicitly. ET++ used
+      <span class="rm-code">WidgetKit</span> as its abstract factory, with
+      <span class="rm-code">MotifWidgetKit</span> and <span class="rm-code">PMWidgetKit</span>
+      as the concrete implementations. The suffix <strong>Kit</strong> signals that
+      you're producing a coordinated <em>set</em> of things that belong together, not just a single object.
+    </p>
+    <p class="rm-p">
+      The concrete factory name always contains the abstract name: <span class="rm-code">DesertBiomeKit</span>
+      tells you it is a <span class="rm-code">BiomeKit</span>, specifically the desert one. You never have
+      to look up what kind of kit it is. The naming is self-documenting.
+    </p>
+  </section>
+
+  <!-- ── The Problem ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Problem It Solves</h2>
+    <p class="rm-p">
+      A procedural world generator needs to spawn terrain, enemies, weather, and loot.
+      Each must be internally consistent. You cannot have arctic enemies dropping desert spice
+      or forest weather playing over frozen tundra. Without a pattern, you'd scatter
+      <span class="rm-code">if (biome === 'desert')</span> checks across every system
+      that creates something.
+    </p>
+    <p class="rm-p">
+      With Abstract Factory, that check happens <strong>once</strong>: when you choose a kit.
+      After that, <span class="rm-code">WorldGenerator</span> just calls
+      <span class="rm-code">kit.createTerrain()</span>,
+      <span class="rm-code">kit.createEnemies()</span>, and so on.
+      It has no idea whether it's building a desert, arctic, or forest world.
+      It doesn't need to.
+    </p>
+  </section>
+
+  <!-- ── Structure ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Structure</h2>
+
+    <pre class="rm-diagram"><span class="uml-arrow">┌─────────────────────────────────────────────────────────────────────────────────┐</span>
+<span class="uml-arrow">│</span>                        <span class="uml-title">ABSTRACT FACTORY PATTERN</span>                                 <span class="uml-arrow">│</span>
+<span class="uml-arrow">└─────────────────────────────────────────────────────────────────────────────────┘</span>
+
+       <span class="uml-stereotype">«interface»</span>                                              <span class="uml-client">┌────────────┐</span>
+     <span class="uml-iface">┌──────────────────┐</span>  <span class="uml-arrow">◄──────── </span><span class="uml-rel">«use»</span><span class="uml-arrow"> ────────────────────────</span>  <span class="uml-client">│   Client   │</span>
+     <span class="uml-iface">│  AbstractFactory │</span>                                        <span class="uml-client">└────────────┘</span>
+     <span class="uml-iface">├──────────────────┤</span>                                              <span class="uml-arrow">│</span>
+     <span class="uml-iface">│</span> <span class="uml-method">+ CreateProductA</span>  <span class="uml-iface">│</span>                                              <span class="uml-arrow">│ </span><span class="uml-rel">«use»</span>
+     <span class="uml-iface">│</span> <span class="uml-method">+ CreateProductB</span>  <span class="uml-iface">│</span>                                              <span class="uml-arrow">│</span>
+     <span class="uml-iface">└────────┬─────────┘</span>                                             <span class="uml-arrow">▼</span>
+              <span class="uml-arrow">△</span>                                               <span class="uml-stereotype">«interface»</span>
+      <span class="uml-arrow">┌───────┴────────┐</span>                                  <span class="uml-iface">┌──────────────────┐</span>
+      <span class="uml-arrow">│                │</span>                                  <span class="uml-iface">│  AbstractProductA │</span>
+      <span class="uml-arrow">│                │</span>                                  <span class="uml-iface">└────────┬─────────┘</span>
+<span class="uml-concrete">┌───────────────┐</span> <span class="uml-concrete">┌───────────────┐</span>                                  <span class="uml-arrow">△</span>
+<span class="uml-concrete">│ConcreteFactory2│</span> <span class="uml-concrete">│ConcreteFactory1│</span>                        <span class="uml-arrow">┌────────┴────────┐</span>
+<span class="uml-concrete">├───────────────┤</span> <span class="uml-concrete">├───────────────┤</span>                          <span class="uml-arrow">│                 │</span>
+<span class="uml-concrete">│</span><span class="uml-method">+CreateProductA</span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">+CreateProductA</span><span class="uml-concrete">│</span><span class="uml-arrow"> ──── </span><span class="uml-rel">«instantiate»</span><span class="uml-arrow"> ──►</span> <span class="uml-concrete">┌──────────┐</span> <span class="uml-concrete">┌──────────┐</span>
+<span class="uml-concrete">│</span><span class="uml-method">+CreateProductB</span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">+CreateProductB</span><span class="uml-concrete">│</span>                         <span class="uml-concrete">│ ProductA1│</span> <span class="uml-concrete">│ ProductA2│</span>
+<span class="uml-concrete">└───────────────┘</span> <span class="uml-concrete">└───────────────┘</span>                         <span class="uml-concrete">└──────────┘</span> <span class="uml-concrete">└──────────┘</span>
+      <span class="uml-arrow">│                 │</span>
+      <span class="uml-arrow">│                 │ </span><span class="uml-rel">«instantiate»</span>                         <span class="uml-rel">«use»</span>
+      <span class="uml-arrow">│                 │</span>                                              <span class="uml-arrow">│</span>
+      <span class="uml-arrow">│                 ▼</span>                                             <span class="uml-arrow">▼</span>
+      <span class="uml-arrow">│</span>         <span class="uml-stereotype">«interface»</span>                                   <span class="uml-stereotype">«interface»</span>
+      <span class="uml-arrow">│</span>       <span class="uml-iface">┌──────────────────┐</span>  <span class="uml-arrow">◄────────────────────</span>  <span class="uml-iface">┌──────────────────┐</span>
+      <span class="uml-arrow">│</span>       <span class="uml-iface">│  AbstractProductB │</span>                         <span class="uml-iface">│  AbstractProductB│</span>
+      <span class="uml-arrow">│</span>       <span class="uml-iface">└────────┬─────────┘</span>                         <span class="uml-iface">└──────────────────┘</span>
+      <span class="uml-arrow">│                △</span>
+      <span class="uml-arrow">│       ┌────────┴────────┐</span>
+      <span class="uml-arrow">│       │                 │</span>
+      <span class="uml-arrow">│</span>       <span class="uml-concrete">┌──────────┐</span> <span class="uml-concrete">┌──────────┐</span>
+      <span class="uml-arrow">│</span>       <span class="uml-concrete">│ ProductB1│</span> <span class="uml-concrete">│ ProductB2│</span>
+      <span class="uml-arrow">│</span>       <span class="uml-concrete">└──────────┘</span> <span class="uml-concrete">└──────────┘</span>
+      <span class="uml-arrow">│                          ▲</span>
+      <span class="uml-arrow">└────── </span><span class="uml-rel">«instantiate»</span><span class="uml-arrow"> ─────┘</span></pre>
+
+    <h3 class="rm-h3">Mapped to this implementation</h3>
+    <pre class="rm-diagram"><span class="uml-stereotype">«interface»</span>  <span class="uml-iface">BiomeKit</span>                   <span class="uml-client">WorldGenerator</span>  (Client)
+             <span class="uml-method">createTerrain()  → Terrain</span>
+             <span class="uml-method">createEnemies()  → List&lt;Enemy&gt;</span>
+             <span class="uml-method">createWeather()  → WeatherSystem</span>
+             <span class="uml-method">createLoot()     → LootTable</span>
+             <span class="uml-method">registerEnemy()  → void</span>
+                    <span class="uml-arrow">△</span>
+        <span class="uml-arrow">┌──────┴──────┬────────────┐</span>
+        <span class="uml-arrow">│             │            │</span>
+<span class="uml-concrete">DesertBiomeKit</span>  <span class="uml-concrete">ArcticBiomeKit</span>  <span class="uml-concrete">ForestBiomeKit</span>    (Singletons)
+<span class="uml-method">  registry: [Scorpion…]  [PolarBear…]  [Wolf…]</span>
+                    <span class="uml-arrow">│ </span><span class="uml-rel">«instantiate»</span>
+        <span class="uml-arrow">┌───────────────────────────────────────┐</span>
+        <span class="uml-arrow">▼                   ▼                  ▼</span>
+<span class="uml-iface">Terrain</span>           <span class="uml-iface">Enemy</span> <span class="uml-stereotype">(+Prototype)</span>      <span class="uml-iface">WeatherSystem</span>    <span class="uml-iface">LootTable</span></pre>
+  </section>
+
+  <!-- ── Participants ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Participants</h2>
+    <table class="rm-table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>In This Implementation</th>
+          <th>Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Abstract Factory</td>
+          <td><span class="rm-code">BiomeKit</span></td>
+          <td>Declares the four creation methods every biome must provide</td>
+        </tr>
+        <tr>
+          <td>Concrete Factory</td>
+          <td><span class="rm-code">DesertBiomeKit</span> · <span class="rm-code">ArcticBiomeKit</span> · <span class="rm-code">ForestBiomeKit</span></td>
+          <td>Singleton. Holds a prototype enemy registry. Creates a coherent product family.</td>
+        </tr>
+        <tr>
+          <td>Abstract Product A</td>
+          <td><span class="rm-code">Terrain</span></td>
+          <td>Ground type with movement penalty and description</td>
+        </tr>
+        <tr>
+          <td>Abstract Product B</td>
+          <td><span class="rm-code">Enemy</span> (+ Prototype)</td>
+          <td>Combat unit. Also implements <span class="rm-code">clone()</span> so the factory copies from its registry rather than constructing fresh.</td>
+        </tr>
+        <tr>
+          <td>Abstract Product C</td>
+          <td><span class="rm-code">WeatherSystem</span></td>
+          <td>Wraps <span class="rm-code">a</span> (base conditions) and <span class="rm-code">b</span> (named triggerable events)</td>
+        </tr>
+        <tr>
+          <td>Abstract Product D</td>
+          <td><span class="rm-code">LootTable</span></td>
+          <td>Item drop pool. <span class="rm-code">roll()</span> returns a random selection.</td>
+        </tr>
+        <tr>
+          <td>Client</td>
+          <td><span class="rm-code">WorldGenerator</span></td>
+          <td>Receives any <span class="rm-code">BiomeKit</span>. References zero concrete classes.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── Patterns at Work ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Patterns at Work</h2>
+    <p class="rm-p">This implementation deliberately layers three patterns:</p>
+    <ul class="rm-list plain">
+      <li><strong>Abstract Factory.</strong> <span class="rm-code">BiomeKit</span> defines the product family contract. Swap the kit, swap the world.</li>
+      <li><strong>Singleton.</strong> Each concrete kit has exactly one instance. The enemy registry is shared state; multiple calls to a kit return clones from the same prototype pool.</li>
+      <li><strong>Prototype.</strong> <span class="rm-code">createEnemies()</span> doesn't construct enemies from scratch. It streams the registry and calls <span class="rm-code">Enemy::clone()</span> on each. New enemy types can be pushed into the registry at runtime via <span class="rm-code">registerEnemy()</span> without touching any factory class.</li>
+    </ul>
+  </section>
+
+  <!-- ── Stable vs Changing Interface ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Stable vs. Changing Interface</h2>
+    <p class="rm-p">
+      This is the central tension of Abstract Factory. The <span class="rm-code">BiomeKit</span> interface
+      is the <strong>stable contract</strong>. Every client, every test, every caller depends on it.
+      Once it exists, changing it is expensive.
+    </p>
+    <p class="rm-p">
+      Adding a new <em>family</em> (a fourth biome, <span class="rm-code">SwampBiomeKit</span>) is free.
+      You write one new class that implements the existing interface. Nothing else changes.
+      This is the pattern working as intended.
+    </p>
+    <p class="rm-p">
+      Adding a new <em>product type</em> (a fifth method, <span class="rm-code">createAmbientSound()</span>)
+      breaks the stable interface. Every concrete kit must be updated, and any client that depends
+      on the interface must recompile. The pattern does not protect you here. This is the known cost,
+      and it is why you design the interface carefully upfront.
+    </p>
+    <p class="rm-p">
+      The rule: <strong>families grow easily, product slots do not.</strong>
+      Choose this pattern when the product types are settled and the variants are what will grow.
+    </p>
+  </section>
+
+  <!-- ── Consequences ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Consequences</h2>
+    <p class="rm-p">The GoF names four specific consequences. All four show up here.</p>
+
+    <h3 class="rm-h3">✓ Concrete Isolation</h3>
+    <p class="rm-p">
+      <span class="rm-code">WorldGenerator</span> never imports <span class="rm-code">SandWorm</span>,
+      <span class="rm-code">IceTerrain</span>, or <span class="rm-code">SpiceLoot</span>.
+      It only knows <span class="rm-code">BiomeKit</span>, <span class="rm-code">Terrain</span>,
+      <span class="rm-code">Enemy</span>, <span class="rm-code">WeatherSystem</span>, and
+      <span class="rm-code">LootTable</span>. Adding a fourth biome requires zero changes to the client.
+    </p>
+
+    <h3 class="rm-h3">✓ Exchanging Product Families</h3>
+    <p class="rm-p">
+      The entire world is determined by which kit you pass in. The demo runs all three kits
+      through the same <span class="rm-code">WorldGenerator</span> loop: identical client code,
+      three completely different worlds. In a real game, this is a single variable at startup.
+    </p>
+
+    <h3 class="rm-h3">✓ Consistency Across Products</h3>
+    <p class="rm-p">
+      <span class="rm-code">DesertBiomeKit</span> returns a sandstorm, scorpions, sand dunes, and
+      spice loot. Everything belongs together. The pattern enforces this at the architectural level.
+      It is impossible to get arctic weather paired with desert enemies because the same kit
+      produces both, and kits do not cross-pollinate.
+    </p>
+
+    <p class="rm-p">
+      That is of course if we don't create a DesertArticHybridBiomeKite <span class="rm-code">DesertArticHybridBiomeKite</span>
+      with sandstorms and penguins.
+    </p>
+
+
+    <h3 class="rm-h3">✗ Difficulty of New Products</h3>
+    <p class="rm-p">
+      Adding a fifth product type means adding a method to <span class="rm-code">BiomeKit</span>
+      and implementing it in all three concrete kits. There is no shortcut.
+      The Prototype trick only softens this within the Enemy slot: new enemy types register
+      at runtime, but a new product category still touches every factory.
+    </p>
+  </section>
+
+  <!-- ── When to Reach For It ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">When to Reach For It</h2>
+    <ul class="rm-list plain">
+      <li>You have multiple families of objects that must be used together and never mixed</li>
+      <li>The choice of family is made once and then used everywhere</li>
+      <li>You want client code that is completely agnostic to which concrete family it's working with</li>
+      <li>The number of families will grow, but the set of product types will stay stable</li>
+    </ul>
+  </section>
+
+  <!-- ── Trade-offs ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Trade-offs</h2>
+    <div class="rm-grid-2">
+      <div class="rm-card">
+        <div class="rm-card-title good">Strengths</div>
+        <ul class="rm-list good">
+          <li>Products from one factory are guaranteed compatible</li>
+          <li>Swap an entire system by changing one reference</li>
+          <li>Client code has zero dependency on concrete classes</li>
+          <li>Adding a new family only adds a new kit class</li>
+        </ul>
+      </div>
+      <div class="rm-card">
+        <div class="rm-card-title bad">Weaknesses</div>
+        <ul class="rm-list bad">
+          <li>Adding a new product type touches every existing factory</li>
+          <li>More classes and interfaces than simpler alternatives</li>
+          <li>Overkill if you only have one product family that never changes</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Related Patterns ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Related Patterns</h2>
+    <span class="rm-tag">Factory Method</span>
+    <span class="rm-tag">Singleton</span>
+    <span class="rm-tag">Prototype</span>
+    <p class="rm-p" style="margin-top: 0.8rem;">
+      <strong>Factory Method.</strong> Abstract Factory methods are often implemented as Factory Methods per product slot.<br>
+      <strong>Singleton.</strong> Concrete kits are almost always Singletons. One kit instance is all you need.<br>
+      <strong>Prototype.</strong> Used here inside <span class="rm-code">createEnemies()</span> to clone from a registry,
+      partially addressing the difficulty of new products within the Enemy product slot.
+    </p>
+  </section>
+
+</div>

@@ -1,0 +1,231 @@
+<div class="page">
+  <header>
+    <h1>C<span>#</span> Cheat Sheet</h1>
+    <p>// backend systems edition</p>
+  </header>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">compile &amp; run</span></div>
+      <div class="code-block"><pre><span class="cmt">// create + run a web API project</span>
+dotnet new webapi -n OrderService
+dotnet run
+
+<span class="cmt">// console app</span>
+dotnet new console -n Worker
+dotnet build
+dotnet run</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">entry point</span></div>
+      <div class="code-block"><pre><span class="cmt">// top-level (C# 9+ / .NET 6+)</span>
+<span class="kw">var</span> builder = <span class="tp">WebApplication</span>.<span class="fn">CreateBuilder</span>(args);
+builder.Services.<span class="fn">AddDbContext</span>&lt;<span class="tp">AppDbContext</span>&gt;();
+builder.Services.<span class="fn">AddScoped</span>&lt;<span class="tp">IOrderService</span>, <span class="tp">OrderService</span>&gt;();
+
+<span class="kw">var</span> app = builder.<span class="fn">Build</span>();
+app.<span class="fn">MapControllers</span>();
+app.<span class="fn">Run</span>();</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">variables &amp; types</span></div>
+      <div class="code-block"><pre><span class="tp">int</span> port = <span class="num">5432</span>;
+<span class="tp">bool</span> useSsl = <span class="kw">true</span>;
+<span class="tp">string</span> connStr = <span class="str">"Host=localhost;Db=orders"</span>;
+<span class="kw">var</span> results = <span class="kw">new</span> <span class="tp">List</span>&lt;<span class="tp">Order</span>&gt;();
+
+<span class="cmt">// nullable - missing header, optional field</span>
+<span class="tp">string</span>? authHeader = request.<span class="fn">Headers</span>[<span class="str">"Authorization"</span>];
+<span class="tp">int</span>? userId = session?.<span class="fn">UserId</span>;
+
+<span class="cmt">// constant</span>
+<span class="kw">const int</span> MAX_RETRIES = <span class="num">3</span>;</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">control flow</span></div>
+      <div class="code-block"><pre><span class="cmt">// status code handling</span>
+<span class="kw">if</span> (response.IsSuccessStatusCode) &#123;
+    <span class="kw">return</span> <span class="fn">Ok</span>(data);
+&#125; <span class="kw">else if</span> (response.StatusCode == <span class="num">404</span>) &#123;
+    <span class="kw">return</span> <span class="fn">NotFound</span>();
+&#125;
+
+<span class="cmt">// switch expression - content-type routing</span>
+<span class="kw">var</span> serializer = contentType <span class="kw">switch</span> &#123;
+    <span class="str">"application/json"</span> =&gt; <span class="kw">new</span> <span class="tp">JsonSerializer</span>(),
+    <span class="str">"application/xml"</span>  =&gt; <span class="kw">new</span> <span class="tp">XmlSerializer</span>(),
+    _ =&gt; <span class="kw">throw new</span> <span class="tp">UnsupportedMediaTypeException</span>()
+&#125;;
+
+<span class="cmt">// null coalescing</span>
+<span class="kw">var</span> token = authHeader ?? <span class="kw">throw new</span> <span class="tp">UnauthorizedException</span>();</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">loops</span></div>
+      <div class="code-block"><pre><span class="cmt">// paginate DB results</span>
+<span class="kw">for</span> (<span class="tp">int</span> page = <span class="num">0</span>; page &lt; totalPages; page++) &#123; &#125;
+
+<span class="cmt">// apply middleware pipeline</span>
+<span class="kw">foreach</span> (<span class="kw">var</span> mw <span class="kw">in</span> pipeline.<span class="fn">GetMiddleware</span>()) &#123;
+    <span class="kw">await</span> mw.<span class="fn">InvokeAsync</span>(context);
+&#125;
+
+<span class="cmt">// LINQ - filter active users</span>
+<span class="kw">var</span> admins = users
+    .<span class="fn">Where</span>(u =&gt; u.Role == <span class="str">"admin"</span>)
+    .<span class="fn">OrderBy</span>(u =&gt; u.CreatedAt)
+    .<span class="fn">ToList</span>();</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">oop - service &amp; repository pattern</span></div>
+      <div class="code-grid">
+        <div class="code-block"><pre><span class="cmt">// interface</span>
+<span class="kw">public interface</span> <span class="tp">IOrderRepository</span> &#123;
+    <span class="tp">Task</span>&lt;<span class="tp">Order</span>?&gt; <span class="fn">FindByIdAsync</span>(<span class="tp">Guid</span> id);
+    <span class="tp">Task</span>&lt;<span class="tp">IEnumerable</span>&lt;<span class="tp">Order</span>&gt;&gt; <span class="fn">FindByUserAsync</span>(<span class="tp">Guid</span> userId);
+    <span class="tp">Task</span> <span class="fn">SaveAsync</span>(<span class="tp">Order</span> order);
+&#125;</pre></div>
+        <div class="code-block"><pre><span class="cmt">// EF Core implementation</span>
+<span class="kw">public class</span> <span class="tp">EfOrderRepository</span> : <span class="tp">IOrderRepository</span> &#123;
+    <span class="kw">private readonly</span> <span class="tp">AppDbContext</span> _db;
+
+    <span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">Order</span>?&gt; <span class="fn">FindByIdAsync</span>(<span class="tp">Guid</span> id)
+        =&gt; <span class="kw">await</span> _db.Orders.<span class="fn">FindAsync</span>(id);
+
+    <span class="kw">public async</span> <span class="tp">Task</span> <span class="fn">SaveAsync</span>(<span class="tp">Order</span> o) &#123;
+        _db.Orders.<span class="fn">Add</span>(o);
+        <span class="kw">await</span> _db.<span class="fn">SaveChangesAsync</span>();
+    &#125;
+&#125;</pre></div>
+        <div class="code-block"><pre><span class="cmt">// record - immutable API response</span>
+<span class="kw">public record</span> <span class="tp">OrderResponse</span>(
+    <span class="tp">Guid</span> Id,
+    <span class="tp">string</span> Status,
+    <span class="tp">decimal</span> Total,
+    <span class="tp">DateTimeOffset</span> CreatedAt
+);
+
+<span class="cmt">// controller</span>
+<span class="ann">[HttpGet("&#123;id&#125;")]</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">IActionResult</span>&gt; <span class="fn">GetOrder</span>(<span class="tp">Guid</span> id) &#123;
+    <span class="kw">var</span> order = <span class="kw">await</span> _repo.<span class="fn">FindByIdAsync</span>(id);
+    <span class="kw">return</span> order <span class="kw">is null</span> ? <span class="fn">NotFound</span>() : <span class="fn">Ok</span>(order);
+&#125;</pre></div>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">collections &amp; linq</span></div>
+      <div class="code-grid">
+        <div class="code-block"><pre><span class="cmt">// list of pending orders</span>
+<span class="kw">var</span> pending = <span class="kw">new</span> <span class="tp">List</span>&lt;<span class="tp">Order</span>&gt;();
+pending.<span class="fn">Add</span>(order);
+pending.<span class="fn">Count</span>;
+
+<span class="cmt">// dict: endpoint -> rate limit</span>
+<span class="kw">var</span> limits = <span class="kw">new</span> <span class="tp">Dictionary</span>&lt;<span class="tp">string</span>, <span class="tp">int</span>&gt;();
+limits[<span class="str">"/api/orders"</span>] = <span class="num">100</span>;
+limits.<span class="fn">ContainsKey</span>(<span class="str">"/api/users"</span>);</pre></div>
+        <div class="code-block"><pre><span class="cmt">// LINQ - aggregate revenue</span>
+<span class="kw">var</span> revenue = orders
+    .<span class="fn">Where</span>(o =&gt; o.Status == <span class="str">"completed"</span>)
+    .<span class="fn">Sum</span>(o =&gt; o.Total);
+
+<span class="kw">var</span> byUser = orders
+    .<span class="fn">GroupBy</span>(o =&gt; o.UserId)
+    .<span class="fn">ToDictionary</span>(g =&gt; g.Key, g =&gt; g.<span class="fn">ToList</span>());</pre></div>
+        <div class="code-block"><pre><span class="cmt">// collection init (C# 12)</span>
+<span class="tp">List</span>&lt;<span class="tp">string</span>&gt; allowedMethods = [<span class="str">"GET"</span>, <span class="str">"POST"</span>, <span class="str">"DELETE"</span>];
+
+<span class="cmt">// async stream - DB cursor</span>
+<span class="kw">await foreach</span> (<span class="kw">var</span> row <span class="kw">in</span> db.<span class="fn">StreamRowsAsync</span>(query)) &#123;
+    <span class="kw">await</span> <span class="fn">ProcessAsync</span>(row);
+&#125;</pre></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">strings - sql &amp; http</span></div>
+      <div class="code-block"><pre>path.<span class="fn">StartsWith</span>(<span class="str">"/api"</span>)
+url.<span class="fn">Contains</span>(<span class="str">"?"</span>)
+header.<span class="fn">Split</span>(<span class="str">','</span>)            <span class="cmt">// Accept types</span>
+token.<span class="fn">Substring</span>(<span class="num">7</span>)          <span class="cmt">// strip "Bearer "</span>
+
+<span class="cmt">// interpolation in SQL logging</span>
+logger.<span class="fn">Info</span>(<span class="str">$"Query: &#123;sql&#125; | Rows: &#123;rowCount&#125;"</span>);
+
+<span class="cmt">// raw string - multiline SQL</span>
+<span class="kw">var</span> query = <span class="str">"""
+    SELECT o.id, o.total, u.email
+    FROM orders o
+    JOIN users u ON u.id = o.user_id
+    WHERE o.status = 'pending'
+    """</span>;</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">async / await</span></div>
+      <div class="code-block"><pre><span class="cmt">// async service method</span>
+<span class="kw">public async</span> <span class="tp">Task</span>&lt;<span class="tp">Order</span>&gt; <span class="fn">PlaceOrderAsync</span>(<span class="tp">OrderRequest</span> req) &#123;
+    <span class="kw">var</span> user = <span class="kw">await</span> _users.<span class="fn">FindByIdAsync</span>(req.UserId);
+    <span class="kw">var</span> order = <span class="tp">Order</span>.<span class="fn">Create</span>(user, req.Items);
+    <span class="kw">await</span> _repo.<span class="fn">SaveAsync</span>(order);
+    <span class="kw">await</span> _events.<span class="fn">PublishAsync</span>(<span class="kw">new</span> <span class="tp">OrderPlaced</span>(order.Id));
+    <span class="kw">return</span> order;
+&#125;
+
+<span class="cmt">// parallel I/O</span>
+<span class="kw">await</span> <span class="tp">Task</span>.<span class="fn">WhenAll</span>(
+    cache.<span class="fn">WarmAsync</span>(),
+    db.<span class="fn">MigrateAsync</span>()
+);</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">exceptions</span></div>
+      <div class="code-block"><pre><span class="kw">try</span> &#123;
+    <span class="kw">await</span> db.<span class="fn">ExecuteAsync</span>(sql);
+&#125; <span class="kw">catch</span> (<span class="tp">DbException</span> e) &#123;
+    logger.<span class="fn">Error</span>(e, <span class="str">"Query failed"</span>);
+    <span class="kw">throw new</span> <span class="tp">DatabaseException</span>(e.Message);
+&#125; <span class="kw">finally</span> &#123;
+    connection.<span class="fn">Close</span>();
+&#125;
+
+<span class="cmt">// using - auto-close connection</span>
+<span class="kw">await using var</span> conn = <span class="kw">await</span> pool.<span class="fn">GetAsync</span>();
+<span class="kw">await</span> conn.<span class="fn">ExecuteAsync</span>(query);</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">access modifiers</span></div>
+      <div class="pills-body">
+        <span class="pill pill-blue">public - controller endpoints / DTOs</span>
+        <span class="pill pill-teal">protected - base service logic</span>
+        <span class="pill pill-amber">internal - within service boundary</span>
+        <span class="pill pill-red">private - repo / db internals</span>
+        <span class="pill pill-purple">protected internal - shared framework code</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">useful keywords</span></div>
+      <div class="pills-body">
+        <span class="pill pill-purple">static - shared config / constants</span>
+        <span class="pill pill-purple">readonly - injected dependencies</span>
+        <span class="pill pill-purple">sealed - finalised middleware</span>
+        <span class="pill pill-purple">virtual - overridable base handler</span>
+        <span class="pill pill-purple">override - custom auth / logging</span>
+        <span class="pill pill-purple">abstract - base repository</span>
+        <span class="pill pill-purple">partial - split large controllers</span>
+        <span class="pill pill-purple">ref / out - low-level buffer ops</span>
+      </div>
+    </div>
+
+  </div>
+</div>

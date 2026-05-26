@@ -1,0 +1,116 @@
+╔══════════════════════════════════════════════════════════════╗
+║        Abstract Factory + Prototype — Biome World Builder    ║
+╚══════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════
+  Biome: DesertBiomeKit
+════════════════════════════════════════════════════════════════
+
+  TERRAIN
+    Sand Dunes — Endless shifting dunes, brutal heat, no cover
+    Movement: -20% speed, doubles stamina drain
+
+  ENEMIES  (cloned from prototype registry)
+    Scorpion         HP:50   DMG:15   Attack: Venomous sting — poisons for 3 turns
+                     Drop:   Scorpion Venom Gland
+    Sand Worm        HP:200  DMG:30   Attack: Burrow strike — ignores armour
+                     Drop:   Worm Scale
+    Desert Bandit    HP:80   DMG:20   Attack: Ambush — double damage on first hit
+                     Drop:   Stolen Spice Pouch
+
+  WEATHER SYSTEM
+    Base      : Sandstorm — -30% visibility, +10% fire resistance
+    Events    :
+      [heat_wave] Heat Wave | trigger: Midday in desert biome | effect: Stamina drain doubles, enemies become sluggish
+      [dust_devil] Dust Devil | trigger: Wind speed exceeds threshold | effect: Random item knocked from player inventory
+      [mirage] Mirage | trigger: Player health below 30% | effect: Nearby oasis appears — may be real or false
+
+  LOOT ROLL  (Desert Loot Table)
+    Dropped: [Desert Spice, Sand Ruby]
+
+════════════════════════════════════════════════════════════════
+  Biome: ArcticBiomeKit
+════════════════════════════════════════════════════════════════
+
+  TERRAIN
+    Frozen Tundra — Vast frozen plains, cracking ice sheets, permafrost
+    Movement: -15% speed, risk of slip on ice tiles
+
+  ENEMIES  (cloned from prototype registry)
+    Polar Bear       HP:180  DMG:35   Attack: Bear maul — knocks player back 3 tiles
+                     Drop:   Polar Bear Pelt
+    Ice Wolf         HP:70   DMG:22   Attack: Pack howl — summons 1-2 additional wolves
+                     Drop:   Frost Fang
+    Frost Troll      HP:300  DMG:45   Attack: Ice slam — freezes player in place for 2 turns
+                     Drop:   Troll Permafrost Core
+
+  WEATHER SYSTEM
+    Base      : Blizzard — -50% visibility, -5 HP per turn from frostbite
+    Events    :
+      [whiteout] Whiteout | trigger: Blizzard intensity exceeds level 3 | effect: Zero visibility — navigation by compass only
+      [ice_storm] Ice Storm | trigger: Temperature drops below critical threshold | effect: Ice shards deal 8 damage per turn, enemies gain ice shield
+      [aurora] Aurora Borealis | trigger: Clear night sky, no blizzard | effect: All magic abilities cost 50% less for 60 seconds
+
+  LOOT ROLL  (Arctic Loot Table)
+    Dropped: [Frost Fang, Arctic Sapphire]
+
+════════════════════════════════════════════════════════════════
+  Biome: ForestBiomeKit
+════════════════════════════════════════════════════════════════
+
+  TERRAIN
+    Dense Forest Floor — Ancient trees, thick undergrowth, soft mud paths
+    Movement: -10% speed in mud, stealth bonus in undergrowth
+
+  ENEMIES  (cloned from prototype registry)
+    Wolf             HP:90   DMG:18   Attack: Lunge — high speed, targets lowest HP player
+                     Drop:   Wolf Pelt
+    Wild Boar        HP:120  DMG:25   Attack: Charge — stuns on hit, destroys cover
+                     Drop:   Boar Tusk
+    Forest Bandit    HP:75   DMG:20   Attack: Arrow volley — ranged, ignores melee armour
+                     Drop:   Bandit Coin Pouch
+
+  WEATHER SYSTEM
+    Base      : Heavy Rain — Extinguishes fire, +15% bow miss chance, plants grow faster
+    Events    :
+      [thunderstorm] Thunderstorm | trigger: Rain intensity exceeds level 2 | effect: Lightning strikes random tiles — stuns and deals 20 damage
+      [dense_fog] Dense Fog | trigger: Temperature drop after heavy rain | effect: -40% visibility, stealth enemies become invisible
+      [forest_fire] Forest Fire | trigger: Lightning strike + dry undergrowth | effect: Spreads across tiles, forces enemy + player retreat
+
+  LOOT ROLL  (Forest Loot Table)
+    Dropped: [Healing Herb, Glowing Mushroom]
+
+════════════════════════════════════════════════════════════════
+  PROTOTYPE DEMO — registering GiantScorpion at runtime
+════════════════════════════════════════════════════════════════
+  [DesertBiomeKit] Registered new prototype: Giant Scorpion (Boss)
+
+  Desert enemies after registration:
+
+  TERRAIN
+    Sand Dunes — Endless shifting dunes, brutal heat, no cover
+    Movement: -20% speed, doubles stamina drain
+
+  ENEMIES  (cloned from prototype registry)
+    Scorpion         HP:50   DMG:15   Attack: Venomous sting — poisons for 3 turns
+                     Drop:   Scorpion Venom Gland
+    Sand Worm        HP:200  DMG:30   Attack: Burrow strike — ignores armour
+                     Drop:   Worm Scale
+    Desert Bandit    HP:80   DMG:20   Attack: Ambush — double damage on first hit
+                     Drop:   Stolen Spice Pouch
+    Giant Scorpion (Boss) HP:400  DMG:60   Attack: Tail sweep — hits all nearby players
+                     Drop:   Ancient Venom Sac + Desert Crown
+
+  WEATHER SYSTEM
+    Base      : Sandstorm — -30% visibility, +10% fire resistance
+    Events    :
+      [heat_wave] Heat Wave | trigger: Midday in desert biome | effect: Stamina drain doubles, enemies become sluggish
+      [dust_devil] Dust Devil | trigger: Wind speed exceeds threshold | effect: Random item knocked from player inventory
+      [mirage] Mirage | trigger: Player health below 30% | effect: Nearby oasis appears — may be real or false
+
+  LOOT ROLL  (Desert Loot Table)
+    Dropped: [Ancient Coin, Mirage Crystal]
+
+╔══════════════════════════════════════════════════════════════╗
+║  Done                                                        ║
+╚══════════════════════════════════════════════════════════════╝

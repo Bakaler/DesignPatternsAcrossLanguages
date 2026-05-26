@@ -1,0 +1,211 @@
+<div class="page">
+  <header>
+    <h1>Type<span>Script</span> Cheat Sheet</h1>
+    <p>// backend systems edition</p>
+  </header>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">compile &amp; run</span></div>
+      <div class="code-block"><pre><span class="cmt"># install typescript</span>
+npm install -g typescript
+
+<span class="cmt"># compile</span>
+tsc server.ts
+
+<span class="cmt"># run directly (ts-node)</span>
+npx ts-node server.ts
+
+<span class="cmt"># watch mode</span>
+tsc --watch</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">basic types</span></div>
+      <div class="code-block"><pre><span class="kw">let</span> port: <span class="tp">number</span> = <span class="num">3000</span>;
+<span class="kw">let</span> host: <span class="tp">string</span> = <span class="str">"localhost"</span>;
+<span class="kw">let</span> useSsl: <span class="tp">boolean</span> = <span class="kw">true</span>;
+<span class="kw">let</span> timeout: <span class="tp">number</span> | <span class="tp">null</span> = <span class="kw">null</span>;
+
+<span class="cmt">// typed arrays</span>
+<span class="kw">let</span> allowedOrigins: <span class="tp">string</span>[] = [<span class="str">"https://app.io"</span>];
+<span class="kw">let</span> ids: <span class="tp">Array</span>&lt;<span class="tp">number</span>&gt; = [];
+
+<span class="cmt">// tuple - [status, message]</span>
+<span class="kw">let</span> result: [<span class="tp">number</span>, <span class="tp">string</span>] = [<span class="num">200</span>, <span class="str">"OK"</span>];</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">type aliases &amp; unions</span></div>
+      <div class="code-block"><pre><span class="cmt">// domain types</span>
+<span class="kw">type</span> <span class="tp">UserId</span> = <span class="tp">string</span>;
+<span class="kw">type</span> <span class="tp">HttpMethod</span> = <span class="str">"GET"</span> | <span class="str">"POST"</span> | <span class="str">"PUT"</span> | <span class="str">"DELETE"</span>;
+<span class="kw">type</span> <span class="tp">OrderStatus</span> = <span class="str">"pending"</span> | <span class="str">"processing"</span> | <span class="str">"completed"</span>;
+
+<span class="cmt">// API response shape</span>
+<span class="kw">type</span> <span class="tp">ApiResponse</span>&lt;<span class="tp">T</span>&gt; = &#123;
+    data: <span class="tp">T</span>;
+    status: <span class="tp">number</span>;
+    message: <span class="tp">string</span>;
+&#125;;
+
+<span class="cmt">// optional fields (DB row)</span>
+<span class="kw">type</span> <span class="tp">User</span> = &#123;
+    <span class="kw">readonly</span> id: <span class="tp">UserId</span>;
+    email: <span class="tp">string</span>;
+    deletedAt?: <span class="tp">Date</span>;
+&#125;;</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">interfaces &amp; classes - repository pattern</span></div>
+      <div class="code-grid">
+        <div class="code-block"><pre><span class="cmt">// repository interface</span>
+<span class="kw">interface</span> <span class="tp">IUserRepository</span> &#123;
+    <span class="fn">findById</span>(id: <span class="tp">UserId</span>): <span class="tp">Promise</span>&lt;<span class="tp">User</span> | <span class="tp">null</span>&gt;;
+    <span class="fn">findByEmail</span>(email: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">User</span> | <span class="tp">null</span>&gt;;
+    <span class="fn">save</span>(user: <span class="tp">User</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;
+    <span class="fn">delete</span>(id: <span class="tp">UserId</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;
+&#125;</pre></div>
+        <div class="code-block"><pre><span class="cmt">// Postgres implementation</span>
+<span class="kw">class</span> <span class="tp">PgUserRepository</span> <span class="kw">implements</span> <span class="tp">IUserRepository</span> &#123;
+    <span class="kw">constructor</span>(<span class="kw">private</span> db: <span class="tp">Pool</span>) &#123;&#125;
+
+    <span class="kw">async</span> <span class="fn">findById</span>(id: <span class="tp">UserId</span>): <span class="tp">Promise</span>&lt;<span class="tp">User</span> | <span class="tp">null</span>&gt; &#123;
+        <span class="kw">const</span> row = <span class="kw">await</span> <span class="kw">this</span>.db.<span class="fn">query</span>(
+            <span class="str">`SELECT * FROM users WHERE id = $1`</span>, [id]
+        );
+        <span class="kw">return</span> row.rows[<span class="num">0</span>] ?? <span class="kw">null</span>;
+    &#125;
+&#125;</pre></div>
+        <div class="code-block"><pre><span class="cmt">// abstract base - shared query logic</span>
+<span class="kw">abstract class</span> <span class="tp">BaseRepository</span>&lt;<span class="tp">T</span>&gt; &#123;
+    <span class="kw">constructor</span>(<span class="kw">protected</span> db: <span class="tp">Pool</span>) &#123;&#125;
+
+    <span class="kw">abstract</span> <span class="fn">tableName</span>(): <span class="tp">string</span>;
+
+    <span class="kw">async</span> <span class="fn">findAll</span>(): <span class="tp">Promise</span>&lt;<span class="tp">T</span>[]&gt; &#123;
+        <span class="kw">const</span> res = <span class="kw">await</span> <span class="kw">this</span>.db.<span class="fn">query</span>(
+            <span class="str">`SELECT * FROM $&#123;this.tableName()&#125;`</span>
+        );
+        <span class="kw">return</span> res.rows;
+    &#125;
+&#125;</pre></div>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">generics - typed api layer</span></div>
+      <div class="code-grid">
+        <div class="code-block"><pre><span class="cmt">// generic HTTP client</span>
+<span class="kw">async function</span> <span class="fn">get</span>&lt;<span class="tp">T</span>&gt;(url: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt; &#123;
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url);
+    <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="tp">HttpError</span>(res.status);
+    <span class="kw">return</span> res.<span class="fn">json</span>() <span class="kw">as</span> <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt;;
+&#125;
+
+<span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">get</span>&lt;<span class="tp">User</span>&gt;(<span class="str">`/users/$&#123;id&#125;`</span>);</pre></div>
+        <div class="code-block"><pre><span class="cmt">// generic service interface</span>
+<span class="kw">interface</span> <span class="tp">IService</span>&lt;<span class="tp">T</span>, <span class="tp">CreateDto</span>&gt; &#123;
+    <span class="fn">findAll</span>(): <span class="tp">Promise</span>&lt;<span class="tp">T</span>[]&gt;;
+    <span class="fn">findById</span>(id: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt;;
+    <span class="fn">create</span>(dto: <span class="tp">CreateDto</span>): <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt;;
+    <span class="fn">delete</span>(id: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;
+&#125;</pre></div>
+        <div class="code-block"><pre><span class="cmt">// utility types on DB models</span>
+<span class="kw">type</span> <span class="tp">CreateUserDto</span> = <span class="tp">Omit</span>&lt;<span class="tp">User</span>, <span class="str">"id"</span> | <span class="str">"createdAt"</span>&gt;;
+<span class="kw">type</span> <span class="tp">UpdateUserDto</span> = <span class="tp">Partial</span>&lt;<span class="tp">CreateUserDto</span>&gt;;
+<span class="kw">type</span> <span class="tp">UserRow</span>       = <span class="tp">Readonly</span>&lt;<span class="tp">User</span>&gt;;
+<span class="kw">type</span> <span class="tp">Headers</span>       = <span class="tp">Record</span>&lt;<span class="tp">string</span>, <span class="tp">string</span>&gt;;
+<span class="kw">type</span> <span class="tp">RouteHandler</span>  = <span class="tp">ReturnType</span>&lt;<span class="kw">typeof</span> <span class="fn">createHandler</span>&gt;;</pre></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">functions - middleware &amp; handlers</span></div>
+      <div class="code-block"><pre><span class="cmt">// typed request handler</span>
+<span class="kw">type</span> <span class="tp">Handler</span> = (req: <span class="tp">Request</span>, res: <span class="tp">Response</span>) =&gt; <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;
+
+<span class="cmt">// middleware factory</span>
+<span class="kw">function</span> <span class="fn">withAuth</span>(handler: <span class="tp">Handler</span>): <span class="tp">Handler</span> &#123;
+    <span class="kw">return async</span> (req, res) =&gt; &#123;
+        <span class="kw">const</span> token = req.headers[<span class="str">"authorization"</span>];
+        <span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>(&#123; error: <span class="str">"Unauthorized"</span> &#125;);
+        <span class="kw">await</span> <span class="fn">handler</span>(req, res);
+    &#125;;
+&#125;</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">async / await</span></div>
+      <div class="code-block"><pre><span class="kw">async function</span> <span class="fn">createOrder</span>(dto: <span class="tp">CreateOrderDto</span>): <span class="tp">Promise</span>&lt;<span class="tp">Order</span>&gt; &#123;
+    <span class="kw">const</span> user = <span class="kw">await</span> userRepo.<span class="fn">findById</span>(dto.userId);
+    <span class="kw">if</span> (!user) <span class="kw">throw new</span> <span class="tp">NotFoundError</span>(<span class="str">"User"</span>);
+
+    <span class="kw">const</span> order = <span class="kw">await</span> orderRepo.<span class="fn">save</span>(&#123; ...dto, status: <span class="str">"pending"</span> &#125;);
+    <span class="kw">await</span> eventBus.<span class="fn">publish</span>(<span class="str">"order.created"</span>, order);
+    <span class="kw">return</span> order;
+&#125;
+
+<span class="cmt">// parallel DB + cache lookup</span>
+<span class="kw">const</span> [session, permissions] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+    sessionStore.<span class="fn">get</span>(token),
+    permRepo.<span class="fn">findByUser</span>(userId)
+]);</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">enums</span></div>
+      <div class="code-block"><pre><span class="cmt">// HTTP methods</span>
+<span class="kw">enum</span> <span class="tp">HttpMethod</span> &#123;
+    GET = <span class="str">"GET"</span>, POST = <span class="str">"POST"</span>,
+    PUT = <span class="str">"PUT"</span>, DELETE = <span class="str">"DELETE"</span>
+&#125;
+
+<span class="cmt">// order lifecycle</span>
+<span class="kw">enum</span> <span class="tp">OrderStatus</span> &#123;
+    Pending    = <span class="str">"PENDING"</span>,
+    Processing = <span class="str">"PROCESSING"</span>,
+    Shipped    = <span class="str">"SHIPPED"</span>,
+    Cancelled  = <span class="str">"CANCELLED"</span>
+&#125;</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">type guards</span></div>
+      <div class="code-block"><pre><span class="cmt">// narrow DB error vs unknown</span>
+<span class="kw">function</span> <span class="fn">isDbError</span>(e: <span class="tp">unknown</span>): e <span class="kw">is</span> <span class="tp">DbError</span> &#123;
+    <span class="kw">return</span> e <span class="kw">instanceof</span> <span class="tp">Error</span> &amp;&amp; <span class="str">"code"</span> <span class="kw">in</span> e;
+&#125;
+
+<span class="kw">try</span> &#123;
+    <span class="kw">await</span> db.<span class="fn">query</span>(sql);
+&#125; <span class="kw">catch</span> (e) &#123;
+    <span class="kw">if</span> (<span class="fn">isDbError</span>(e) &amp;&amp; e.code === <span class="str">"23505"</span>)
+        <span class="kw">throw new</span> <span class="tp">ConflictError</span>(<span class="str">"Duplicate entry"</span>);
+    <span class="kw">throw</span> e;
+&#125;
+
+<span class="cmt">// safe header access</span>
+<span class="kw">const</span> auth = req.headers.authorization ?? <span class="kw">null</span>;
+<span class="kw">const</span> bearer = auth?.<span class="fn">startsWith</span>(<span class="str">"Bearer "</span>) ? auth.<span class="fn">slice</span>(<span class="num">7</span>) : <span class="kw">null</span>;</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">useful keywords</span></div>
+      <div class="pills-body">
+        <span class="pill pill-blue">as - cast API response body</span>
+        <span class="pill pill-blue">satisfies - validate config shape</span>
+        <span class="pill pill-teal">keyof - typed config keys</span>
+        <span class="pill pill-teal">typeof - infer handler signature</span>
+        <span class="pill pill-amber">infer - extract response type</span>
+        <span class="pill pill-amber">extends - constrain repo generics</span>
+        <span class="pill pill-purple">readonly - immutable DB row</span>
+        <span class="pill pill-purple">declare - ambient module types</span>
+        <span class="pill pill-red">! - assert non-null after auth check</span>
+        <span class="pill pill-red">never - exhaustive status handling</span>
+      </div>
+    </div>
+
+  </div>
+</div>

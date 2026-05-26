@@ -1,0 +1,180 @@
+<div class="page">
+
+  <!-- ── HERO ── -->
+  <header class="hero">
+    <div>
+      <p class="hero-label">Reference Sheet</p>
+      <h1>Gang of<br><em>Four</em></h1>
+    </div>
+    <div class="hero-meta">
+      <div>23 patterns</div>
+      <div>3 categories</div>
+      <div>1 book (1994)</div>
+      <div class="hero-meta-note">// backend edition</div>
+    </div>
+  </header>
+
+  <!-- ── INTRO ── -->
+  <section class="section">
+    <p class="section-label">01 - Introduction</p>
+    <h2 class="section-title">What are Design Patterns?</h2>
+    <div class="section-body">
+      <p>Design patterns are <strong>reusable solutions to commonly occurring problems</strong> in software design. They are not finished code — they are templates describing how to solve a problem that can be used in many different situations.</p>
+      <br>
+      <p>They were formalised in 1994 by Erich Gamma, Richard Helm, Ralph Johnson, and John Vlissides — known as the <strong>Gang of Four</strong> — in their book <em>Design Patterns: Elements of Reusable Object-Oriented Software</em>.</p>
+    </div>
+
+    <blockquote class="quote-block">
+      "Program to an interface, not an implementation."
+      <cite>- Gang of Four, Design Patterns (1994)</cite>
+    </blockquote>
+
+    <div class="section-body">
+      <p>Patterns give developers a <strong>shared vocabulary</strong>. Saying "use a Factory here" communicates a full architectural idea instantly. They also encode hard-won wisdom about what works — and what breaks — at scale.</p>
+    </div>
+  </section>
+
+  <!-- ── 3 CATEGORIES ── -->
+  <section class="section">
+    <p class="section-label">02 - All 23 Patterns</p>
+    <h2 class="section-title">Click Any Pattern to View Implementation</h2>
+    <div class="section-body">
+      <p>The 23 GoF patterns grouped by category. <strong>Click a pattern</strong> to load its implementation below.</p>
+    </div>
+
+    <div class="pattern-types">
+
+      @for (group of groups; track group.label) {
+        <div class="ptype">
+          <span [class]="'ptype-badge ' + group.cls">{{ group.label }}</span>
+          <h3 [class]="group.cls">{{ group.label === 'Creational' ? 'Creation' : group.label === 'Structural' ? 'Composition' : 'Communication' }}</h3>
+          <div class="ptype-patterns">
+            @for (p of group.patterns; track p.slug) {
+              <button
+                [class]="'ptag' + (isSelected(p) ? ' active' : '') + (p.done ? ' done' : '')"
+                (click)="selectPattern(p)">
+                {{ p.name }}
+                @if (p.done) { <span class="ptag-dot">●</span> }
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+  </section>
+
+  <!-- ── IMPLEMENTATION VIEWER ── -->
+  <section class="section viewer-section">
+    <p class="section-label">03 - Implementation</p>
+
+    <!-- Nothing selected yet -->
+    @if (!selected) {
+      <div class="viewer-empty">
+        <div class="viewer-empty-icon">&#123; &#125;</div>
+        <p class="viewer-empty-title">Select a pattern above</p>
+        <p class="viewer-empty-sub">Click any pattern tag in section 02 to load its implementation here. Patterns marked <span class="done-dot">●</span> have code available.</p>
+      </div>
+    }
+
+    <!-- Pattern selected -->
+    @if (selected) {
+      <div [class]="'viewer-card zoom-' + zoomLevel">
+
+        <!-- Header -->
+        <div class="viewer-header">
+          <div class="viewer-title-group">
+            <span [class]="'ptype-badge ' + (selected.done ? selected.category === 'CreationalPatterns' ? 'creational' : selected.category === 'StructuralPatterns' ? 'structural' : 'behavioral' : 'muted')">
+              {{ selected.category === 'CreationalPatterns' ? 'Creational' : selected.category === 'StructuralPatterns' ? 'Structural' : 'Behavioral' }}
+            </span>
+            <h2 class="viewer-pattern-name">{{ selected.name }}</h2>
+          </div>
+
+          <!-- Zoom controls -->
+          <div class="viewer-zoom">
+            <button [class]="'zoom-btn z1' + (zoomLevel === 1 ? ' active' : '')" (click)="setZoom(1)" title="Small">A</button>
+            <button [class]="'zoom-btn z2' + (zoomLevel === 2 ? ' active' : '')" (click)="setZoom(2)" title="Medium">A</button>
+            <button [class]="'zoom-btn z3' + (zoomLevel === 3 ? ' active' : '')" (click)="setZoom(3)" title="Large">A</button>
+          </div>
+
+          <!-- Tabs: README first, then language tabs -->
+          <div class="viewer-lang-tabs">
+            @for (tab of allTabs; track tab) {
+              <button
+                [class]="'lang-tab' + (tab === 'readme' ? ' readme-tab' : '') + (activeLang === tab ? ' active' : '') + (!tabAvailable(tab) ? ' unavailable' : '')"
+                [disabled]="!tabAvailable(tab)"
+                (click)="switchTab(tab)">
+                {{ tabLabel(tab) }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Loading -->
+        @if (loading) {
+          <div class="viewer-state">
+            <div class="viewer-spinner"></div>
+            <span>Loading...</span>
+          </div>
+        }
+
+        <!-- README -->
+        @if (!loading && activeLang === 'readme' && readme) {
+          <div class="viewer-readme-wrap">
+            <div class="viewer-readme" [innerHTML]="renderedReadme"></div>
+            @if (tocSections.length) {
+              <nav class="viewer-toc">
+                @for (s of tocSections; track s.index) {
+                  <button [class]="'toc-btn' + (s.index === activeTocIndex ? ' active' : '')" (click)="scrollToSection(s.index)">{{ s.label }}</button>
+                }
+              </nav>
+            }
+          </div>
+        }
+
+        <!-- Not implemented yet -->
+        @if (!loading && notFound) {
+          <div class="viewer-state viewer-state--empty">
+            <div class="viewer-coming-soon-icon">[ ]</div>
+            <p class="viewer-state-title">Not implemented yet</p>
+            <p class="viewer-state-sub">
+              Create the file at:<br>
+              <code class="viewer-path">patterns/{{ selected.category }}/{{ selected.slug }}/{{ activeLang }}.{{ langExt(activeLang) }}</code>
+            </p>
+          </div>
+        }
+
+        <!-- Code -->
+        @if (!loading && highlightedCode) {
+          <div class="viewer-code-wrap">
+            <div class="viewer-code-topbar">
+              <span class="viewer-code-file">{{ selected.slug }}/{{ activeLang }}.{{ langExt(activeLang) }}</span>
+              <span class="viewer-code-lines">{{ code!.split('\n').length }} lines</span>
+            </div>
+            <pre class="viewer-pre"><code [innerHTML]="highlightedCode"></code></pre>
+          </div>
+
+          <!-- Output -->
+          <div class="viewer-output-wrap">
+            <div class="viewer-output-topbar">
+              <span class="viewer-output-label">
+                <span class="viewer-output-dot"></span>
+                console output
+              </span>
+              @if (!output) {
+                <span class="viewer-output-empty-note">no output file — add {{ activeLang }}.output to see results here</span>
+              }
+            </div>
+            @if (output) {
+              <pre class="viewer-output-pre">{{ output }}</pre>
+            } @else {
+              <div class="viewer-output-empty">—</div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+  </section>
+
+</div>

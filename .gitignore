@@ -1,0 +1,47 @@
+# ── Node / Express (root) ─────────────────────────────────────────────────────
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+
+# ── Angular (client) ──────────────────────────────────────────────────────────
+client/node_modules/
+client/dist/
+client/.angular/
+
+# ── Java (pattern artifacts) ──────────────────────────────────────────────────
+*.class
+*.jar
+
+# ── Python (pattern artifacts) ────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# ── C# (pattern artifacts) ────────────────────────────────────────────────────
+bin/
+obj/
+*.dll
+*.exe
+*.user
+.dotnet/
+
+# ── TypeScript (compiled output in pattern folders) ───────────────────────────
+# Keep .ts source; ignore any compiled .js next to it
+patterns/**/*.js
+patterns/**/*.js.map
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor ────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,222 @@
+<div class="page">
+  <header>
+    <h1><span>Python</span> Cheat Sheet</h1>
+    <p>// backend systems edition</p>
+  </header>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">run</span></div>
+      <div class="code-block"><pre><span class="cmt"># run server</span>
+python main.py
+uvicorn main:app --reload   <span class="cmt"># FastAPI</span>
+flask run                   <span class="cmt"># Flask</span>
+
+<span class="cmt"># run worker / script</span>
+python -m celery worker
+python manage.py migrate    <span class="cmt"># Django</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">variables &amp; types</span></div>
+      <div class="code-block"><pre><span class="cmt"># no declaration needed</span>
+port = <span class="num">5432</span>
+db_url = <span class="str">"postgresql://localhost/app"</span>
+ssl_enabled = <span class="kw">True</span>
+timeout = <span class="kw">None</span>
+
+<span class="cmt"># type hints (recommended)</span>
+port: <span class="tp">int</span> = <span class="num">5432</span>
+conn_str: <span class="tp">str</span> = <span class="str">"postgresql://..."</span>
+row_ids: <span class="tp">list</span>[<span class="tp">int</span>] = []
+config: <span class="tp">dict</span>[<span class="tp">str</span>, <span class="tp">str</span>] = &#123;&#125;
+
+<span class="cmt"># unpack tuple from DB row</span>
+user_id, email, role = row</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">control flow</span></div>
+      <div class="code-block"><pre><span class="cmt"># handle HTTP response</span>
+<span class="kw">if</span> response.status_code == <span class="num">200</span>:
+    <span class="fn">process</span>(response.json())
+<span class="kw">elif</span> response.status_code == <span class="num">404</span>:
+    <span class="kw">raise</span> <span class="tp">NotFoundError</span>(path)
+<span class="kw">else</span>:
+    <span class="fn">retry_with_backoff</span>()
+
+<span class="cmt"># match - route dispatch (3.10+)</span>
+<span class="kw">match</span> method:
+    <span class="kw">case</span> <span class="str">"GET"</span>:    <span class="fn">handle_get</span>(req)
+    <span class="kw">case</span> <span class="str">"POST"</span>:   <span class="fn">handle_post</span>(req)
+    <span class="kw">case</span> _:        <span class="fn">send_405</span>()
+
+<span class="cmt"># ternary</span>
+status = <span class="str">"active"</span> <span class="kw">if</span> user.enabled <span class="kw">else</span> <span class="str">"inactive"</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">loops</span></div>
+      <div class="code-block"><pre><span class="cmt"># iterate DB result rows</span>
+<span class="kw">for</span> row <span class="kw">in</span> cursor.<span class="fn">fetchall</span>():
+    <span class="fn">process_row</span>(row)
+
+<span class="cmt"># paginate with index</span>
+<span class="kw">for</span> i, record <span class="kw">in</span> <span class="fn">enumerate</span>(records):
+    <span class="fn">bulk_insert</span>(i, record)
+
+<span class="cmt"># poll message queue</span>
+<span class="kw">while</span> queue.<span class="fn">has_messages</span>():
+    <span class="fn">dispatch</span>(queue.<span class="fn">pop</span>())
+
+<span class="cmt"># comprehension - map DB rows to dicts</span>
+users = [<span class="fn">row_to_dict</span>(r) <span class="kw">for</span> r <span class="kw">in</span> rows <span class="kw">if</span> r[<span class="str">"active"</span>]]</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">oop - repository &amp; service pattern</span></div>
+      <div class="code-grid">
+        <div class="code-block"><pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="tp">UserRepository</span>(ABC):
+    <span class="dec">&#64;abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">find_by_id</span>(self, user_id: <span class="tp">int</span>) -&gt; <span class="tp">dict</span> | <span class="kw">None</span>: ...
+
+    <span class="dec">&#64;abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">save</span>(self, user: <span class="tp">dict</span>) -&gt; <span class="tp">dict</span>: ...
+
+    <span class="dec">&#64;abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">delete</span>(self, user_id: <span class="tp">int</span>) -&gt; <span class="kw">None</span>: ...</pre></div>
+        <div class="code-block"><pre><span class="kw">class</span> <span class="tp">PostgresUserRepo</span>(<span class="tp">UserRepository</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, conn):
+        self._conn = conn
+
+    <span class="kw">def</span> <span class="fn">find_by_id</span>(self, user_id: <span class="tp">int</span>):
+        cur = self._conn.<span class="fn">cursor</span>()
+        cur.<span class="fn">execute</span>(
+            <span class="str">"SELECT * FROM users WHERE id = %s"</span>,
+            (user_id,)
+        )
+        <span class="kw">return</span> cur.<span class="fn">fetchone</span>()</pre></div>
+        <div class="code-block"><pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="dec">&#64;dataclass</span>
+<span class="kw">class</span> <span class="tp">User</span>:
+    id: <span class="tp">int</span>
+    email: <span class="tp">str</span>
+    role: <span class="tp">str</span>
+    active: <span class="tp">bool</span> = <span class="kw">True</span>
+
+<span class="kw">class</span> <span class="tp">UserService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, repo: <span class="tp">UserRepository</span>):
+        self._repo = repo
+
+    <span class="kw">def</span> <span class="fn">get_or_raise</span>(self, user_id: <span class="tp">int</span>) -&gt; <span class="tp">User</span>:
+        user = self._repo.<span class="fn">find_by_id</span>(user_id)
+        <span class="kw">if not</span> user: <span class="kw">raise</span> <span class="tp">NotFoundError</span>(user_id)
+        <span class="kw">return</span> user</pre></div>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">data structures - backend use cases</span></div>
+      <div class="code-grid">
+        <div class="code-block"><pre><span class="cmt"># list - ordered result set</span>
+rows = cursor.<span class="fn">fetchall</span>()
+rows.<span class="fn">append</span>(new_row)
+rows[<span class="num">0</span>]
+<span class="fn">len</span>(rows)
+rows[<span class="num">10</span>:<span class="num">20</span>]   <span class="cmt"># page slice</span>
+rows[::-<span class="num">1</span>]   <span class="cmt"># reverse</span></pre></div>
+        <div class="code-block"><pre><span class="cmt"># dict - config, request body, DB row</span>
+config = &#123;<span class="str">"host"</span>: <span class="str">"localhost"</span>, <span class="str">"port"</span>: <span class="num">5432</span>&#125;
+config.<span class="fn">get</span>(<span class="str">"timeout"</span>, <span class="num">30</span>)   <span class="cmt"># safe get</span>
+config.<span class="fn">keys</span>()
+config.<span class="fn">items</span>()               <span class="cmt"># iterate pairs</span>
+&#123;**config, <span class="str">"port"</span>: <span class="num">5433</span>&#125;     <span class="cmt"># merge/override</span></pre></div>
+        <div class="code-block"><pre><span class="cmt"># set - unique IDs, dedup</span>
+active_sessions = &#123;<span class="str">"tok1"</span>, <span class="str">"tok2"</span>&#125;
+active_sessions.<span class="fn">add</span>(token)
+active_sessions.<span class="fn">discard</span>(expired)
+token <span class="kw">in</span> active_sessions
+
+<span class="cmt"># tuple - immutable DB creds</span>
+creds = (host, port, db_name)
+host, port, db = creds   <span class="cmt"># unpack</span></pre></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">functions - handlers &amp; middleware</span></div>
+      <div class="code-block"><pre><span class="cmt"># typed route handler</span>
+<span class="kw">def</span> <span class="fn">get_user</span>(user_id: <span class="tp">int</span>, db=<span class="tp">Depends</span>(get_db)) -&gt; <span class="tp">User</span>:
+    <span class="kw">return</span> db.<span class="fn">query</span>(<span class="tp">User</span>).<span class="fn">filter_by</span>(id=user_id).<span class="fn">first</span>()
+
+<span class="cmt"># middleware via decorator</span>
+<span class="kw">def</span> <span class="fn">require_auth</span>(fn):
+    <span class="kw">def</span> <span class="fn">wrapper</span>(req, *args, **kwargs):
+        <span class="kw">if not</span> req.headers.<span class="fn">get</span>(<span class="str">"Authorization"</span>):
+            <span class="kw">raise</span> <span class="tp">UnauthorizedError</span>()
+        <span class="kw">return</span> <span class="fn">fn</span>(req, *args, **kwargs)
+    <span class="kw">return</span> wrapper</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">strings - sql &amp; http</span></div>
+      <div class="code-block"><pre>path.<span class="fn">startswith</span>(<span class="str">"/api"</span>)
+url.<span class="fn">split</span>(<span class="str">"?"</span>)[<span class="num">0</span>]        <span class="cmt"># strip query string</span>
+header.<span class="fn">replace</span>(<span class="str">"Bearer "</span>, <span class="str">""</span>)
+content_type.<span class="fn">lower</span>().<span class="fn">strip</span>()
+
+<span class="cmt"># f-string in log output</span>
+logger.<span class="fn">info</span>(<span class="str">f"[&#123;method&#125;] &#123;path&#125; -&gt; &#123;status&#125;"</span>)
+
+<span class="cmt"># multiline SQL</span>
+sql = <span class="str">"""
+    SELECT u.id, u.email, r.name AS role
+    FROM users u
+    JOIN roles r ON r.user_id = u.id
+    WHERE u.active = true
+"""</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">exceptions &amp; context managers</span></div>
+      <div class="code-block"><pre><span class="kw">try</span>:
+    result = db.<span class="fn">execute</span>(query, params)
+<span class="kw">except</span> <span class="tp">psycopg2.IntegrityError</span> <span class="kw">as</span> e:
+    db.<span class="fn">rollback</span>()
+    <span class="kw">raise</span> <span class="tp">ConflictError</span>(<span class="str">"Duplicate entry"</span>) <span class="kw">from</span> e
+<span class="kw">except</span> <span class="tp">psycopg2.OperationalError</span>:
+    <span class="kw">raise</span> <span class="tp">ServiceUnavailableError</span>(<span class="str">"DB unreachable"</span>)
+<span class="kw">finally</span>:
+    cursor.<span class="fn">close</span>()
+
+<span class="cmt"># context manager - auto-close connection</span>
+<span class="kw">with</span> db.<span class="fn">get_connection</span>() <span class="kw">as</span> conn:
+    conn.<span class="fn">execute</span>(sql, params)</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">useful builtins &amp; keywords</span></div>
+      <div class="pills-body">
+        <span class="pill pill-teal">len() - row count / payload size</span>
+        <span class="pill pill-teal">enumerate() - paginated indexing</span>
+        <span class="pill pill-teal">zip() - merge request + schema</span>
+        <span class="pill pill-teal">sorted() - order query results</span>
+        <span class="pill pill-blue">isinstance() - validate request type</span>
+        <span class="pill pill-blue">hasattr() - check model fields</span>
+        <span class="pill pill-blue">getattr() - dynamic field access</span>
+        <span class="pill pill-amber">&#64;staticmethod - utility / helper</span>
+        <span class="pill pill-amber">&#64;classmethod - factory methods</span>
+        <span class="pill pill-amber">&#64;property - computed DB fields</span>
+        <span class="pill pill-orange">__init__ - inject dependencies</span>
+        <span class="pill pill-orange">__repr__ - debug model output</span>
+        <span class="pill pill-orange">__enter__/__exit__ - connection mgmt</span>
+        <span class="pill pill-red">pass - stub unimplemented endpoint</span>
+        <span class="pill pill-red">... - abstract method placeholder</span>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,250 @@
+<div class="page">
+  <header>
+    <h1><span>Ruby</span> Cheat Sheet</h1>
+    <p>// backend systems edition</p>
+  </header>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">run</span></div>
+      <div class="code-block"><pre><span class="cmt"># run script</span>
+ruby main.rb
+
+<span class="cmt"># run server</span>
+bundle exec rails server
+bundle exec rackup         <span class="cmt"># Rack app</span>
+bundle exec puma           <span class="cmt"># Puma directly</span>
+
+<span class="cmt"># run worker</span>
+bundle exec sidekiq
+bundle exec rake db:migrate</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">variables &amp; types</span></div>
+      <div class="code-block"><pre><span class="cmt"># no declaration needed</span>
+port    = <span class="num">5432</span>
+db_url  = <span class="str">"postgresql://localhost/app"</span>
+enabled = <span class="kw">true</span>
+timeout = <span class="kw">nil</span>
+
+<span class="cmt"># symbols — lightweight identifiers</span>
+status = <span class="sym">:active</span>
+method = <span class="sym">:get</span>
+
+<span class="cmt"># frozen string (memory efficient)</span>
+HOST = <span class="str">"localhost"</span>.freeze
+
+<span class="cmt"># multiple assignment</span>
+host, port, db = <span class="str">"localhost"</span>, <span class="num">5432</span>, <span class="str">"app"</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">control flow</span></div>
+      <div class="code-block"><pre><span class="cmt"># if / elsif / else</span>
+<span class="kw">if</span> response.ok?
+  <span class="fn">process</span>(response.body)
+<span class="kw">elsif</span> response.not_found?
+  <span class="kw">raise</span> <span class="tp">NotFoundError</span>, path
+<span class="kw">else</span>
+  <span class="fn">retry_with_backoff</span>
+<span class="kw">end</span>
+
+<span class="cmt"># case / when</span>
+<span class="kw">case</span> method
+<span class="kw">when</span> <span class="sym">:get</span>  <span class="kw">then</span> <span class="fn">handle_get</span>(req)
+<span class="kw">when</span> <span class="sym">:post</span> <span class="kw">then</span> <span class="fn">handle_post</span>(req)
+<span class="kw">else</span>            <span class="fn">send_405</span>
+<span class="kw">end</span>
+
+<span class="cmt"># inline / ternary</span>
+status = user.active? ? <span class="sym">:active</span> : <span class="sym">:inactive</span>
+<span class="kw">return</span> <span class="kw">if</span> request.nil?</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">loops &amp; blocks</span></div>
+      <div class="code-block"><pre><span class="cmt"># iterate result rows</span>
+rows.<span class="fn">each</span> &#123; |row| <span class="fn">process_row</span>(row) &#125;
+
+<span class="cmt"># map — transform</span>
+emails = users.<span class="fn">map</span>(&amp;<span class="sym">:email</span>)
+
+<span class="cmt"># select — filter active</span>
+active = users.<span class="fn">select</span>(&amp;<span class="sym">:active?</span>)
+
+<span class="cmt"># each_with_index — paginated</span>
+records.<span class="fn">each_with_index</span> <span class="kw">do</span> |rec, i|
+  <span class="fn">bulk_insert</span>(i, rec)
+<span class="kw">end</span>
+
+<span class="cmt"># poll message queue</span>
+<span class="fn">loop</span> <span class="kw">do</span>
+  msg = queue.<span class="fn">pop</span>
+  <span class="kw">break</span> <span class="kw">if</span> msg.nil?
+  <span class="fn">dispatch</span>(msg)
+<span class="kw">end</span></pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">oop — module interface &amp; service pattern</span></div>
+      <div class="code-grid">
+        <div class="code-block"><pre><span class="cmt"># module as interface</span>
+<span class="kw">module</span> <span class="tp">UserRepository</span>
+  <span class="kw">def</span> <span class="fn">find_by_id</span>(id)
+    <span class="kw">raise</span> <span class="tp">NotImplementedError</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">save</span>(user)
+    <span class="kw">raise</span> <span class="tp">NotImplementedError</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">delete</span>(id)
+    <span class="kw">raise</span> <span class="tp">NotImplementedError</span>
+  <span class="kw">end</span>
+<span class="kw">end</span></pre></div>
+        <div class="code-block"><pre><span class="cmt"># concrete implementation</span>
+<span class="kw">class</span> <span class="tp">PostgresUserRepo</span>
+  <span class="kw">include</span> <span class="tp">UserRepository</span>
+
+  <span class="kw">def</span> <span class="fn">initialize</span>(conn)
+    &#64;conn = conn
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">find_by_id</span>(id)
+    &#64;conn.<span class="fn">exec_params</span>(
+      <span class="str">"SELECT * FROM users WHERE id=$1"</span>,
+      [id]
+    ).<span class="fn">first</span>
+  <span class="kw">end</span>
+<span class="kw">end</span></pre></div>
+        <div class="code-block"><pre><span class="cmt"># value object + service</span>
+<span class="tp">User</span> = <span class="tp">Struct</span>.<span class="fn">new</span>(<span class="sym">:id</span>, <span class="sym">:email</span>, <span class="sym">:role</span>,
+                   keyword_init: <span class="kw">true</span>)
+
+<span class="kw">class</span> <span class="tp">UserService</span>
+  <span class="kw">def</span> <span class="fn">initialize</span>(repo)
+    &#64;repo = repo
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">get_or_raise</span>(id)
+    &#64;repo.<span class="fn">find_by_id</span>(id) ||
+      <span class="kw">raise</span>(<span class="tp">NotFoundError</span>, id)
+  <span class="kw">end</span>
+<span class="kw">end</span></pre></div>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">data structures — backend use cases</span></div>
+      <div class="code-grid">
+        <div class="code-block"><pre><span class="cmt"># Array — result set</span>
+rows = conn.<span class="fn">exec</span>(sql).<span class="fn">to_a</span>
+rows.<span class="fn">push</span>(new_row)
+rows.<span class="fn">first</span>
+rows.<span class="fn">length</span>
+rows[<span class="num">10</span>..<span class="num">19</span>]    <span class="cmt"># page slice</span>
+rows.<span class="fn">reverse</span>    <span class="cmt"># reverse order</span>
+rows.<span class="fn">flatten</span>    <span class="cmt"># flatten nested</span></pre></div>
+        <div class="code-block"><pre><span class="cmt"># Hash — config / request body</span>
+config = &#123; host: <span class="str">"localhost"</span>, port: <span class="num">5432</span> &#125;
+config.<span class="fn">fetch</span>(<span class="sym">:timeout</span>, <span class="num">30</span>)  <span class="cmt"># safe get</span>
+config.<span class="fn">keys</span>
+config.<span class="fn">each</span> &#123; |k, v| <span class="fn">puts</span> <span class="str">"#&#123;k&#125;: #&#123;v&#125;"</span> &#125;
+config.<span class="fn">merge</span>(port: <span class="num">5433</span>)     <span class="cmt"># override</span>
+config.<span class="fn">slice</span>(<span class="sym">:host</span>, <span class="sym">:port</span>)   <span class="cmt"># pick keys</span></pre></div>
+        <div class="code-block"><pre><span class="cmt"># Set — unique tokens / IDs</span>
+<span class="kw">require</span> <span class="str">"set"</span>
+sessions = <span class="tp">Set</span>.<span class="fn">new</span>([<span class="str">"tok1"</span>, <span class="str">"tok2"</span>])
+sessions.<span class="fn">add</span>(token)
+sessions.<span class="fn">delete</span>(expired)
+sessions.<span class="fn">include?</span>(token)
+
+<span class="cmt"># Struct — typed value object</span>
+Creds = <span class="tp">Struct</span>.<span class="fn">new</span>(<span class="sym">:host</span>, <span class="sym">:port</span>, <span class="sym">:db</span>)
+creds = <span class="tp">Creds</span>.<span class="fn">new</span>(<span class="str">"localhost"</span>, <span class="num">5432</span>, <span class="str">"app"</span>)</pre></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">methods &amp; procs</span></div>
+      <div class="code-block"><pre><span class="cmt"># keyword arguments with defaults</span>
+<span class="kw">def</span> <span class="fn">find_user</span>(id, repo: &#64;repo, cache: <span class="kw">true</span>)
+  cache ? &#64;cache[id] : repo.<span class="fn">find_by_id</span>(id)
+<span class="kw">end</span>
+
+<span class="cmt"># lambda middleware</span>
+auth = <span class="fn">-></span>(req) &#123;
+  <span class="kw">raise</span> <span class="tp">UnauthorizedError</span> <span class="kw">unless</span> req.token?
+&#125;
+
+<span class="cmt"># yield to block</span>
+<span class="kw">def</span> <span class="fn">with_connection</span>
+  conn = <span class="tp">DB</span>.<span class="fn">connect</span>
+  <span class="kw">yield</span> conn
+<span class="kw">ensure</span>
+  conn&amp;.<span class="fn">close</span>
+<span class="kw">end</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">strings &amp; interpolation</span></div>
+      <div class="code-block"><pre>path.<span class="fn">start_with?</span>(<span class="str">"/api"</span>)
+url.<span class="fn">split</span>(<span class="str">"?"</span>).<span class="fn">first</span>    <span class="cmt"># strip query</span>
+header.<span class="fn">delete_prefix</span>(<span class="str">"Bearer "</span>)
+content_type.<span class="fn">downcase</span>.<span class="fn">strip</span>
+
+<span class="cmt"># interpolation in log</span>
+<span class="fn">logger</span>.<span class="fn">info</span>(<span class="str">"[#&#123;method&#125;] #&#123;path&#125; -> #&#123;status&#125;"</span>)
+
+<span class="cmt"># heredoc — multiline SQL</span>
+sql = &lt;&lt;~SQL
+  SELECT u.id, u.email, r.name AS role
+  FROM users u
+  JOIN roles r ON r.user_id = u.id
+  WHERE u.active = true
+SQL</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">exceptions &amp; ensure</span></div>
+      <div class="code-block"><pre><span class="kw">begin</span>
+  result = db.<span class="fn">exec</span>(query, params)
+<span class="kw">rescue</span> <span class="tp">PG::UniqueViolation</span> => e
+  <span class="kw">raise</span> <span class="tp">ConflictError</span>, <span class="str">"Duplicate entry"</span>
+<span class="kw">rescue</span> <span class="tp">PG::ConnectionBad</span>
+  <span class="kw">raise</span> <span class="tp">ServiceUnavailableError</span>, <span class="str">"DB unreachable"</span>
+<span class="kw">ensure</span>
+  cursor&amp;.<span class="fn">close</span>
+<span class="kw">end</span>
+
+<span class="cmt"># connection via block</span>
+<span class="fn">with_connection</span> <span class="kw">do</span> |conn|
+  conn.<span class="fn">exec</span>(sql, params)
+<span class="kw">end</span></pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">useful keywords &amp; methods</span></div>
+      <div class="pills-body">
+        <span class="pill pill-teal">map / flat_map — transform collections</span>
+        <span class="pill pill-teal">select / reject — filter rows</span>
+        <span class="pill pill-teal">reduce / inject — aggregate results</span>
+        <span class="pill pill-teal">group_by — bucket by field</span>
+        <span class="pill pill-blue">respond_to? — duck type check</span>
+        <span class="pill pill-blue">is_a? / kind_of? — type check</span>
+        <span class="pill pill-blue">send — dynamic method dispatch</span>
+        <span class="pill pill-purple">attr_reader — expose instance var</span>
+        <span class="pill pill-purple">attr_accessor — read + write</span>
+        <span class="pill pill-purple">include — mixin module</span>
+        <span class="pill pill-purple">extend — add module as class methods</span>
+        <span class="pill pill-orange">freeze — prevent mutation</span>
+        <span class="pill pill-orange">dup / clone — shallow copy (Prototype)</span>
+        <span class="pill pill-orange">&amp;: shorthand — map(&amp;:email)</span>
+        <span class="pill pill-red">raise / rescue — exception handling</span>
+        <span class="pill pill-red">ensure — always runs (like finally)</span>
+      </div>
+    </div>
+
+  </div>
+</div>

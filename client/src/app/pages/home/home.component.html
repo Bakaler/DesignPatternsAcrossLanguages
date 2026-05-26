@@ -1,0 +1,272 @@
+<div class="page">
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <p class="hero-eyebrow">Self-directed study series</p>
+    <h1>Design Patterns <span class="accent">Across</span> Languages:</h1>
+    <p class="hero-tagline">A Codex</p>
+    <p class="hero-sub">
+      A personal deep-dive into all <strong>23 Gang of Four design patterns</strong><br>
+      Implemented in Java, C#, TypeScript, Python, and Ruby.
+    </p>
+    <div class="hero-stats">
+      <div class="stat stat-live">
+        <div class="stat-num">{{ displayPatterns }}<span>.</span></div>
+        <div class="stat-label">
+          <span class="live-dot-wrap">
+            <span class="live-dot"></span>
+            <span class="live-tip">Growing toward all 23 GoF patterns — a pattern counts once at least one language has an implementation</span>
+          </span>
+          Patterns Done
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ displayLanguages }}<span>.</span></div>
+        <div class="stat-label">Languages</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{ displayCategories }}<span>.</span></div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat stat-live stat-live-teal">
+        <div class="stat-num">{{ displayCount }}<span>.</span></div>
+        <div class="stat-label">
+          <span class="live-dot-wrap">
+            <span class="live-dot" style="background:#4ec9b0;box-shadow:0 0 4px #4ec9b0,0 0 10px #4ec9b088;animation:live-blink-teal 1.4s ease-in-out infinite"></span>
+            <span class="live-tip">A growing series — implementations are added as each pattern is completed across all languages</span>
+          </span>
+          Implementations
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PURPOSE ── -->
+  <div class="section-label">01 - Purpose</div>
+  <section class="purpose">
+    <div class="purpose-col">
+      <h3>Why Am I Making This?</h3>
+      <p>
+        
+
+      </p>
+    </div>
+    <div class="purpose-col">
+      <h3>Why I want to share it with you all</h3>
+      <p>
+
+      </p>
+    </div>
+  </section>
+
+  <!-- ── ROLL ── -->
+  <div class="section-label">02 - Pick Your Next Problem</div>
+  <section class="languages">
+
+    <div class="roll-config">
+      <div class="roll-config-group">
+        <span class="config-label">sound</span>
+        <div class="config-chips">
+          <button class="cfg-chip" [class.active]="selectedChord === 'sine'"    (click)="selectedChord = 'sine'">sine</button>
+          <button class="cfg-chip" [class.active]="selectedChord === 'arcade'"  (click)="selectedChord = 'arcade'">arcade</button>
+          <button class="cfg-chip" [class.active]="selectedChord === 'dm'"      (click)="selectedChord = 'dm'">dm</button>
+        </div>
+      </div>
+      <div class="roll-config-group">
+        <span class="config-label">win</span>
+        <div class="config-chips">
+          <button class="cfg-chip" [class.active]="selectedWin === 'confetti'"  (click)="selectedWin = 'confetti'">confetti</button>
+          <button class="cfg-chip" [class.active]="selectedWin === 'lightning'" (click)="selectedWin = 'lightning'">lightning</button>
+          <button class="cfg-chip" [class.active]="selectedWin === 'sparks'"    (click)="selectedWin = 'sparks'">sparks</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dice-track pat-dice-track"
+         [class.rolling]="combinedTrack === 'rolling'"
+         [class.done]="combinedTrack === 'done'"
+         (click)="rollBoth()">
+      <div class="dice-track-fill"
+           [style.width]="langFillWidth"
+           [style.background]="langFillBg"></div>
+      <span class="dice-track-label">{{ combinedLabel }}</span>
+    </div>
+
+    <div class="categories" style="margin-top:1.2rem">
+      @for (cat of categories; track cat.name) {
+        <div class="cat-card">
+          <div class="cat-header">
+            <span [class]="'cat-name ' + cat.cls">{{ cat.name }}</span>
+            <span class="cat-count">{{ cat.count }}</span>
+          </div>
+          <p class="cat-desc">{{ cat.desc }}</p>
+          <div class="cat-patterns">
+            @for (p of cat.patterns; track p.id) {
+              <div class="pat-row"
+                   [class.pat-lit]="litPatternId === p.id"
+                   [class.pat-won]="wonPatternId === p.id">
+                <span class="pat-name" [class.done]="p.done">{{ p.name }}</span>
+                <span class="pat-status"
+                      [class.status-done]="p.done"
+                      [class.status-pending]="!p.done">
+                  {{ p.done ? 'done' : 'upcoming' }}
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="lang-grid" style="margin-top:1.2rem">
+
+      <div class="lang-card java"
+           style="--lang-glow:#f89820"
+           [class.lit-card]="langCardState['java'] === 'lit'"
+           [class.won-card]="langCardState['java'] === 'won'">
+        <div class="lang-card-bar"
+             style="--bar-color:#c07830; --bar-color-bright:#f89820"
+             [class.lit]="langBarState['java'] === 'lit'"
+             [class.selected]="langBarState['java'] === 'selected'"></div>
+        <div class="lang-card-name">Java</div>
+        <div class="lang-card-sub">JDK 21</div>
+        <div class="lang-card-snippet"><span class="hi-java">public static void</span> <span class="hi-fn">main</span>(String[] args) &#123;</div>
+      </div>
+
+      <div class="lang-card csharp"
+           style="--lang-glow:#9b59f5"
+           [class.lit-card]="langCardState['csharp'] === 'lit'"
+           [class.won-card]="langCardState['csharp'] === 'won'">
+        <div class="lang-card-bar"
+             style="--bar-color:#6e40b0; --bar-color-bright:#9b59f5"
+             [class.lit]="langBarState['csharp'] === 'lit'"
+             [class.selected]="langBarState['csharp'] === 'selected'"></div>
+        <div class="lang-card-name">C#</div>
+        <div class="lang-card-sub">.NET 8</div>
+        <div class="lang-card-snippet"><span class="hi-csharp">static void</span> <span class="hi-fn">Main</span>(string[] args) &#123;</div>
+      </div>
+
+      <div class="lang-card ts"
+           style="--lang-glow:#4a9eff"
+           [class.lit-card]="langCardState['ts'] === 'lit'"
+           [class.won-card]="langCardState['ts'] === 'won'">
+        <div class="lang-card-bar"
+             style="--bar-color:#2d6aaa; --bar-color-bright:#4a9eff"
+             [class.lit]="langBarState['ts'] === 'lit'"
+             [class.selected]="langBarState['ts'] === 'selected'"></div>
+        <div class="lang-card-name">TypeScript</div>
+        <div class="lang-card-sub">TS 5</div>
+        <div class="lang-card-snippet"><span class="hi-ts">const</span> <span class="hi-fn">main</span> = <span class="hi-ts">async</span> (): <span class="hi-ts">Promise</span>&lt;<span class="hi-ts">void</span>&gt; =&gt; &#123;</div>
+      </div>
+
+      <div class="lang-card python"
+           style="--lang-glow:#ffd43b"
+           [class.lit-card]="langCardState['python'] === 'lit'"
+           [class.won-card]="langCardState['python'] === 'won'">
+        <div class="lang-card-bar"
+             style="--bar-color:#9e8a28; --bar-color-bright:#ffd43b"
+             [class.lit]="langBarState['python'] === 'lit'"
+             [class.selected]="langBarState['python'] === 'selected'"></div>
+        <div class="lang-card-name">Python</div>
+        <div class="lang-card-sub">Python 3.12</div>
+        <div class="lang-card-snippet"><span class="hi-py">if</span> __name__ == <span class="hi-str">"__main__"</span>:</div>
+      </div>
+
+      <div class="lang-card ruby"
+           style="--lang-glow:#cc342d"
+           [class.lit-card]="langCardState['ruby'] === 'lit'"
+           [class.won-card]="langCardState['ruby'] === 'won'">
+        <div class="lang-card-bar"
+             style="--bar-color:#7a1818; --bar-color-bright:#cc342d"
+             [class.lit]="langBarState['ruby'] === 'lit'"
+             [class.selected]="langBarState['ruby'] === 'selected'"></div>
+        <div class="lang-card-name">Ruby</div>
+        <div class="lang-card-sub">Ruby 3.3</div>
+        <div class="lang-card-snippet"><span class="hi-ruby">if</span> __FILE__ == $PROGRAM_NAME</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── APPROACH ── -->
+  <div class="section-label">03 - Approach</div>
+  <section class="approach">
+    <div class="approach-grid">
+      <div class="approach-col">
+        <div class="approach-num">01</div>
+        <div class="approach-title">Roll the Randomizer</div>
+        <p class="approach-body">
+          In real engineering, we rarely get to pick the problems we face. <strong>We just have to solve them.</strong>
+          
+        </p>
+      </div>
+      <div class="approach-col">
+        <div class="approach-num">02</div>
+        <div class="approach-title">Read and Explore</div>
+        <p class="approach-body">
+          The <strong>GoF chapter</strong> is the foundation, but we go wider than that. Medium posts,
+          YouTube deep dives, real codebases. We want to actually understand the thing before
+          touching any code.
+        </p>
+      </div>
+      <div class="approach-col">
+        <div class="approach-num">03</div>
+        <div class="approach-title">Scope the Problem</div>
+        <p class="approach-body">
+          Pick a concrete domain and a specific problem within it. The scope needs to be
+          small enough to finish and <strong>real enough to matter</strong>, useable as a solid reference piece.
+        </p>
+      </div>
+      <div class="approach-col">
+        <div class="approach-num">04</div>
+        <div class="approach-title">Find a Complement</div>
+        <p class="approach-body">
+          Look for a second pattern that slots in naturally alongside the main one without
+          becoming the focus. Because is software ever simple?
+        </p>
+      </div>
+      <div class="approach-col">
+        <div class="approach-num">05</div>
+        <div class="approach-title">Build It</div>
+        <p class="approach-body">
+          Once we have our idea, we want to create an architecture, throw ideas at the whiteboard, and start slapping the keyboard.
+        </p>
+      </div>
+      <div class="approach-col">
+        <div class="approach-num">06</div>
+        <div class="approach-title">Write It Up</div>
+        <p class="approach-body">
+          After the build, we put the page together. We cite our sources, talk about the intent, go through
+          some of the notes taken on the pattern, and showcase the structure, participants, and patterns within
+          the architecture. We highlight the <strong>strengths and weaknesses</strong> associated with the pattern,
+          share what the experience was actually like, and some other fun stuff.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── QUOTE ── -->
+  <div class="quote">
+    <div class="quote-mark">"</div>
+    <p class="quote-text">Program to an interface, not an implementation. Favor object composition over class inheritance.</p>
+    <p class="quote-attr">- Gamma, Helm, Johnson, Vlissides · Design Patterns (1994)</p>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer-left">
+      <div><img class="footer-logo-mark" src="Euler.png" alt=""> <span>Design Patterns Across Languages</span></div>
+      <div>23 patterns · Java · C# · TypeScript · Python · Ruby</div>
+      <div class="footer-note">self-instruction · practice · education</div>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" routerLink="/gof">GoF Cheat Sheet</a>
+      <a class="footer-link" routerLink="/java">Java Ref</a>
+      <a class="footer-link" routerLink="/csharp">C# Ref</a>
+      <a class="footer-link" routerLink="/typescript">TS Ref</a>
+      <a class="footer-link" routerLink="/python">Python Ref</a>
+      <a class="footer-link" routerLink="/ruby">Ruby Ref</a>
+    </div>
+  </footer>
+
+</div>
