@@ -67,17 +67,17 @@
       <div class="roll-config-group">
         <span class="config-label">sound</span>
         <div class="config-chips">
-          <button class="cfg-chip" [class.active]="selectedChord === 'sine'"    (click)="selectedChord = 'sine'">sine</button>
-          <button class="cfg-chip" [class.active]="selectedChord === 'arcade'"  (click)="selectedChord = 'arcade'">arcade</button>
-          <button class="cfg-chip" [class.active]="selectedChord === 'dm'"      (click)="selectedChord = 'dm'">dm</button>
+          <button class="cfg-chip" [class.active]="settings.chord() === 'sine'"   (click)="settings.chord.set('sine');   settings.playUiClick()">sine</button>
+          <button class="cfg-chip" [class.active]="settings.chord() === 'arcade'" (click)="settings.chord.set('arcade'); settings.playUiClick()">arcade</button>
+          <button class="cfg-chip" [class.active]="settings.chord() === 'dm'"     (click)="settings.chord.set('dm');     settings.playUiClick()">dm</button>
         </div>
       </div>
       <div class="roll-config-group">
         <span class="config-label">win</span>
         <div class="config-chips">
-          <button class="cfg-chip" [class.active]="selectedWin === 'confetti'"  (click)="selectedWin = 'confetti'">confetti</button>
-          <button class="cfg-chip" [class.active]="selectedWin === 'lightning'" (click)="selectedWin = 'lightning'">lightning</button>
-          <button class="cfg-chip" [class.active]="selectedWin === 'sparks'"    (click)="selectedWin = 'sparks'">sparks</button>
+          <button class="cfg-chip" [class.active]="selectedWin === 'confetti'"  (click)="selectedWin = 'confetti';  settings.playUiClick()">confetti</button>
+          <button class="cfg-chip" [class.active]="selectedWin === 'lightning'" (click)="selectedWin = 'lightning'; settings.playUiClick()">lightning</button>
+          <button class="cfg-chip" [class.active]="selectedWin === 'sparks'"    (click)="selectedWin = 'sparks';    settings.playUiClick()">sparks</button>
         </div>
       </div>
     </div>
@@ -253,20 +253,6 @@
   </div>
 
   <!-- ── FOOTER ── -->
-  <footer class="footer">
-    <div class="footer-left">
-      <div><img class="footer-logo-mark" src="Euler.png" alt=""> <span>Design Patterns Across Languages</span></div>
-      <div>23 patterns · Java · C# · TypeScript · Python · Ruby</div>
-      <div class="footer-note">self-instruction · practice · education</div>
-    </div>
-    <div class="footer-links">
-      <a class="footer-link" routerLink="/gof">GoF Cheat Sheet</a>
-      <a class="footer-link" routerLink="/java">Java Ref</a>
-      <a class="footer-link" routerLink="/csharp">C# Ref</a>
-      <a class="footer-link" routerLink="/typescript">TS Ref</a>
-      <a class="footer-link" routerLink="/python">Python Ref</a>
-      <a class="footer-link" routerLink="/ruby">Ruby Ref</a>
-    </div>
-  </footer>
+  <app-footer />
 
 </div>

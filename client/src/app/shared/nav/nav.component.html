@@ -1,12 +1,44 @@
 <nav class="site-nav">
-  <a routerLink="/" class="nav-logo"><img class="nav-logo-mark" src="Euler.png" alt=""> <span>Design Patterns</span> Across Languages</a>
+  <a routerLink="/" class="nav-logo" (click)="settings.playUiClick()">
+    <img class="nav-logo-mark" src="Euler.png" alt=""> <span>Design Patterns</span> Across Languages
+  </a>
   <div class="nav-links">
-    <a routerLink="/"           routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">Index</a>
-    <a routerLink="/gof"        routerLinkActive="active" class="nav-link">GoF</a>
-    <a routerLink="/java"       routerLinkActive="active" class="nav-link">Java</a>
-    <a routerLink="/csharp"     routerLinkActive="active" class="nav-link">C#</a>
-    <a routerLink="/typescript" routerLinkActive="active" class="nav-link">TypeScript</a>
-    <a routerLink="/python"     routerLinkActive="active" class="nav-link">Python</a>
-    <a routerLink="/ruby"       routerLinkActive="active" class="nav-link">Ruby</a>
+    <a routerLink="/"           routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" (click)="settings.playUiClick()">Index</a>
+    <a routerLink="/gof"        routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">GoF</a>
+    <a routerLink="/java"       routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">Java</a>
+    <a routerLink="/csharp"     routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">C#</a>
+    <a routerLink="/typescript" routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">TypeScript</a>
+    <a routerLink="/python"     routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">Python</a>
+    <a routerLink="/ruby"       routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">Ruby</a>
+
+    <!-- ── Settings ── -->
+    <div class="nav-settings">
+      <button class="nav-settings-btn" (click)="toggleSettings($event)" [class.open]="settingsOpen">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+
+      @if (settingsOpen) {
+        <div class="settings-dropdown" (click)="$event.stopPropagation()">
+          <span class="settings-section-label">sound</span>
+          <div class="settings-chips">
+            <button class="cfg-chip" [class.active]="settings.chord() === 'sine'"   (click)="selectChord('sine',   $event)">sine</button>
+            <button class="cfg-chip" [class.active]="settings.chord() === 'arcade'" (click)="selectChord('arcade', $event)">arcade</button>
+            <button class="cfg-chip" [class.active]="settings.chord() === 'dm'"     (click)="selectChord('dm',     $event)">dm</button>
+          </div>
+
+          <span class="settings-section-label">volume</span>
+          <div class="volume-row" (click)="$event.stopPropagation()">
+            <input type="range" class="volume-slider" min="0" max="1" step="0.05"
+              [value]="settings.volume()"
+              (input)="setVolume($event)">
+            <span class="volume-val">{{ volumePercent }}%</span>
+          </div>
+        </div>
+      }
+    </div>
+
   </div>
 </nav>

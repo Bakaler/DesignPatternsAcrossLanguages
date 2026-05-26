@@ -1,0 +1,127 @@
+/* ── Settings button ───────────────────────────────────────────────────────── */
+.nav-settings {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.nav-settings-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: #5a5a6e;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.nav-settings-btn:hover,
+.nav-settings-btn.open {
+  color: #e4e2df;
+  border-color: #2e2e3a;
+  background: #18181d;
+}
+
+/* ── Settings dropdown ─────────────────────────────────────────────────────── */
+.settings-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #111114;
+  border: 1px solid #252530;
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  z-index: 100;
+  min-width: 160px;
+  box-shadow: 0 8px 24px #00000066;
+}
+
+.settings-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #5a5a6e;
+}
+
+.settings-chips {
+  display: flex;
+  gap: 4px;
+}
+
+/* ── Volume slider ─────────────────────────────────────────────────────────── */
+.volume-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 3px;
+  border-radius: 2px;
+  background: #2e2e3a;
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #f0a500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #f0a500;
+  border: none;
+  cursor: pointer;
+}
+
+.volume-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  color: #5a5a6e;
+  min-width: 2.8rem;
+  text-align: right;
+}
+
+/* ── cfg-chip (duplicated from home so it works in this scope) ─────────────── */
+.cfg-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid #2e2e3a;
+  border-radius: 2px;
+  background: #111114;
+  color: #5a5a6e;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.cfg-chip:hover { color: #e4e2df; border-color: #3a3a4a; }
+
+.cfg-chip.active {
+  color: #f0a500;
+  border-color: #f0a50055;
+  background: #f0a50010;
+}

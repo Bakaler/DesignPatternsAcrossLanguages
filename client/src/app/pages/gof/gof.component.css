@@ -422,7 +422,15 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Code block */
-.viewer-code-wrap { overflow: hidden; }
+.viewer-code-wrap {
+  overflow: hidden;
+  animation: viewer-fade-in 0.12s ease;
+}
+
+@keyframes viewer-fade-in {
+  from { opacity: 0.4; }
+  to   { opacity: 1;   }
+}
 
 .viewer-code-topbar {
   display: flex;

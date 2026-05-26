@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { SettingsService } from '../../services/settings.service';
+import { FooterComponent } from '../../shared/footer/footer.component';
 
 interface PatternDef {
   name:     string;
@@ -34,7 +36,7 @@ interface PatternAvailable {
 @Component({
   selector: 'app-gof',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FooterComponent],
   templateUrl: './gof.component.html',
   styleUrl: './gof.component.css'
 })
@@ -44,6 +46,7 @@ export class GofComponent implements OnDestroy {
   private sanitizer = inject(DomSanitizer);
   private el        = inject(ElementRef);
   private ngZone    = inject(NgZone);
+  private settings  = inject(SettingsService);
 
   readonly langs = ['typescript', 'java', 'csharp', 'python', 'ruby'] as const;
 
@@ -124,7 +127,10 @@ export class GofComponent implements OnDestroy {
   tocSections:      { label: string; index: number }[] = [];
   activeTocIndex:   number            = 0;
 
-  private scrollListener: (() => void) | null = null;
+  private scrollListener: (() => void) | null  = null;
+  private loadingTimer:   ReturnType<typeof setTimeout> | null = null;
+
+  keepReadme = false;   // holds README visible while first code fetch is in flight
 
   private hljsLang(tab: string): string {
     return tab === 'csharp' ? 'csharp' : tab;
@@ -142,6 +148,7 @@ export class GofComponent implements OnDestroy {
   }
 
   selectPattern(pattern: PatternDef): void {
+    this.settings.playUiClick();
     this.selected         = pattern;
     this.code             = null;
     this.highlightedCode  = null;
@@ -188,8 +195,14 @@ export class GofComponent implements OnDestroy {
   }
 
   switchTab(tab: string): void {
+    this.settings.playUiClick();
+    // If leaving README, keep it visible until the code response arrives
+    if (this.activeLang === 'readme' && tab !== 'readme') {
+      this.keepReadme = true;
+    }
     this.activeLang = tab;
     if (tab === 'readme') {
+      this.keepReadme      = false;
       this.code            = null;
       this.highlightedCode = null;
       this.output          = null;
@@ -205,11 +218,20 @@ export class GofComponent implements OnDestroy {
 
   private loadCode(): void {
     if (!this.selected) return;
-    this.loading         = true;
-    this.code            = null;
-    this.highlightedCode = null;
-    this.output          = null;
-    this.notFound        = false;
+
+    // Cancel any pending loading indicator
+    if (this.loadingTimer) { clearTimeout(this.loadingTimer); this.loadingTimer = null; }
+
+    this.notFound = false;
+
+    // Only blank the content if the request takes longer than 180ms —
+    // fast local responses swap without any visible flash
+    this.loadingTimer = setTimeout(() => {
+      this.loading         = true;
+      this.code            = null;
+      this.highlightedCode = null;
+      this.output          = null;
+    }, 180);
 
     this.http
       .get<PatternFile>(
@@ -217,15 +239,22 @@ export class GofComponent implements OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.loading  = false;
-          this.code     = res.exists ? res.content : null;
-          this.output   = res.output ?? null;
-          this.notFound = !res.exists;
-          if (this.code) {
-            this.highlightedCode = this.applyHighlight(this.code, this.activeLang);
-          }
+          if (this.loadingTimer) { clearTimeout(this.loadingTimer); this.loadingTimer = null; }
+          this.keepReadme      = false;
+          this.loading         = false;
+          this.code            = res.exists ? res.content : null;
+          this.output          = res.output ?? null;
+          this.notFound        = !res.exists;
+          this.highlightedCode = this.code
+            ? this.applyHighlight(this.code, this.activeLang)
+            : null;
         },
-        error: () => { this.loading = false; this.notFound = true; }
+        error: () => {
+          if (this.loadingTimer) { clearTimeout(this.loadingTimer); this.loadingTimer = null; }
+          this.keepReadme = false;
+          this.loading    = false;
+          this.notFound   = true;
+        }
       });
   }
 
@@ -265,6 +294,7 @@ export class GofComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.removeScrollListener();
+    if (this.loadingTimer) clearTimeout(this.loadingTimer);
   }
 
   scrollToSection(index: number): void {
@@ -279,7 +309,7 @@ export class GofComponent implements OnDestroy {
     container.scrollTo({ top: newTop, behavior: 'smooth' });
   }
 
-  setZoom(level: 1 | 2 | 3): void { this.zoomLevel = level; }
+  setZoom(level: 1 | 2 | 3): void { this.settings.playUiClick(); this.zoomLevel = level; }
 
   isSelected(pattern: PatternDef): boolean {
     return this.selected?.slug === pattern.slug;

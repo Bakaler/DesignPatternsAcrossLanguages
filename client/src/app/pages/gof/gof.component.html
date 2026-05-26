@@ -119,7 +119,7 @@
         }
 
         <!-- README -->
-        @if (!loading && activeLang === 'readme' && readme) {
+        @if (!loading && (activeLang === 'readme' || keepReadme) && readme) {
           <div class="viewer-readme-wrap">
             <div class="viewer-readme" [innerHTML]="renderedReadme"></div>
             @if (tocSections.length) {
@@ -145,7 +145,7 @@
         }
 
         <!-- Code -->
-        @if (!loading && highlightedCode) {
+        @if (!loading && !keepReadme && highlightedCode) {
           <div class="viewer-code-wrap">
             <div class="viewer-code-topbar">
               <span class="viewer-code-file">{{ selected.slug }}/{{ activeLang }}.{{ langExt(activeLang) }}</span>
@@ -178,3 +178,5 @@
   </section>
 
 </div>
+
+  <app-footer />

@@ -2,6 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { SettingsService } from '../../services/settings.service';
+import { FooterComponent } from '../../shared/footer/footer.component';
 
 interface Pattern {
   id: string;
@@ -20,13 +22,13 @@ interface Category {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FooterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public settings: SettingsService) {}
 
   ngOnInit(): void {
     this.animateCount(5, v => this.displayLanguages  = v, 0);
@@ -130,114 +132,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   litPatternId: string | null = null;
   wonPatternId: string | null = null;
 
-  selectedChord: 'sine' | 'arcade' | 'dm' = 'sine';
-  selectedWin:   'confetti' | 'lightning' | 'sparks' = 'confetti';
+  selectedWin: 'confetti' | 'lightning' | 'sparks' = 'confetti';
 
   private timeouts:   ReturnType<typeof setTimeout>[] = [];
-  private audioCtx:   AudioContext | null = null;
   private confCanvas: HTMLCanvasElement | null = null;
   private animFrame:  number | null = null;
 
   ngOnDestroy(): void {
     this.timeouts.forEach(t => clearTimeout(t));
-    this.audioCtx?.close();
     if (this.animFrame != null) cancelAnimationFrame(this.animFrame);
     this.confCanvas?.remove();
-  }
-
-  // ── Audio ─────────────────────────────────────────────────────────────────
-  private getAudio(): AudioContext | null {
-    try {
-      if (!this.audioCtx) this.audioCtx = new AudioContext();
-      if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
-      return this.audioCtx;
-    } catch { return null; }
-  }
-
-  private playTick(): void {
-    const ctx = this.getAudio();
-    if (!ctx) return;
-    const osc  = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    switch (this.selectedChord) {
-      case 'arcade':
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(400 + Math.random() * 300, ctx.currentTime);
-        gain.gain.setValueAtTime(0.04, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.028);
-        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.032);
-        break;
-      case 'dm': {
-        // Guitar pluck — random Dm chord tone (D3 · A3 · D4 · F4)
-        const dmTones = [146.83, 220.00, 293.66, 349.23];
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(dmTones[Math.floor(Math.random() * dmTones.length)], ctx.currentTime);
-        gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.09, ctx.currentTime + 0.003);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
-        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.25);
-        break;
-      }
-      default: // sine
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(700 + Math.random() * 200, ctx.currentTime);
-        gain.gain.setValueAtTime(0.07, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
-        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.05);
-    }
-  }
-
-  private playWin(): void {
-    const ctx = this.getAudio();
-    if (!ctx) return;
-    switch (this.selectedChord) {
-      case 'arcade': {
-        // Fast square arpeggio — A5 · C6 · E6 · G6
-        [0, 0.07, 0.13, 0.19].forEach((offset, i) => {
-          const freq = [880, 1047, 1319, 1568][i];
-          const osc = ctx.createOscillator(), gain = ctx.createGain();
-          osc.connect(gain); gain.connect(ctx.destination);
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + offset);
-          gain.gain.setValueAtTime(0.001, ctx.currentTime + offset);
-          gain.gain.linearRampToValueAtTime(0.055, ctx.currentTime + offset + 0.01);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + 0.14);
-          osc.start(ctx.currentTime + offset); osc.stop(ctx.currentTime + offset + 0.16);
-        });
-        break;
-      }
-      case 'dm': {
-        // Dm guitar strum — D3 · A3 · D4 · F4, 16ms apart (down strum)
-        [0, 0.016, 0.032, 0.048].forEach((offset, i) => {
-          const freq = [146.83, 220.00, 293.66, 349.23][i];
-          const osc = ctx.createOscillator(), gain = ctx.createGain();
-          osc.connect(gain); gain.connect(ctx.destination);
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + offset);
-          gain.gain.setValueAtTime(0, ctx.currentTime + offset);
-          gain.gain.linearRampToValueAtTime(0.11, ctx.currentTime + offset + 0.003);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + 0.9);
-          osc.start(ctx.currentTime + offset); osc.stop(ctx.currentTime + offset + 0.95);
-        });
-        break;
-      }
-      default: {
-        // Smooth sine arpeggio — C5 · E5 · G5
-        [0, 0.09, 0.18].forEach((offset, i) => {
-          const freq = [523, 659, 784][i];
-          const osc = ctx.createOscillator(), gain = ctx.createGain();
-          osc.connect(gain); gain.connect(ctx.destination);
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + offset);
-          gain.gain.setValueAtTime(0.001, ctx.currentTime + offset);
-          gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + offset + 0.01);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + offset + 0.35);
-          osc.start(ctx.currentTime + offset); osc.stop(ctx.currentTime + offset + 0.4);
-        });
-      }
-    }
   }
 
   private launchConfetti(): void {
@@ -525,7 +429,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.langLabel = this.langNames[this.langs[idx]];
       this.langFillWidth = Math.min((elapsed / totalMs) * 100, 100) + '%';
       this.langFillBg = this.langColors[this.langs[idx]] + '22';
-      this.playTick();
+      this.settings.playTick();
 
       idx = (idx + 1) % this.langs.length;
       const progress = elapsed / totalMs;
@@ -545,7 +449,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.langLabel = this.langNames[lang];
         this.langTrack = 'done';
         this.langRolling = false;
-        this.playWin();
+        this.settings.playWin();
       }
     };
 
@@ -602,7 +506,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.litPatternId = eligible[idx].id;
       this.patLabel = eligible[idx].name;
       this.patFillWidth = Math.min((elapsed / totalMs) * 100, 100) + '%';
-      this.playTick();
+      this.settings.playTick();
 
       idx = (idx + 1) % eligible.length;
       const progress = elapsed / totalMs;
