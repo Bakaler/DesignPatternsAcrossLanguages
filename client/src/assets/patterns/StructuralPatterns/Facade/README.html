@@ -1,0 +1,299 @@
+<div class="rm-wrap">
+
+  <!-- Hero -->
+  <div class="rm-hero">
+    <span class="rm-badge structural">Structural</span>
+    <h1 class="rm-hero-title">Facade</h1>
+    <div class="rm-hero-meta">
+      <span>GoF pg. 185</span>
+    </div>
+  </div>
+
+  <!-- Power Words -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Power Words</h2>
+    <div class="rm-powerword-block">
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word amber">Power Word: Simplicity</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word teal">Power Word: Decoupling</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word pink">Power Word: Orchestration</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Attributions -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Attributions</h2>
+
+    <div class="rm-attribution-book">
+      <div class="rm-attribution-book-title">Design Patterns: Elements of Reusable Object-Oriented Software</div>
+      <div class="rm-attribution-book-authors">Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides</div>
+      <div class="rm-attribution-book-forward">Forward by Grady Booch</div>
+    </div>
+
+    <ul class="rm-list plain" style="margin-top: 1rem;">
+      <li>
+        <a class="rm-link" href="https://www.cs.unc.edu/~stotts/GOF/hires/pat4efso.htm" target="_blank">
+          cs.unc.edu &rarr; GoF Pattern Reference (Facade)
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://refactoring.guru/design-patterns/facade" target="_blank">
+          refactoring.guru &rarr; Facade Pattern
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://www.geeksforgeeks.org/facade-design-pattern-introduction/" target="_blank">
+          geeksforgeeks.org &rarr; Facade Design Pattern
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Intent -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Intent</h2>
+    <div class="rm-callout">
+      Provide a <strong>unified interface</strong> to a set of interfaces in a subsystem.
+      Facade defines a higher-level interface that makes the subsystem easier to use.
+    </div>
+    <p class="rm-p">
+      You have subsystems. Each subsystem has its own interface, its own auth, its own quirks.
+      Clients that need to coordinate them must know all of that detail and spread it everywhere.
+      Facade puts one class in front of all of it. Clients talk to the facade.
+      The subsystems never know a facade exists.
+    </p>
+  </section>
+
+  <!-- The Problem It Solves -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Problem It Solves</h2>
+    <p class="rm-p">
+      A purchase flow needs to validate a token, charge a card, and send a confirmation message.
+      That means talking to three separate third-party APIs, each with its own base URL,
+      its own auth header format, and its own request/response shape.
+    </p>
+    <p class="rm-p">
+      Without Facade, every consumer that needs to do anything involving these systems must know
+      all of that. Change one auth header and you are hunting down every caller. Add a new
+      third party and the blast radius is the entire codebase.
+    </p>
+    <p class="rm-p">
+      With Facade, that knowledge lives in exactly one place per subsystem.
+      <span class="rm-code">PurchaseService</span> calls
+      <span class="rm-code">auth.validateToken(token)</span>,
+      <span class="rm-code">payment.charge(userId, amount)</span>, and
+      <span class="rm-code">messaging.send(phone, message)</span>.
+      It has no idea what headers those calls carry, what base URLs they target,
+      or what the raw response shapes look like.
+    </p>
+  </section>
+
+  <!-- Structure -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Structure</h2>
+
+    <pre class="rm-diagram"><span class="uml-arrow">┌─────────────────────────────────────────────────────────────────────────────────┐</span>
+<span class="uml-arrow">│</span>                              <span class="uml-title">FACADE PATTERN</span>                                    <span class="uml-arrow">│</span>
+<span class="uml-arrow">└─────────────────────────────────────────────────────────────────────────────────┘</span>
+
+                         <span class="uml-client">┌──────────┐</span>
+                         <span class="uml-client">│  Client  │</span>
+                         <span class="uml-client">└────┬─────┘</span>
+                              <span class="uml-arrow">│</span> <span class="uml-rel">«use»</span>
+                              <span class="uml-arrow">▼</span>
+                  <span class="uml-concrete">┌───────────────────────┐</span>
+                  <span class="uml-concrete">│        Facade         │</span>
+                  <span class="uml-concrete">├───────────────────────┤</span>
+                  <span class="uml-concrete">│</span> <span class="uml-method">+ operationA()</span>        <span class="uml-concrete">│</span>
+                  <span class="uml-concrete">│</span> <span class="uml-method">+ operationB()</span>        <span class="uml-concrete">│</span>
+                  <span class="uml-concrete">└───────────┬───────────┘</span>
+                              <span class="uml-arrow">│  delegates</span>
+          <span class="uml-arrow">┌───────────────────┼───────────────────┐</span>
+          <span class="uml-arrow">▼</span>                  <span class="uml-arrow">▼</span>                  <span class="uml-arrow">▼</span>
+  <span class="uml-iface">┌────────────────┐</span>  <span class="uml-iface">┌────────────────┐</span>  <span class="uml-iface">┌────────────────┐</span>
+  <span class="uml-iface">│  Subsystem 1   │</span>  <span class="uml-iface">│  Subsystem 2   │</span>  <span class="uml-iface">│  Subsystem 3   │</span>
+  <span class="uml-iface">├────────────────┤</span>  <span class="uml-iface">├────────────────┤</span>  <span class="uml-iface">├────────────────┤</span>
+  <span class="uml-iface">│</span> <span class="uml-method">method()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">method()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">method()</span>       <span class="uml-iface">│</span>
+  <span class="uml-iface">└────────────────┘</span>  <span class="uml-iface">└────────────────┘</span>  <span class="uml-iface">└────────────────┘</span>
+  <span class="uml-arrow">  Subsystem layereach class is independently usable.</span>
+  <span class="uml-arrow">  The facade coordinates them. The client sees none of it.</span></pre>
+
+    <h3 class="rm-h3">Mapped to this implementation</h3>
+    <pre class="rm-diagram"><span class="uml-client">PurchaseService</span>  (Consumer)
+      <span class="uml-arrow">│</span> <span class="uml-rel">«use»</span>
+      <span class="uml-arrow">▼</span>
+<span class="uml-concrete">┌──────────────────────────────────────┐</span>
+<span class="uml-concrete">│          ThirdPartyClient            │</span>  <span class="uml-arrow">◄── Abstract Facade Base</span>
+<span class="uml-concrete">├──────────────────────────────────────┤</span>
+<span class="uml-concrete">│</span> <span class="uml-method"># request(method, url, body)</span>         <span class="uml-concrete">│</span>  <span class="uml-arrow">HTTP plumbing lives here once</span>
+<span class="uml-concrete">│</span> <span class="uml-method"># get(url)  # post(url, body)</span>        <span class="uml-concrete">│</span>
+<span class="uml-concrete">└──────────────────────┬───────────────┘</span>
+                       <span class="uml-arrow">△</span>
+      <span class="uml-arrow">┌──────────────────┼──────────────────┐</span>
+      <span class="uml-arrow">│</span>                  <span class="uml-arrow">│</span>                  <span class="uml-arrow">│</span>
+<span class="uml-iface">┌────────────────┐</span>  <span class="uml-iface">┌────────────────┐</span>  <span class="uml-iface">┌─────────────────┐</span>
+<span class="uml-iface">│ PaymentFacade  │</span>  <span class="uml-iface">│   AuthFacade   │</span>  <span class="uml-iface">│ MessagingFacade │</span>
+<span class="uml-iface">├────────────────┤</span>  <span class="uml-iface">├────────────────┤</span>  <span class="uml-iface">├─────────────────┤</span>
+<span class="uml-iface">│</span> <span class="uml-method">charge()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">validateToken()</span><span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">send()</span>          <span class="uml-iface">│</span>
+<span class="uml-iface">│</span> <span class="uml-method">refund()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">getUser()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">getStatus()</span>     <span class="uml-iface">│</span>
+<span class="uml-iface">│</span> <span class="uml-method">getTransaction()</span><span class="uml-iface">│</span>  <span class="uml-iface">└────────────────┘</span>  <span class="uml-iface">└─────────────────┘</span>
+<span class="uml-iface">└────────────────┘</span>
+<span class="uml-method">  baseUrl, headers, authprivate to each facade. Never seen by callers.</span></pre>
+  </section>
+
+  <!-- Participants -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Participants</h2>
+    <table class="rm-table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>In This Implementation</th>
+          <th>Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Abstract Facade Base</td>
+          <td><span class="rm-code">ThirdPartyClient</span></td>
+          <td>Owns the HTTP plumbing oncerequest, get, post, header masking, mock response. Subclasses inherit it for free.</td>
+        </tr>
+        <tr>
+          <td>Facade A</td>
+          <td><span class="rm-code">PaymentFacade</span></td>
+          <td>Wraps PaymentProcessorTP. Defines its base URL, auth headers, and exposes <span class="rm-code">charge()</span>, <span class="rm-code">refund()</span>, <span class="rm-code">getTransaction()</span>.</td>
+        </tr>
+        <tr>
+          <td>Facade B</td>
+          <td><span class="rm-code">AuthFacade</span></td>
+          <td>Wraps AuthProviderTP. Defines its bearer format, client ID header, and exposes <span class="rm-code">validateToken()</span>, <span class="rm-code">getUser()</span>.</td>
+        </tr>
+        <tr>
+          <td>Facade C</td>
+          <td><span class="rm-code">MessagingFacade</span></td>
+          <td>Wraps MessagingTP. Defines its account SID + auth token headers and exposes <span class="rm-code">send()</span>, <span class="rm-code">getStatus()</span>.</td>
+        </tr>
+        <tr>
+          <td>Consumer</td>
+          <td><span class="rm-code">PurchaseService</span></td>
+          <td>Calls facade methods only. References zero raw TP details no base URLs, no header names, no endpoint paths.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Consequences -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Consequences</h2>
+    <p class="rm-p">The GoF names three specific consequences. All three show up here.</p>
+
+    <h3 class="rm-h3">✓ Shields Clients from Subsystem Components</h3>
+    <p class="rm-p">
+      <span class="rm-code">PurchaseService</span> references no TP class, no base URL, no auth header.
+      It calls three methods and gets results. If <span class="rm-code">PaymentProcessorTP</span>
+      changes its auth mechanism tomorrow, only <span class="rm-code">PaymentFacade</span> needs updating.
+      Zero cascading changes to callers.
+    </p>
+
+    <h3 class="rm-h3">✓ Promotes Weak Coupling</h3>
+    <p class="rm-p">
+      Subsystems can be swapped entirely. Replace <span class="rm-code">PaymentProcessorTP</span>
+      with a different processorrewrite <span class="rm-code">PaymentFacade</span> and nothing upstream
+      notices. The facade is the only coupling point between the TP and the rest of the codebase.
+    </p>
+
+    <h3 class="rm-h3">✓ Doesn't Prevent Direct Access</h3>
+    <p class="rm-p">
+      The GoF lists this as a benefit, not a warning. Subsystems remain directly accessible for
+      callers that need the full API. The facade is a convenience layer, not a gate.
+      Advanced consumers can bypass it without breaking the pattern.
+      The risk is that they will, and then you are back to scattered TP knowledge everywhere.
+    </p>
+
+    <h3 class="rm-h3">✗ God-Object Risk</h3>
+    <p class="rm-p">
+      Every new TP endpoint is a candidate to land on the facade. Left unchecked,
+      <span class="rm-code">PaymentFacade</span> ends up with thirty methods and becomes harder
+      to maintain than the raw TP it was hiding. The pattern does not protect you here.
+      Discipline does.
+    </p>
+  </section>
+
+  <!-- The Base Class Decision -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Base Class Decision</h2>
+    <p class="rm-p">
+      The GoF describes Facade as a single class wrapping a subsystem. This implementation
+      goes one step further: an abstract base class (<span class="rm-code">ThirdPartyClient</span>)
+      owns the HTTP plumbing so each concrete facade only defines its configuration and methods.
+    </p>
+    <p class="rm-p">
+      The trade-off is intentional. Without the base class, every facade duplicates the same
+      <span class="rm-code">fetch</span> logic, the same header formatting, the same error handling.
+      The base class eliminates that repetition and means improvements to the HTTP layer
+      (retry logic, logging, timeout handling) happen once and apply everywhere.
+    </p>
+    <p class="rm-p">
+      It also means each concrete facade is a very short class. The config is three lines.
+      The methods are one-liners. That is the intent of the pattern working correctly.
+    </p>
+  </section>
+
+  <!-- When to Reach For It -->
+  <section class="rm-section">
+    <h2 class="rm-h2">When to Reach For It</h2>
+    <ul class="rm-list plain">
+      <li>You have a complex or poorly designed subsystem that callers should not need to understand</li>
+      <li>There are many dependencies between clients and the implementation classes of an abstraction</li>
+      <li>You want to layer your subsystemseach layer gets a facade that is the entry point to that layer</li>
+      <li>Third-party APIs: every one of them is a candidate for a facade</li>
+    </ul>
+  </section>
+
+  <!-- Trade-offs -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Trade-offs</h2>
+    <div class="rm-grid-2">
+      <div class="rm-card">
+        <div class="rm-card-title good">Strengths</div>
+        <ul class="rm-list good">
+          <li>Callers are shielded from subsystem complexity</li>
+          <li>Swap a subsystem by updating one class</li>
+          <li>Single place for error handling, logging, retry logic</li>
+          <li>Subsystems remain directly accessible when needed</li>
+        </ul>
+      </div>
+      <div class="rm-card">
+        <div class="rm-card-title bad">Weaknesses</div>
+        <ul class="rm-list bad">
+          <li>Can become a god-object if every feature gets bolted on</li>
+          <li>Adds a layer of indirection that may not always be worth it</li>
+          <li>Developers can bypass the facade and re-scatter TP knowledge</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Patterns -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Related Patterns</h2>
+    <a href="/gof?p=Abstract Factory" class="rm-tag">Abstract Factory</a>
+    <span class="rm-tag">Mediator</span>
+    <span class="rm-tag">Singleton</span>
+    <p class="rm-p" style="margin-top: 0.8rem;">
+      <strong>Abstract Factory.</strong> Can be used with Facade to provide an interface for creating subsystem objects in a subsystem-independent way.<br>
+      <strong>Mediator.</strong> Both abstract functionality of existing classes. Mediator centralises communication between peer objects that know about each other. Facade defines a simpler interface to a subsystem whose objects do not know the facade exists. Key difference: bidirectional vs. one-directional.<br>
+      <strong>Singleton.</strong> Facades are often Singletons because only one facade object is needed per subsystem.
+    </p>
+  </section>
+
+</div>

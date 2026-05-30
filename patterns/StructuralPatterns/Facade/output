@@ -1,0 +1,44 @@
+╔══════════════════════════════════════════════════════════════╗
+║           Facade — Third Party API Hub                      ║
+╚══════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════
+  Scenario: PurchaseService.makePurchase()
+════════════════════════════════════════════════════════════════
+
+  [Auth]      Validating token...
+    → POST https://api.authprovidertp.com/v1/validate
+    → Headers: Content-Type: •••  |  Authorization: •••  |  X-Client-Id: •••
+    → Body:    { token: tok_user_jane }
+  ✓ User: jane.doe@example.com
+
+  [Payment]   Charging $49.99...
+    → POST https://api.paymentprocessortp.com/v1/charge
+    → Headers: Content-Type: •••  |  Authorization: •••  |  X-Merchant-Id: •••
+    → Body:    { user_id: usr_4421, amount: 49.99 }
+  ✓ Charged — ref: txn_8821
+
+  [Messaging] Sending confirmation to +15550142...
+    → POST https://api.messagingtp.com/v1/dispatch
+    → Headers: Content-Type: •••  |  X-Account-SID: •••  |  X-Auth-Token: •••
+    → Body:    { to: +15550142, body: Payment confirmed. Ref: txn_8821 }
+  ✓ Message queued — id: msg_3301
+
+════════════════════════════════════════════════════════════════
+  Without the Facade
+════════════════════════════════════════════════════════════════
+
+  PurchaseService would need to know:
+    auth:      base URL, bearer format, client ID header name
+    payment:   base URL, merchant ID header, charge endpoint path
+    messaging: base URL, account SID + auth token, dispatch endpoint
+    — plus JSON serialization and error handling per TP
+
+  With the facade:
+    auth.validateToken(token)
+    payment.charge(userId, amount)
+    messaging.send(phone, message)
+
+╔══════════════════════════════════════════════════════════════╗
+║  Done                                                        ║
+╚══════════════════════════════════════════════════════════════╝

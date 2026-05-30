@@ -149,9 +149,24 @@
           <div class="viewer-code-wrap">
             <div class="viewer-code-topbar">
               <span class="viewer-code-file">{{ selected.slug }}/{{ activeLang }}.{{ langExt(activeLang) }}</span>
-              <span class="viewer-code-lines">{{ code!.split('\n').length }} lines</span>
+              <div class="viewer-topbar-right">
+                <span class="viewer-code-lines">{{ code!.split('\n').length }} lines</span>
+                <button [class]="'copy-btn' + (codeCopied ? ' copied' : '')" (click)="copyCode()">
+                  {{ codeCopied ? '✓ copied' : 'copy' }}
+                </button>
+              </div>
             </div>
-            <pre class="viewer-pre"><code [innerHTML]="highlightedCode"></code></pre>
+            <div class="viewer-code-body">
+              <pre class="viewer-pre"><code [innerHTML]="highlightedCode"></code></pre>
+              @if (codeSections.length) {
+                <nav class="viewer-toc">
+                  @for (s of codeSections; track s.line) {
+                    <button [class]="'toc-btn' + ($index === activeCodeSection ? ' active' : '')"
+                            (click)="scrollToCodeSection($index); settings.playUiClick()">{{ s.label }}</button>
+                  }
+                </nav>
+              }
+            </div>
           </div>
 
           <!-- Output -->
@@ -161,9 +176,16 @@
                 <span class="viewer-output-dot"></span>
                 console output
               </span>
-              @if (!output) {
-                <span class="viewer-output-empty-note">no output file — add {{ activeLang }}.output to see results here</span>
-              }
+              <div class="viewer-topbar-right">
+                @if (!output) {
+                  <span class="viewer-output-empty-note">no output file — add {{ activeLang }}.output to see results here</span>
+                }
+                @if (output) {
+                  <button [class]="'copy-btn' + (outputCopied ? ' copied' : '')" (click)="copyOutput()">
+                    {{ outputCopied ? '✓ copied' : 'copy' }}
+                  </button>
+                }
+              </div>
             </div>
             @if (output) {
               <pre class="viewer-output-pre">{{ output }}</pre>
@@ -176,6 +198,13 @@
       </div>
     }
   </section>
+
+  <!-- ── COMMENTS ── -->
+  @if (selected) {
+    <section class="section comment-section-wrap">
+      <app-comment-section [patternKey]="selected.category.toLowerCase() + '-' + selected.slug.toLowerCase()" />
+    </section>
+  }
 
 </div>
 

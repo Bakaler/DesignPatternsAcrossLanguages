@@ -1,0 +1,185 @@
+.thread { display: flex; flex-direction: column; gap: 0; }
+
+.nested {
+  border-left: 2px solid var(--border, #333);
+  margin-left: 12px;
+  padding-left: 12px;
+}
+
+.comment {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border, #2a2a2a);
+}
+.comment:last-child { border-bottom: none; }
+.comment.deleted { opacity: 0.5; }
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.author {
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--accent, #7eb8f7);
+}
+
+.timestamp {
+  font-size: 0.74rem;
+  color: var(--muted, #666);
+}
+.timestamp em { font-style: italic; }
+
+.deleted-label {
+  font-size: 0.82rem;
+  color: var(--muted, #666);
+  font-style: italic;
+}
+
+.comment-body {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text, #ccc);
+  margin-bottom: 4px;
+  word-break: break-word;
+  overflow: hidden;
+}
+.comment-body.truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.comment-body :is(strong, b) { color: var(--text-bright, #eee); }
+
+/* Standard code tags */
+.comment-body code {
+  background: var(--code-bg, #1a1a1a);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.84em;
+  font-family: monospace;
+}
+.comment-body pre {
+  background: var(--code-bg, #1a1a1a);
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.83em;
+}
+
+/* Quill code block output — ::ng-deep needed because content is injected via [innerHTML] */
+:host ::ng-deep .comment-body .ql-code-block-container {
+  background: var(--code-bg, #1a1a1a);
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  overflow-x: auto;
+  border-left: 3px solid var(--accent, #7eb8f7);
+}
+:host ::ng-deep .comment-body .ql-code-block {
+  font-family: monospace;
+  font-size: 0.83em;
+  color: var(--text, #ccc);
+  white-space: pre;
+  line-height: 1.5;
+}
+
+/* Quill blockquote */
+:host ::ng-deep .comment-body blockquote {
+  border-left: 3px solid var(--border2, #333);
+  margin: 6px 0;
+  padding-left: 10px;
+  color: var(--muted, #888);
+  font-style: italic;
+}
+
+/* Restore list styles stripped by Quill's global CSS reset */
+:host ::ng-deep .comment-body ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin: 4px 0;
+}
+:host ::ng-deep .comment-body ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin: 4px 0;
+}
+:host ::ng-deep .comment-body li {
+  margin: 2px 0;
+}
+
+.read-more-btn {
+  background: none;
+  border: none;
+  color: var(--accent, #7eb8f7);
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 0 0 6px 0;
+  display: block;
+}
+.read-more-btn:hover { text-decoration: underline; }
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.vote-btn {
+  background: none;
+  border: 1px solid var(--border, #333);
+  border-radius: 3px;
+  color: var(--muted, #666);
+  cursor: pointer;
+  padding: 1px 6px;
+  font-size: 0.78rem;
+  transition: color 0.15s, border-color 0.15s;
+}
+.vote-btn:hover:not(:disabled) { color: var(--accent, #7eb8f7); border-color: var(--accent, #7eb8f7); }
+.vote-btn.active { color: var(--accent, #7eb8f7); border-color: var(--accent, #7eb8f7); }
+.vote-btn:disabled { opacity: 0.3; cursor: default; }
+
+.vote-ratio {
+  font-size: 0.76rem;
+  color: var(--muted, #666);
+  min-width: 36px;
+  text-align: center;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: var(--muted, #666);
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: color 0.15s;
+}
+.action-btn:hover { color: var(--text, #ccc); }
+.action-btn.danger:hover { color: #e06c6c; }
+
+.deep-thread { margin-top: 6px; }
+
+.view-thread-btn {
+  background: none;
+  border: 1px solid var(--border, #333);
+  border-radius: 4px;
+  color: var(--accent, #7eb8f7);
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 3px 10px;
+  margin-bottom: 6px;
+}
+.view-thread-btn:hover { background: var(--hover-bg, #1e1e1e); }

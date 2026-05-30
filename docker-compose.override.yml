@@ -11,6 +11,10 @@ services:
     environment:
       - NODE_ENV=development
 
+  db:
+    ports:
+      - "5432:5432"
+
   api:
     build:
       context: .
@@ -20,3 +24,6 @@ services:
       - ./patterns:/app/patterns
     environment:
       - NODE_ENV=development
+      - BETTER_AUTH_URL=http://localhost:3000
+    depends_on:
+      - db

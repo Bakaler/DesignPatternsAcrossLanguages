@@ -7,7 +7,7 @@
     <p class="hero-tagline">{{ tagline }}@if (taglineTyping) {<span class="tagline-cursor">|</span>}</p>
     <p class="hero-sub">
       A personal deep-dive into all <strong>23 Gang of Four design patterns</strong><br>
-      Implemented in Java, C#, TypeScript, Python, and Ruby.
+      Implemented in Java, C#, TypeScript, Python, Ruby, and C++.
     </p>
     <div class="hero-stats">
       <div class="stat stat-live">
@@ -47,8 +47,16 @@
     <div class="purpose-col">
       <h3>Why Am I Making This?</h3>
       <p>
-        
-
+        I was making flashcards to study Design Patterns — alongside SOLID principles,
+        language syntax, OOP keywords, REST, and APIs — when I thought:
+        <em>why not just build an accessible site I can actually refer back to?</em>
+        <br><br>
+        It's not exactly flashcards, but the goal is the same: a living reference of
+        examples I've written myself, across multiple languages. I've picked up a new
+        language at every job I've had. Context switching causes memory fatigue;
+        a good reference doesn't.
+        <br><br>
+        <strong>TLDR — studying through the craft of creation.</strong>
       </p>
     </div>
     <div class="purpose-col">
@@ -112,8 +120,9 @@
                 <span class="pat-name" [class.done]="p.done">{{ p.name }}@if (p.id === potdId) {<span class="potd-star" title="Pattern of the day">★</span>}</span>
                 <span class="pat-status"
                       [class.status-done]="p.done"
-                      [class.status-pending]="!p.done">
-                  {{ p.done ? 'done' : 'upcoming' }}
+                      [class.status-in-works]="!p.done && p.inWorks"
+                      [class.status-pending]="!p.done && !p.inWorks">
+                  {{ p.done ? 'done' : p.inWorks ? 'in works' : 'upcoming' }}
                 </span>
               </a>
             }
@@ -197,6 +206,21 @@
         <div class="lang-card-name">Ruby</div>
         <div class="lang-card-sub">Ruby 3.3</div>
         <div class="lang-card-snippet"><span class="hi-ruby">if</span> __FILE__ == $PROGRAM_NAME</div>
+      </a>
+
+      <a class="lang-card cpp"
+           style="--lang-glow:#00adef"
+           routerLink="/cpp"
+           (click)="settings.playUiClick()"
+           [class.lit-card]="langCardState['cpp'] === 'lit'"
+           [class.won-card]="langCardState['cpp'] === 'won'">
+        <div class="lang-card-bar"
+             style="--bar-color:#005f8a; --bar-color-bright:#00adef"
+             [class.lit]="langBarState['cpp'] === 'lit'"
+             [class.selected]="langBarState['cpp'] === 'selected'"></div>
+        <div class="lang-card-name">C++</div>
+        <div class="lang-card-sub">C++17/20</div>
+        <div class="lang-card-snippet"><span class="hi-cpp">int</span> <span class="hi-fn">main</span>() &#123; <span class="kw">return</span> <span class="num">0</span>; &#125;</div>
       </a>
 
     </div>

@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
+// SECTION:: Abstract Products
 // ═════════════════════════════════════════════════════════════
 //  ABSTRACT PRODUCTS
 // ═════════════════════════════════════════════════════════════
@@ -94,6 +95,7 @@ interface ILootTable {
 }
 
 
+// SECTION:: Abstract Factory
 // ═════════════════════════════════════════════════════════════
 //  ABSTRACT FACTORY
 // ═════════════════════════════════════════════════════════════
@@ -108,6 +110,7 @@ interface IBiomeKit {
 }
 
 
+// SECTION:: Desert Biome
 // ═════════════════════════════════════════════════════════════
 //  DESERT — Concrete Products
 // ═════════════════════════════════════════════════════════════
@@ -179,6 +182,7 @@ sealed class SpiceLoot : ILootTable {
 }
 
 
+// SECTION:: Arctic Biome
 // ═════════════════════════════════════════════════════════════
 //  ARCTIC — Concrete Products
 // ═════════════════════════════════════════════════════════════
@@ -250,6 +254,7 @@ sealed class FurLoot : ILootTable {
 }
 
 
+// SECTION:: Forest Biome
 // ═════════════════════════════════════════════════════════════
 //  FOREST — Concrete Products
 // ═════════════════════════════════════════════════════════════
@@ -321,6 +326,7 @@ sealed class HerbLoot : ILootTable {
 }
 
 
+// SECTION:: Concrete Factories
 // ═════════════════════════════════════════════════════════════
 //  CONCRETE FACTORIES — Singleton + Prototype Registry
 // ═════════════════════════════════════════════════════════════
@@ -401,6 +407,7 @@ sealed class ForestBiomeKit : IBiomeKit {
 }
 
 
+// SECTION:: Client
 // ═════════════════════════════════════════════════════════════
 //  CLIENT
 // ═════════════════════════════════════════════════════════════
@@ -438,6 +445,7 @@ sealed class WorldGenerator {
 }
 
 
+// SECTION:: Entry Point
 // ═════════════════════════════════════════════════════════════
 //  ENTRY POINT
 // ═════════════════════════════════════════════════════════════

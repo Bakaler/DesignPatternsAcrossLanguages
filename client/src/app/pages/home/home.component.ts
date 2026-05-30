@@ -9,6 +9,7 @@ interface Pattern {
   id: string;
   name: string;
   done: boolean;
+  inWorks?: boolean;
 }
 
 interface Category {
@@ -122,7 +123,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         { id: 'bridge',    name: 'Bridge',    done: false },
         { id: 'composite', name: 'Composite', done: false },
         { id: 'decorator', name: 'Decorator', done: false },
-        { id: 'facade',    name: 'Facade',    done: false },
+        { id: 'facade',    name: 'Facade',    done: false, inWorks: true },
         { id: 'flyweight', name: 'Flyweight', done: false },
         { id: 'proxy',     name: 'Proxy',     done: false },
       ]
@@ -139,7 +140,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         { id: 'observer', name: 'Observer',        done: false },
         { id: 'state',    name: 'State',           done: false },
         { id: 'strategy', name: 'Strategy',        done: false },
-        { id: 'template', name: 'Template Method', done: false },
+        { id: 'template', name: 'Template Method', done: false, inWorks: true },
         { id: 'visitor',  name: 'Visitor',         done: false },
         { id: 'interpreter', name: 'Interpreter',  done: false },
       ]
@@ -511,7 +512,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     const eligible = this.categories
       .flatMap(c => c.patterns)
-      .filter(p => !p.done)
+      .filter(p => !p.done && !p.inWorks)
       .map(p => ({ ...p }));
 
     if (eligible.length === 0) return;

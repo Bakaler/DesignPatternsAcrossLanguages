@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.stream.*;
 
 
+// SECTION:: Abstract Products
 // ═════════════════════════════════════════════════════════════
 //  ABSTRACT PRODUCTS
 // ═════════════════════════════════════════════════════════════
@@ -103,6 +104,7 @@ interface LootTable {
 }
 
 
+// SECTION:: Abstract Factory
 // ═════════════════════════════════════════════════════════════
 //  ABSTRACT FACTORY
 // ═════════════════════════════════════════════════════════════
@@ -121,6 +123,7 @@ interface BiomeKit {
 }
 
 
+// SECTION:: Desert Biome
 // ═════════════════════════════════════════════════════════════
 //  DESERT — Concrete Products
 // ═════════════════════════════════════════════════════════════
@@ -206,6 +209,7 @@ class SpiceLoot implements LootTable {
 }
 
 
+// SECTION:: Arctic Biome
 // ═════════════════════════════════════════════════════════════
 //  ARCTIC — Concrete Products
 // ═════════════════════════════════════════════════════════════
@@ -291,6 +295,7 @@ class FurLoot implements LootTable {
 }
 
 
+// SECTION:: Forest Biome
 // ═════════════════════════════════════════════════════════════
 //  FOREST — Concrete Products
 // ═════════════════════════════════════════════════════════════
@@ -376,6 +381,7 @@ class HerbLoot implements LootTable {
 }
 
 
+// SECTION:: Concrete Factories
 // ═════════════════════════════════════════════════════════════
 //  CONCRETE FACTORIES — Singleton + Prototype Registry
 // ═════════════════════════════════════════════════════════════
@@ -485,6 +491,7 @@ class ForestBiomeKit implements BiomeKit {
 }
 
 
+// SECTION:: Client
 // ═════════════════════════════════════════════════════════════
 //  CLIENT
 // ═════════════════════════════════════════════════════════════
@@ -526,6 +533,7 @@ class WorldGenerator {
 }
 
 
+// SECTION:: Entry Point
 // ═════════════════════════════════════════════════════════════
 //  ENTRY POINT
 // ═════════════════════════════════════════════════════════════

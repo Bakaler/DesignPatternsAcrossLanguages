@@ -3,13 +3,44 @@
     <img class="nav-logo-mark" src="Euler.png" alt=""> <span>Design Patterns</span> Across Languages
   </a>
   <div class="nav-links">
-    <a routerLink="/"           routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" (click)="settings.playUiClick()">Index</a>
-    <a routerLink="/gof"        routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">GoF</a>
-    <a routerLink="/java"       routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">Java</a>
-    <a routerLink="/csharp"     routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">C#</a>
-    <a routerLink="/typescript" routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">TypeScript</a>
-    <a routerLink="/python"     routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">Python</a>
-    <a routerLink="/ruby"       routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">Ruby</a>
+    <a routerLink="/"     routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" (click)="settings.playUiClick()">Index</a>
+    <a routerLink="/gof"  routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">GoF</a>
+
+    <!-- ── Languages dropdown ── -->
+    <div class="nav-dropdown-wrap">
+      <button class="nav-link nav-dropdown-btn"
+              [class.active]="isLangActive"
+              [class.open]="langsOpen"
+              (click)="toggleLangs($event)">
+        Languages
+        <svg class="chevron" width="9" height="9" viewBox="0 0 10 10" fill="none"
+             stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="2,3 5,7 8,3"/>
+        </svg>
+      </button>
+      @if (langsOpen) {
+        <div class="nav-dropdown" (click)="$event.stopPropagation()">
+          <a class="lang-drop-item java"       routerLink="/java"       (click)="langsOpen=false; settings.playUiClick()">
+            <span class="ld-dot"></span>Java
+          </a>
+          <a class="lang-drop-item csharp"     routerLink="/csharp"     (click)="langsOpen=false; settings.playUiClick()">
+            <span class="ld-dot"></span>C#
+          </a>
+          <a class="lang-drop-item typescript" routerLink="/typescript" (click)="langsOpen=false; settings.playUiClick()">
+            <span class="ld-dot"></span>TypeScript
+          </a>
+          <a class="lang-drop-item python"     routerLink="/python"     (click)="langsOpen=false; settings.playUiClick()">
+            <span class="ld-dot"></span>Python
+          </a>
+          <a class="lang-drop-item ruby"       routerLink="/ruby"       (click)="langsOpen=false; settings.playUiClick()">
+            <span class="ld-dot"></span>Ruby
+          </a>
+        </div>
+      }
+    </div>
+
+    <a routerLink="/about" routerLinkActive="active" class="nav-link" (click)="settings.playUiClick()">About</a>
 
     <!-- ── Settings ── -->
     <div class="nav-settings">

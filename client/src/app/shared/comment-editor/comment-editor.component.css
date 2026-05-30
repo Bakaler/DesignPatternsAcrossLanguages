@@ -1,0 +1,90 @@
+.editor-wrap {
+  margin-top: 8px;
+  border: 1px solid var(--border, #333);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--panel-bg, #111);
+}
+
+/* Quill toolbar overrides */
+.editor-host :global(.ql-toolbar) {
+  background: var(--toolbar-bg, #1a1a1a);
+  border: none;
+  border-bottom: 1px solid var(--border, #333);
+  padding: 4px 8px;
+}
+
+.editor-host :global(.ql-toolbar button),
+.editor-host :global(.ql-toolbar .ql-picker-label) {
+  color: var(--muted, #888) !important;
+}
+
+.editor-host :global(.ql-toolbar button:hover),
+.editor-host :global(.ql-toolbar button.ql-active) {
+  color: var(--accent, #7eb8f7) !important;
+}
+
+.editor-host :global(.ql-toolbar .ql-stroke) { stroke: var(--muted, #888); }
+.editor-host :global(.ql-toolbar button:hover .ql-stroke),
+.editor-host :global(.ql-toolbar button.ql-active .ql-stroke) { stroke: var(--accent, #7eb8f7); }
+
+.editor-host :global(.ql-toolbar .ql-fill) { fill: var(--muted, #888); }
+.editor-host :global(.ql-toolbar button:hover .ql-fill),
+.editor-host :global(.ql-toolbar button.ql-active .ql-fill) { fill: var(--accent, #7eb8f7); }
+
+.editor-host :global(.ql-container) {
+  border: none;
+  font-size: 0.88rem;
+  font-family: inherit;
+}
+
+.editor-host :global(.ql-editor) {
+  min-height: 80px;
+  max-height: 240px;
+  overflow-y: auto;
+  color: var(--text, #ccc);
+  background: var(--panel-bg, #111);
+  padding: 10px 12px;
+}
+
+.editor-host :global(.ql-editor.ql-blank::before) {
+  color: var(--muted, #555);
+  font-style: italic;
+}
+
+.editor-host :global(.ql-editor code),
+.editor-host :global(.ql-editor pre) {
+  background: var(--code-bg, #1a1a1a);
+  border-radius: 3px;
+  font-size: 0.84em;
+}
+
+.editor-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--toolbar-bg, #1a1a1a);
+  border-top: 1px solid var(--border, #333);
+}
+
+.btn-cancel, .btn-submit {
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 5px 14px;
+  transition: opacity 0.15s;
+}
+.btn-cancel {
+  background: transparent;
+  color: var(--muted, #666);
+  border: 1px solid var(--border, #333);
+}
+.btn-cancel:hover { color: var(--text, #ccc); }
+.btn-submit {
+  background: var(--accent, #7eb8f7);
+  color: #000;
+  font-weight: 600;
+}
+.btn-submit:hover { opacity: 0.85; }

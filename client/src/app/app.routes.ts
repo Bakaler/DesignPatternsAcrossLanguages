@@ -9,5 +9,7 @@ export const routes: Routes = [
   { path: 'typescript', loadComponent: () => import('./pages/typescript/typescript.component').then(m => m.TypescriptComponent) },
   { path: 'python',     loadComponent: () => import('./pages/python/python.component').then(m => m.PythonComponent) },
   { path: 'ruby',       loadComponent: () => import('./pages/ruby/ruby.component').then(m => m.RubyComponent) },
+  { path: 'cpp',        loadComponent: () => import('./pages/cpp/cpp.component').then(m => m.CppComponent) },
+  { path: 'about',      loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent) },
   { path: '**',         redirectTo: '' }
 ];

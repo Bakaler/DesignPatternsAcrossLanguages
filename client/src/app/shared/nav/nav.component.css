@@ -1,3 +1,83 @@
+/* ── Languages dropdown ────────────────────────────────────────────────────── */
+.nav-dropdown-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+
+.nav-dropdown-btn .chevron {
+  opacity: 0.5;
+  transition: transform 0.15s, opacity 0.15s;
+  position: relative;
+  top: 1px;
+}
+
+.nav-dropdown-btn.open .chevron,
+.nav-dropdown-btn:hover .chevron {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #111114;
+  border: 1px solid #252530;
+  border-radius: 4px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  z-index: 100;
+  min-width: 148px;
+  box-shadow: 0 8px 24px #00000066;
+}
+
+.lang-drop-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: #7a7a8e;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+
+.lang-drop-item:hover {
+  background: #1a1a20;
+  color: #e4e2df;
+}
+
+.ld-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lang-drop-item.java       .ld-dot { background: #f89820; box-shadow: 0 0 4px #f8982088; }
+.lang-drop-item.csharp     .ld-dot { background: #9b59f5; box-shadow: 0 0 4px #9b59f588; }
+.lang-drop-item.typescript .ld-dot { background: #4a9eff; box-shadow: 0 0 4px #4a9eff88; }
+.lang-drop-item.python     .ld-dot { background: #ffd43b; box-shadow: 0 0 4px #ffd43b88; }
+.lang-drop-item.ruby       .ld-dot { background: #cc342d; box-shadow: 0 0 4px #cc342d88; }
+
 /* ── Settings button ───────────────────────────────────────────────────────── */
 .nav-settings {
   position: relative;

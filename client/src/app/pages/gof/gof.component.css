@@ -448,6 +448,55 @@
 .viewer-code-file { color: #9896a4; }
 .viewer-code-lines { }
 
+/* Right-side cluster in both topbars */
+.viewer-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Copy button */
+.copy-btn {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+
+.copy-btn:hover { color: var(--text); border-color: var(--dim); }
+
+.copy-btn.copied {
+  color: #4ec9b0;
+  border-color: #4ec9b050;
+  background: #4ec9b010;
+}
+
+/* Code body: pre + optional section TOC side-by-side */
+.viewer-code-body {
+  display: flex;
+  align-items: stretch;
+}
+
+.viewer-code-body .viewer-pre {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Inline span anchors for SECTION:: markers — zero size, just scroll targets */
+.code-section-anchor {
+  display: block;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .viewer-pre {
   margin: 0;
   padding: 1.4rem;
@@ -579,4 +628,9 @@
   .hero          { grid-template-columns: 1fr; }
   .hero-meta     { text-align: left; }
   .viewer-header { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── Comment section wrapper ─────────────────────────────────────────────────── */
+.comment-section-wrap {
+  padding-top: 0;
 }

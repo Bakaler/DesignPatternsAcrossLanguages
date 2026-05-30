@@ -35,6 +35,7 @@ from random import sample
 from typing import override
 
 
+# SECTION:: Singleton Metaclass
 # ═════════════════════════════════════════════════════════════
 #  SINGLETON METACLASS
 # ═════════════════════════════════════════════════════════════
@@ -48,6 +49,7 @@ class SingletonMeta(type):
         return cls._instances[cls]
 
 
+# SECTION:: Abstract Products
 # ═════════════════════════════════════════════════════════════
 #  ABSTRACT PRODUCTS
 # ═════════════════════════════════════════════════════════════
@@ -146,6 +148,7 @@ class LootTable(ABC):
     def roll(self) -> list[str]: ...
 
 
+# SECTION:: Abstract Factory
 # ═════════════════════════════════════════════════════════════
 #  ABSTRACT FACTORY
 # ═════════════════════════════════════════════════════════════
@@ -171,6 +174,7 @@ class BiomeKit(ABC):
     def register_enemy(self, prototype: Enemy) -> None: ...
 
 
+# SECTION:: Desert Biome
 # ═════════════════════════════════════════════════════════════
 #  DESERT — Concrete Products
 # ═════════════════════════════════════════════════════════════
@@ -253,6 +257,7 @@ class SpiceLoot(LootTable):
     def roll(self) -> list[str]: return sample(self._POOL, k=2)
 
 
+# SECTION:: Arctic Biome
 # ═════════════════════════════════════════════════════════════
 #  ARCTIC — Concrete Products
 # ═════════════════════════════════════════════════════════════
@@ -335,6 +340,7 @@ class FurLoot(LootTable):
     def roll(self) -> list[str]: return sample(self._POOL, k=2)
 
 
+# SECTION:: Forest Biome
 # ═════════════════════════════════════════════════════════════
 #  FOREST — Concrete Products
 # ═════════════════════════════════════════════════════════════
@@ -417,6 +423,7 @@ class HerbLoot(LootTable):
     def roll(self) -> list[str]: return sample(self._POOL, k=2)
 
 
+# SECTION:: Concrete Factories
 # ═════════════════════════════════════════════════════════════
 #  CONCRETE FACTORIES — Singleton + Prototype Registry
 # ═════════════════════════════════════════════════════════════
@@ -499,6 +506,7 @@ class ForestBiomeKit(BiomeKit, metaclass=SingletonMeta):
     def kit_name(self) -> str: return "ForestBiomeKit"
 
 
+# SECTION:: Client
 # ═════════════════════════════════════════════════════════════
 #  CLIENT
 # ═════════════════════════════════════════════════════════════
@@ -527,6 +535,7 @@ class WorldGenerator:
         print(f"    Dropped: {self._loot.roll()}")
 
 
+# SECTION:: Entry Point
 # ═════════════════════════════════════════════════════════════
 #  ENTRY POINT
 # ═════════════════════════════════════════════════════════════

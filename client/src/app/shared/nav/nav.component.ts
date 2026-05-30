@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { SettingsService, ChordType } from '../../services/settings.service';
 
 @Component({
@@ -12,12 +12,26 @@ import { SettingsService, ChordType } from '../../services/settings.service';
 export class NavComponent {
 
   settingsOpen = false;
+  langsOpen    = false;
 
-  constructor(public settings: SettingsService) {}
+  constructor(public settings: SettingsService, private router: Router) {}
+
+  get isLangActive(): boolean {
+    const url = this.router.url;
+    return ['/java', '/csharp', '/typescript', '/python', '/ruby']
+      .some(p => url.startsWith(p));
+  }
+
+  toggleLangs(e: Event): void {
+    e.stopPropagation();
+    this.langsOpen = !this.langsOpen;
+    if (this.langsOpen) this.settingsOpen = false;
+  }
 
   toggleSettings(e: Event): void {
     e.stopPropagation();
     this.settingsOpen = !this.settingsOpen;
+    if (this.settingsOpen) this.langsOpen = false;
   }
 
   selectChord(chord: ChordType, e: Event): void {
@@ -37,5 +51,6 @@ export class NavComponent {
   @HostListener('document:click')
   onDocClick(): void {
     this.settingsOpen = false;
+    this.langsOpen    = false;
   }
 }

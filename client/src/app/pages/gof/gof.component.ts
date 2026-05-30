@@ -8,6 +8,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SettingsService } from '../../services/settings.service';
 import { FooterComponent } from '../../shared/footer/footer.component';
+import { CommentSectionComponent } from '../../shared/comment-section/comment-section.component';
 
 interface PatternDef {
   name:     string;
@@ -37,7 +38,7 @@ interface PatternAvailable {
 @Component({
   selector: 'app-gof',
   standalone: true,
-  imports: [CommonModule, FooterComponent],
+  imports: [CommonModule, FooterComponent, CommentSectionComponent],
   templateUrl: './gof.component.html',
   styleUrl: './gof.component.css'
 })
@@ -47,7 +48,7 @@ export class GofComponent implements OnInit, OnDestroy {
   private sanitizer = inject(DomSanitizer);
   private el        = inject(ElementRef);
   private ngZone    = inject(NgZone);
-  private settings  = inject(SettingsService);
+  readonly settings  = inject(SettingsService);
   private route     = inject(ActivatedRoute);
 
   private scrollAfterLoad = false;
@@ -63,7 +64,7 @@ export class GofComponent implements OnInit, OnDestroy {
     }
   }
 
-  readonly langs = ['typescript', 'java', 'csharp', 'python', 'ruby'] as const;
+  readonly langs = ['typescript', 'java', 'csharp', 'python', 'ruby', 'cpp'] as const;
 
   readonly langLabels: Record<string, string> = {
     typescript: 'TypeScript',
@@ -71,6 +72,7 @@ export class GofComponent implements OnInit, OnDestroy {
     csharp:     'C#',
     python:     'Python',
     ruby:       'Ruby',
+    cpp:        'C++',
   };
 
   readonly langExts: Record<string, string> = {
@@ -79,6 +81,7 @@ export class GofComponent implements OnInit, OnDestroy {
     csharp:     'cs',
     python:     'py',
     ruby:       'rb',
+    cpp:        'cpp',
   };
 
   langExt(tab: string): string {
@@ -103,7 +106,7 @@ export class GofComponent implements OnInit, OnDestroy {
         { name: 'Bridge',    slug: 'Bridge',    category: 'StructuralPatterns', done: false },
         { name: 'Composite', slug: 'Composite', category: 'StructuralPatterns', done: false },
         { name: 'Decorator', slug: 'Decorator', category: 'StructuralPatterns', done: false },
-        { name: 'Facade',    slug: 'Facade',    category: 'StructuralPatterns', done: false },
+        { name: 'Facade',    slug: 'Facade',    category: 'StructuralPatterns', done: true  },
         { name: 'Flyweight', slug: 'Flyweight', category: 'StructuralPatterns', done: false },
         { name: 'Proxy',     slug: 'Proxy',     category: 'StructuralPatterns', done: false },
       ]
@@ -142,8 +145,15 @@ export class GofComponent implements OnInit, OnDestroy {
   tocSections:      { label: string; index: number }[] = [];
   activeTocIndex:   number            = 0;
 
-  private scrollListener: (() => void) | null  = null;
-  private loadingTimer:   ReturnType<typeof setTimeout> | null = null;
+  // ── Code sections TOC ────────────────────────────────────────────────────────
+  codeSections:      { label: string; line: number }[] = [];
+  activeCodeSection: number  = 0;
+  codeCopied:        boolean = false;
+  outputCopied:      boolean = false;
+
+  private scrollListener:     (() => void) | null = null;
+  private codeScrollListener: (() => void) | null = null;
+  private loadingTimer:       ReturnType<typeof setTimeout> | null = null;
 
   keepReadme = false;   // holds README visible while first code fetch is in flight
 
@@ -151,13 +161,38 @@ export class GofComponent implements OnInit, OnDestroy {
     return tab === 'csharp' ? 'csharp' : tab;
   }
 
+  // Parse // SECTION:: XYZ  or  # SECTION:: XYZ  (and -- ; variants)
+  private parseCodeSections(code: string): { label: string; line: number }[] {
+    const regex = /^\s*(?:\/\/|#|--|;)\s*SECTION::\s*(.+)$/;
+    const sections: { label: string; line: number }[] = [];
+    code.split('\n').forEach((ln, i) => {
+      const m = ln.match(regex);
+      if (m) sections.push({ label: m[1].trim(), line: i });
+    });
+    return sections;
+  }
+
+  // Inject invisible anchor spans at section lines into the highlighted HTML
+  private injectSectionAnchors(html: string, sections: { line: number }[]): string {
+    if (!sections.length) return html;
+    const lines = html.split('\n');
+    sections.forEach(({ line }, idx) => {
+      if (line < lines.length) {
+        lines[line] = `<span class="code-section-anchor" id="code-section-${idx}"></span>` + lines[line];
+      }
+    });
+    return lines.join('\n');
+  }
+
   private applyHighlight(code: string, lang: string): SafeHtml {
     try {
       const result = hljs.highlight(code, { language: this.hljsLang(lang) });
-      return this.sanitizer.bypassSecurityTrustHtml(result.value);
+      const html   = this.injectSectionAnchors(result.value, this.codeSections);
+      return this.sanitizer.bypassSecurityTrustHtml(html);
     } catch {
+      const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       return this.sanitizer.bypassSecurityTrustHtml(
-        code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        this.injectSectionAnchors(escaped, this.codeSections)
       );
     }
   }
@@ -174,9 +209,14 @@ export class GofComponent implements OnInit, OnDestroy {
     this.availableLangs   = [];
     this.hasReadme        = false;
     this.loading          = true;
-    this.tocSections      = [];
-    this.activeTocIndex   = 0;
+    this.tocSections        = [];
+    this.activeTocIndex     = 0;
+    this.codeSections       = [];
+    this.activeCodeSection  = 0;
+    this.codeCopied         = false;
+    this.outputCopied       = false;
     this.removeScrollListener();
+    this.removeCodeScrollListener();
 
     const available$ = this.http
       .get<PatternAvailable>(`/api/patterns/${pattern.category}/${pattern.slug}/available`)
@@ -225,14 +265,17 @@ export class GofComponent implements OnInit, OnDestroy {
     }
     this.activeLang = tab;
     if (tab === 'readme') {
-      this.keepReadme      = false;
-      this.code            = null;
-      this.highlightedCode = null;
-      this.output          = null;
-      this.notFound        = false;
+      this.keepReadme        = false;
+      this.code              = null;
+      this.highlightedCode   = null;
+      this.output            = null;
+      this.notFound          = false;
+      this.codeSections      = [];
+      this.activeCodeSection = 0;
+      this.removeCodeScrollListener();
       setTimeout(() => this.buildToc(), 50);
     } else {
-      this.tocSections = [];
+      this.tocSections    = [];
       this.activeTocIndex = 0;
       this.removeScrollListener();
       this.loadCode();
@@ -263,14 +306,17 @@ export class GofComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (this.loadingTimer) { clearTimeout(this.loadingTimer); this.loadingTimer = null; }
-          this.keepReadme      = false;
-          this.loading         = false;
-          this.code            = res.exists ? res.content : null;
-          this.output          = res.output ?? null;
-          this.notFound        = !res.exists;
-          this.highlightedCode = this.code
+          this.keepReadme        = false;
+          this.loading           = false;
+          this.code              = res.exists ? res.content : null;
+          this.codeSections      = this.code ? this.parseCodeSections(this.code) : [];
+          this.activeCodeSection = 0;
+          this.output            = res.output ?? null;
+          this.notFound          = !res.exists;
+          this.highlightedCode   = this.code
             ? this.applyHighlight(this.code, this.activeLang)
             : null;
+          if (this.codeSections.length) setTimeout(() => this.buildCodeToc(), 50);
         },
         error: () => {
           if (this.loadingTimer) { clearTimeout(this.loadingTimer); this.loadingTimer = null; }
@@ -315,8 +361,60 @@ export class GofComponent implements OnInit, OnDestroy {
     this.scrollListener = null;
   }
 
+  // ── Code sections TOC ─────────────────────────────────────────────────────────
+  private buildCodeToc(): void {
+    const pre = this.el.nativeElement.querySelector('.viewer-pre') as HTMLElement;
+    if (!pre || !this.codeSections.length) return;
+    this.removeCodeScrollListener();
+    this.ngZone.runOutsideAngular(() => {
+      this.codeScrollListener = () => {
+        const anchors = Array.from(pre.querySelectorAll('.code-section-anchor')) as HTMLElement[];
+        const preTop  = pre.getBoundingClientRect().top;
+        let active    = 0;
+        for (let i = 0; i < anchors.length; i++) {
+          if (anchors[i].getBoundingClientRect().top - preTop <= 32) active = i;
+        }
+        if (active !== this.activeCodeSection) {
+          this.ngZone.run(() => { this.activeCodeSection = active; });
+        }
+      };
+      pre.addEventListener('scroll', this.codeScrollListener!);
+    });
+  }
+
+  private removeCodeScrollListener(): void {
+    if (!this.codeScrollListener) return;
+    const pre = this.el.nativeElement.querySelector('.viewer-pre') as HTMLElement;
+    pre?.removeEventListener('scroll', this.codeScrollListener);
+    this.codeScrollListener = null;
+  }
+
+  scrollToCodeSection(index: number): void {
+    const pre    = this.el.nativeElement.querySelector('.viewer-pre') as HTMLElement;
+    const anchor = pre?.querySelector(`#code-section-${index}`) as HTMLElement;
+    if (!pre || !anchor) return;
+    this.activeCodeSection = index;
+    const newTop = pre.scrollTop + anchor.getBoundingClientRect().top - pre.getBoundingClientRect().top - 16;
+    pre.scrollTo({ top: newTop, behavior: 'smooth' });
+  }
+
+  async copyCode(): Promise<void> {
+    if (!this.code) return;
+    try { await navigator.clipboard.writeText(this.code); } catch { return; }
+    this.codeCopied = true;
+    setTimeout(() => { this.codeCopied = false; }, 2000);
+  }
+
+  async copyOutput(): Promise<void> {
+    if (!this.output) return;
+    try { await navigator.clipboard.writeText(this.output); } catch { return; }
+    this.outputCopied = true;
+    setTimeout(() => { this.outputCopied = false; }, 2000);
+  }
+
   ngOnDestroy(): void {
     this.removeScrollListener();
+    this.removeCodeScrollListener();
     if (this.loadingTimer) clearTimeout(this.loadingTimer);
   }
 

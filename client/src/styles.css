@@ -1,3 +1,15 @@
+/* ── GLOBAL DESIGN TOKENS ─────────────────────────────────────────────────── */
+:root {
+  --gold:   #f0a500;
+  --teal:   #4ec9b0;
+  --pink:   #e05c8a;
+  --bg:     #0a0a0c;
+  --text:   #e4e2df;
+  --muted:  #5a5a6e;
+  --border: #252530;
+  --mono:   'JetBrains Mono', monospace;
+}
+
 /* ── NEON CURSOR ──────────────────────────────────────────────────────────── */
 .neon-cursor-active,
 .neon-cursor-active * { cursor: none !important; }

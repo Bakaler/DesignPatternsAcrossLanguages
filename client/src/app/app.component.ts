@@ -27,12 +27,21 @@ export class AppComponent implements OnInit, OnDestroy {
     if (e.clientX >= document.documentElement.clientWidth)  return true;
     if (e.clientY >= document.documentElement.clientHeight) return true;
 
-    // Internal element scrollbar (e.g. code viewer, readme panel)
+    // Internal element scrollbar — only check elements that can actually scroll.
+    // Applying this to all elements causes false positives on inline elements
+    // (clientWidth = 0) and narrow layout columns.
     const t = e.target as HTMLElement;
-    if (t && t !== document.documentElement && t !== document.body && t.getBoundingClientRect) {
-      const r = t.getBoundingClientRect();
-      if (e.clientX > r.left + t.clientWidth  + 1) return true;
-      if (e.clientY > r.top  + t.clientHeight + 1) return true;
+    if (t && t !== document.documentElement && t !== document.body) {
+      const s  = getComputedStyle(t);
+      const ox = s.overflowX;
+      const oy = s.overflowY;
+      const canScrollY = oy === 'scroll' || oy === 'auto';
+      const canScrollX = ox === 'scroll' || ox === 'auto';
+      if (canScrollX || canScrollY) {
+        const r = t.getBoundingClientRect();
+        if (canScrollY && e.clientX > r.left + t.clientWidth  + 1) return true;
+        if (canScrollX && e.clientY > r.top  + t.clientHeight + 1) return true;
+      }
     }
     return false;
   }

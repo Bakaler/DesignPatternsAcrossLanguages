@@ -1,0 +1,121 @@
+<div class="thread" [class.nested]="depth > 0">
+  @for (c of comments; track c.id) {
+    <div class="comment" [class.deleted]="c.deleted">
+
+      <!-- Header -->
+      <div class="comment-header">
+        @if (!c.deleted) {
+          <img class="avatar" [src]="c.avatar || 'assets/default-avatar.png'" [alt]="c.author ?? ''" />
+          <span class="author">{{ c.author }}</span>
+          <span class="timestamp" [title]="c.createdAt | date:'medium'">
+            {{ c.createdAt | date:'MMM d, y' }}
+            @if (c.updatedAt !== c.createdAt) { <em>(edited)</em> }
+          </span>
+        } @else {
+          <span class="deleted-label">[deleted]</span>
+        }
+      </div>
+
+      <!-- Body -->
+      @if (!c.deleted && editingId !== c.id) {
+        <div
+          class="comment-body"
+          [class.truncated]="!expandedComments.has(c.id)"
+          [innerHTML]="safeHtml(c.bodyHtml)"
+        ></div>
+        @if (isLong(c)) {
+          <button class="read-more-btn" (click)="toggleReadMore(c.id)">
+            {{ expandedComments.has(c.id) ? 'Show less' : 'Read more' }}
+          </button>
+        }
+      }
+
+      <!-- Edit editor -->
+      @if (editingId === c.id) {
+        <app-comment-editor
+          [initialHtml]="c.bodyHtml ?? ''"
+          submitLabel="Save"
+          (submitted)="submitEdit(c, $event)"
+          (cancelled)="editingId = null"
+        />
+      }
+
+      <!-- Actions -->
+      @if (!c.deleted) {
+        <div class="comment-actions">
+          <!-- Votes -->
+          <button
+            class="vote-btn"
+            [class.active]="c.myVote === 1"
+            [disabled]="!isLoggedIn"
+            (click)="onVote(c, 1)"
+            title="Helpful"
+          >▲</button>
+
+          <span class="vote-ratio" [title]="ratioLabel(c)">
+            {{ c.upvotes }}/{{ c.upvotes + c.downvotes }}
+          </span>
+
+          <button
+            class="vote-btn"
+            [class.active]="c.myVote === -1"
+            [disabled]="!isLoggedIn"
+            (click)="onVote(c, -1)"
+            title="Not helpful"
+          >▼</button>
+
+          @if (isLoggedIn) {
+            <button class="action-btn" (click)="toggleReply(c.id)">
+              {{ replyingTo === c.id ? 'Cancel' : 'Reply' }}
+            </button>
+          }
+
+          @if (c.isOwn) {
+            <button class="action-btn" (click)="toggleEdit(c.id)">
+              {{ editingId === c.id ? 'Cancel' : 'Edit' }}
+            </button>
+            <button class="action-btn danger" (click)="onDelete(c)">Delete</button>
+          }
+        </div>
+      }
+
+      <!-- Reply editor -->
+      @if (replyingTo === c.id) {
+        <app-comment-editor
+          submitLabel="Post Reply"
+          (submitted)="submitReply(c, $event)"
+          (cancelled)="replyingTo = null"
+        />
+      }
+
+      <!-- Children -->
+      @if (c.children?.length) {
+        @if (depth < maxDepth) {
+          <app-comment-thread
+            [comments]="c.children!"
+            [depth]="depth + 1"
+            [isLoggedIn]="isLoggedIn"
+            [currentUserId]="currentUserId"
+            (action)="onChildAction($event)"
+          />
+        } @else {
+          <div class="deep-thread">
+            <button class="view-thread-btn" (click)="toggleExpand(c.id)">
+              {{ expandedIds.has(c.id) ? 'Collapse thread' : 'View thread (' + c.children!.length + ')' }}
+            </button>
+            @if (expandedIds.has(c.id)) {
+              <app-comment-thread
+                [comments]="c.children!"
+                [depth]="depth + 1"
+                [isLoggedIn]="isLoggedIn"
+                [currentUserId]="currentUserId"
+                (action)="onChildAction($event)"
+              />
+            }
+          </div>
+        }
+      }
+
+    </div>
+  }
+</div>
