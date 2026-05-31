@@ -151,6 +151,37 @@ export class GofComponent implements OnInit, OnDestroy {
   codeCopied:        boolean = false;
   outputCopied:      boolean = false;
 
+  // ── Test mode ────────────────────────────────────────────────────────────────
+  viewMode:           'code' | 'unit' | 'integration' = 'code';
+  testCode:           string | null   = null;
+  highlightedTestCode: SafeHtml | null = null;
+  testOutput:         string | null   = null;
+  testLoading:        boolean         = false;
+  testNotFound:       boolean         = false;
+  testAvailable:      { unit: boolean; integration: boolean } = { unit: false, integration: false };
+
+  // ── Active-mode getters (code vs test) ───────────────────────────────────────
+  get activeHighlightedCode(): SafeHtml | null {
+    return this.viewMode === 'code' ? this.highlightedCode : this.highlightedTestCode;
+  }
+  get activeRawCode(): string | null {
+    return this.viewMode === 'code' ? this.code : this.testCode;
+  }
+  get activeOutput(): string | null {
+    return this.viewMode === 'code' ? this.output : this.testOutput;
+  }
+  get activeLoading(): boolean { return this.loading || this.testLoading; }
+  get activeNotFound(): boolean {
+    return this.viewMode === 'code' ? this.notFound : this.testNotFound;
+  }
+  get activeCodeFile(): string {
+    if (!this.selected) return '';
+    const ext = this.langExt(this.activeLang);
+    if (this.viewMode === 'code') return `${this.selected.slug}/${this.activeLang}.${ext}`;
+    return `_tests/${this.selected.slug}/${this.activeLang}/${this.viewMode}.test.${ext}`;
+  }
+  get isTestMode(): boolean { return this.viewMode !== 'code'; }
+
   private scrollListener:     (() => void) | null = null;
   private codeScrollListener: (() => void) | null = null;
   private loadingTimer:       ReturnType<typeof setTimeout> | null = null;
@@ -184,17 +215,77 @@ export class GofComponent implements OnInit, OnDestroy {
     return lines.join('\n');
   }
 
-  private applyHighlight(code: string, lang: string): SafeHtml {
+  private applyHighlight(code: string, lang: string, sections?: { line: number }[]): SafeHtml {
+    const sects = sections ?? this.codeSections;
     try {
       const result = hljs.highlight(code, { language: this.hljsLang(lang) });
-      const html   = this.injectSectionAnchors(result.value, this.codeSections);
+      const html   = this.injectSectionAnchors(result.value, sects);
       return this.sanitizer.bypassSecurityTrustHtml(html);
     } catch {
       const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       return this.sanitizer.bypassSecurityTrustHtml(
-        this.injectSectionAnchors(escaped, this.codeSections)
+        this.injectSectionAnchors(escaped, sects)
       );
     }
+  }
+
+  // ── Test mode controls ───────────────────────────────────────────────────────
+  setViewMode(mode: 'code' | 'unit' | 'integration'): void {
+    this.settings.playUiClick();
+    this.viewMode = mode;
+    if (mode !== 'code') {
+      this.loadTest();
+    }
+  }
+
+  private checkTestAvailability(): void {
+    if (!this.selected || this.activeLang === 'readme') return;
+    this.http
+      .get<{ unit: boolean; integration: boolean }>(
+        `/api/tests/${this.selected.category}/${this.selected.slug}/available?lang=${this.activeLang}`
+      )
+      .pipe(catchError(() => of({ unit: false, integration: false })))
+      .subscribe(avail => { this.testAvailable = avail; });
+  }
+
+  private loadTest(): void {
+    if (!this.selected || this.viewMode === 'code') return;
+    this.testLoading  = true;
+    this.testNotFound = false;
+    this.testCode     = null;
+    this.highlightedTestCode = null;
+    this.testOutput   = null;
+
+    this.http
+      .get<PatternFile>(
+        `/api/tests/${this.selected.category}/${this.selected.slug}?lang=${this.activeLang}&type=${this.viewMode}`
+      )
+      .subscribe({
+        next: (res) => {
+          this.testLoading  = false;
+          this.testCode     = res.exists ? res.content : null;
+          this.testOutput   = res.output ?? null;
+          this.testNotFound = !res.exists;
+          const testSections = this.testCode ? this.parseCodeSections(this.testCode) : [];
+          this.highlightedTestCode = this.testCode
+            ? this.applyHighlight(this.testCode, this.activeLang, testSections)
+            : null;
+        },
+        error: () => {
+          this.testLoading  = false;
+          this.testNotFound = true;
+        }
+      });
+  }
+
+  private resetTestState(): void {
+    this.viewMode            = 'code';
+    this.testCode            = null;
+    this.highlightedTestCode = null;
+    this.testOutput          = null;
+    this.testLoading         = false;
+    this.testNotFound        = false;
+    this.testAvailable       = { unit: false, integration: false };
   }
 
   selectPattern(pattern: PatternDef): void {
@@ -215,6 +306,7 @@ export class GofComponent implements OnInit, OnDestroy {
     this.activeCodeSection  = 0;
     this.codeCopied         = false;
     this.outputCopied       = false;
+    this.resetTestState();
     this.removeScrollListener();
     this.removeCodeScrollListener();
 
@@ -243,6 +335,7 @@ export class GofComponent implements OnInit, OnDestroy {
           this.activeLang = available.available[0];
         }
         this.loadCode();
+        this.checkTestAvailability();
       } else {
         this.notFound = true;
       }
@@ -272,13 +365,16 @@ export class GofComponent implements OnInit, OnDestroy {
       this.notFound          = false;
       this.codeSections      = [];
       this.activeCodeSection = 0;
+      this.resetTestState();
       this.removeCodeScrollListener();
       setTimeout(() => this.buildToc(), 50);
     } else {
+      this.resetTestState();
       this.tocSections    = [];
       this.activeTocIndex = 0;
       this.removeScrollListener();
       this.loadCode();
+      this.checkTestAvailability();
     }
   }
 
@@ -399,15 +495,17 @@ export class GofComponent implements OnInit, OnDestroy {
   }
 
   async copyCode(): Promise<void> {
-    if (!this.code) return;
-    try { await navigator.clipboard.writeText(this.code); } catch { return; }
+    const raw = this.activeRawCode;
+    if (!raw) return;
+    try { await navigator.clipboard.writeText(raw); } catch { return; }
     this.codeCopied = true;
     setTimeout(() => { this.codeCopied = false; }, 2000);
   }
 
   async copyOutput(): Promise<void> {
-    if (!this.output) return;
-    try { await navigator.clipboard.writeText(this.output); } catch { return; }
+    const out = this.activeOutput;
+    if (!out) return;
+    try { await navigator.clipboard.writeText(out); } catch { return; }
     this.outputCopied = true;
     setTimeout(() => { this.outputCopied = false; }, 2000);
   }

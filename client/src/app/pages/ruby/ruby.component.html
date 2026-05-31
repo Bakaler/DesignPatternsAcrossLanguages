@@ -88,8 +88,8 @@ records.<span class="fn">each_with_index</span> <span class="kw">do</span> |rec,
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">oop — module interface &amp; service pattern</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt"># module as interface</span>
+      <app-code-tabs [tabs]="['Interface', 'Implementation', 'Model & Service']">
+        <div class="code-block" ct1><pre><span class="cmt"># module as interface</span>
 <span class="kw">module</span> <span class="tp">UserRepository</span>
   <span class="kw">def</span> <span class="fn">find_by_id</span>(id)
     <span class="kw">raise</span> <span class="tp">NotImplementedError</span>
@@ -103,7 +103,7 @@ records.<span class="fn">each_with_index</span> <span class="kw">do</span> |rec,
     <span class="kw">raise</span> <span class="tp">NotImplementedError</span>
   <span class="kw">end</span>
 <span class="kw">end</span></pre></div>
-        <div class="code-block"><pre><span class="cmt"># concrete implementation</span>
+        <div class="code-block" ct2><pre><span class="cmt"># concrete implementation</span>
 <span class="kw">class</span> <span class="tp">PostgresUserRepo</span>
   <span class="kw">include</span> <span class="tp">UserRepository</span>
 
@@ -118,7 +118,7 @@ records.<span class="fn">each_with_index</span> <span class="kw">do</span> |rec,
     ).<span class="fn">first</span>
   <span class="kw">end</span>
 <span class="kw">end</span></pre></div>
-        <div class="code-block"><pre><span class="cmt"># value object + service</span>
+        <div class="code-block" ct3><pre><span class="cmt"># value object + service</span>
 <span class="tp">User</span> = <span class="tp">Struct</span>.<span class="fn">new</span>(<span class="sym">:id</span>, <span class="sym">:email</span>, <span class="sym">:role</span>,
                    keyword_init: <span class="kw">true</span>)
 
@@ -132,13 +132,13 @@ records.<span class="fn">each_with_index</span> <span class="kw">do</span> |rec,
       <span class="kw">raise</span>(<span class="tp">NotFoundError</span>, id)
   <span class="kw">end</span>
 <span class="kw">end</span></pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">data structures — backend use cases</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt"># Array — result set</span>
+      <app-code-tabs [tabs]="['Array', 'Hash', 'Set / Struct']">
+        <div class="code-block" ct1><pre><span class="cmt"># Array — result set</span>
 rows = conn.<span class="fn">exec</span>(sql).<span class="fn">to_a</span>
 rows.<span class="fn">push</span>(new_row)
 rows.<span class="fn">first</span>
@@ -146,14 +146,14 @@ rows.<span class="fn">length</span>
 rows[<span class="num">10</span>..<span class="num">19</span>]    <span class="cmt"># page slice</span>
 rows.<span class="fn">reverse</span>    <span class="cmt"># reverse order</span>
 rows.<span class="fn">flatten</span>    <span class="cmt"># flatten nested</span></pre></div>
-        <div class="code-block"><pre><span class="cmt"># Hash — config / request body</span>
+        <div class="code-block" ct2><pre><span class="cmt"># Hash — config / request body</span>
 config = &#123; host: <span class="str">"localhost"</span>, port: <span class="num">5432</span> &#125;
 config.<span class="fn">fetch</span>(<span class="sym">:timeout</span>, <span class="num">30</span>)  <span class="cmt"># safe get</span>
 config.<span class="fn">keys</span>
 config.<span class="fn">each</span> &#123; |k, v| <span class="fn">puts</span> <span class="str">"#&#123;k&#125;: #&#123;v&#125;"</span> &#125;
 config.<span class="fn">merge</span>(port: <span class="num">5433</span>)     <span class="cmt"># override</span>
 config.<span class="fn">slice</span>(<span class="sym">:host</span>, <span class="sym">:port</span>)   <span class="cmt"># pick keys</span></pre></div>
-        <div class="code-block"><pre><span class="cmt"># Set — unique tokens / IDs</span>
+        <div class="code-block" ct3><pre><span class="cmt"># Set — unique tokens / IDs</span>
 <span class="kw">require</span> <span class="str">"set"</span>
 sessions = <span class="tp">Set</span>.<span class="fn">new</span>([<span class="str">"tok1"</span>, <span class="str">"tok2"</span>])
 sessions.<span class="fn">add</span>(token)
@@ -163,7 +163,7 @@ sessions.<span class="fn">include?</span>(token)
 <span class="cmt"># Struct — typed value object</span>
 Creds = <span class="tp">Struct</span>.<span class="fn">new</span>(<span class="sym">:host</span>, <span class="sym">:port</span>, <span class="sym">:db</span>)
 creds = <span class="tp">Creds</span>.<span class="fn">new</span>(<span class="str">"localhost"</span>, <span class="num">5432</span>, <span class="str">"app"</span>)</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card">
@@ -246,6 +246,231 @@ SQL</pre></div>
       </div>
     </div>
 
+  </div>
+
+  <div class="testing-section">
+    <div class="testing-header">
+      <div class="testing-header-title">// <span>testing</span></div>
+      <div class="testing-header-stack"><a href="https://rspec.info" target="_blank" rel="noopener">RSpec</a> · doubles · <a href="https://github.com/simplecov-ruby/simplecov" target="_blank" rel="noopener">SimpleCov</a> · <a href="https://teamcapybara.github.io/capybara" target="_blank" rel="noopener">Capybara</a></div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">concepts</span></div>
+        <div class="pills-body">
+          <span class="pill pill-blue">unit — single class or method, all deps doubled</span>
+          <span class="pill pill-teal">integration — real dependencies, no browser</span>
+          <span class="pill pill-orange">e2e — full user flow via a real browser</span>
+          <span class="pill pill-red">double — RSpec fake replacing a dependency</span>
+          <span class="pill pill-purple">stub — allow + and_return controls the response</span>
+          <span class="pill pill-blue">spy — records all interactions automatically</span>
+          <span class="pill pill-teal">instance_double — verifies methods exist on the class</span>
+          <span class="pill pill-orange">shared examples — reusable test groups</span>
+          <span class="pill pill-purple">coverage — % of lines and branches exercised</span>
+          <span class="pill pill-red">AAA — Arrange · Act · Assert</span>
+          <span class="pill pill-blue">TDD — write the failing test before the code</span>
+          <span class="pill pill-teal">test pyramid — many unit · some integration · few e2e</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">setup &amp; run</span></div>
+        <div class="code-block"><pre><span class="cmt"># Gemfile</span>
+gem <span class="str">'rspec'</span>,      group: <span class="sym">:test</span>
+gem <span class="str">'simplecov'</span>,  group: <span class="sym">:test</span>
+
+bundle install
+
+<span class="cmt"># init config</span>
+bundle exec rspec --init   <span class="cmt"># creates .rspec + spec/</span>
+
+<span class="cmt"># run</span>
+bundle exec rspec
+bundle exec rspec spec/unit/          <span class="cmt"># folder</span>
+bundle exec rspec -e <span class="str">"Stack"</span>         <span class="cmt"># filter</span>
+bundle exec rspec --format doc        <span class="cmt"># verbose</span>
+
+<span class="cmt"># coverage</span>
+bundle exec rspec   <span class="cmt"># SimpleCov auto-generates</span>
+open coverage/index.html</pre></div>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">unit tests</span></div>
+        <app-code-tabs [tabs]="['Lifecycle', 'Matchers', 'let / shared']">
+          <div class="code-block" ct1><pre><span class="kw">RSpec</span>.<span class="fn">describe</span> <span class="tp">Calculator</span> <span class="kw">do</span>
+  subject(<span class="sym">:calc</span>) &#123; described_class.<span class="fn">new</span> &#125;
+
+  <span class="fn">before</span>(<span class="sym">:each</span>) &#123; calc.<span class="fn">reset</span> &#125;
+  <span class="fn">after</span>(<span class="sym">:each</span>)  &#123; &#125;
+  <span class="fn">before</span>(<span class="sym">:all</span>)  &#123; <span class="cmt"># one-time setup</span> &#125;
+
+  <span class="fn">it</span> <span class="str">"adds two numbers"</span> <span class="kw">do</span>
+    <span class="fn">expect</span>(calc.<span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>)).<span class="fn">to</span> <span class="fn">eq</span>(<span class="num">5</span>)
+  <span class="kw">end</span>
+
+  <span class="fn">context</span> <span class="str">"when dividing by zero"</span> <span class="kw">do</span>
+    <span class="fn">it</span> <span class="str">"raises ZeroDivisionError"</span> <span class="kw">do</span>
+      <span class="fn">expect</span> &#123; calc.<span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>) &#125;
+        .<span class="fn">to</span> <span class="fn">raise_error</span>(<span class="tp">ZeroDivisionError</span>)
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="cmt"># data-driven</span>
+  [[<span class="num">1</span>,<span class="num">1</span>,<span class="num">2</span>],[<span class="num">0</span>,<span class="num">5</span>,<span class="num">5</span>],[-<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>]].<span class="fn">each</span> <span class="kw">do</span> |a,b,want|
+    <span class="fn">it</span> <span class="str">"add(&#123;a&#125;,&#123;b&#125;) = &#123;want&#125;"</span> <span class="kw">do</span>
+      <span class="fn">expect</span>(calc.<span class="fn">add</span>(a,b)).<span class="fn">to</span> <span class="fn">eq</span>(want)
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+<span class="kw">end</span></pre></div>
+          <div class="code-block" ct2><pre><span class="cmt"># matchers</span>
+<span class="fn">expect</span>(value).<span class="fn">to</span> <span class="fn">eq</span>(expected)
+<span class="fn">expect</span>(value).<span class="fn">not_to</span> <span class="fn">eq</span>(unexpected)
+<span class="fn">expect</span>(value).<span class="fn">to</span> <span class="fn">be_truthy</span>
+<span class="fn">expect</span>(value).<span class="fn">to</span> <span class="fn">be_nil</span>
+<span class="fn">expect</span>(value).<span class="fn">to</span> <span class="fn">be_a</span>(<span class="tp">User</span>)
+<span class="fn">expect</span>(array).<span class="fn">to</span> <span class="fn">include</span>(<span class="str">"item"</span>)
+<span class="fn">expect</span>(string).<span class="fn">to</span> <span class="fn">match</span>(/pattern/)
+<span class="fn">expect</span>(num).<span class="fn">to</span> <span class="fn">be_between</span>(<span class="num">1</span>, <span class="num">10</span>)
+<span class="fn">expect</span> &#123; action &#125;.<span class="fn">to</span> <span class="fn">raise_error</span>(<span class="tp">NotFoundError</span>)
+<span class="fn">expect</span> &#123; action &#125;.<span class="fn">to</span>
+  <span class="fn">change</span> &#123; counter &#125;.<span class="fn">by</span>(<span class="num">1</span>)
+
+<span class="cmt"># shared examples</span>
+<span class="fn">shared_examples</span> <span class="str">"a repository"</span> <span class="kw">do</span>
+  <span class="fn">it</span> &#123; is_expected.<span class="fn">to</span> <span class="fn">respond_to</span>(<span class="sym">:find_by_id</span>) &#125;
+  <span class="fn">it</span> &#123; is_expected.<span class="fn">to</span> <span class="fn">respond_to</span>(<span class="sym">:save</span>) &#125;
+<span class="kw">end</span>
+
+<span class="kw">RSpec</span>.<span class="fn">describe</span> <span class="tp">PostgresRepo</span> <span class="kw">do</span>
+  it_behaves_like <span class="str">"a repository"</span>
+<span class="kw">end</span></pre></div>
+          <div class="code-block" ct3><pre><span class="cmt"># let — lazy memoised helper</span>
+<span class="kw">RSpec</span>.<span class="fn">describe</span> <span class="tp">UserService</span> <span class="kw">do</span>
+  <span class="fn">let</span>(<span class="sym">:repo</span>)   &#123; <span class="fn">double</span>(<span class="str">"Repo"</span>) &#125;
+  <span class="fn">let</span>(<span class="sym">:mailer</span>) &#123; <span class="fn">spy</span>(<span class="str">"Mailer"</span>) &#125;
+  <span class="fn">let</span>(<span class="sym">:svc</span>)    &#123; described_class
+                   .<span class="fn">new</span>(repo, mailer) &#125;
+
+  <span class="fn">it</span> <span class="str">"sends welcome email on create"</span> <span class="kw">do</span>
+    user = <span class="fn">User</span>.<span class="fn">new</span>(<span class="str">"alice"</span>)
+    <span class="fn">allow</span>(repo).<span class="fn">to</span> <span class="fn">receive</span>(<span class="sym">:save</span>)
+    svc.<span class="fn">create</span>(user)
+    <span class="fn">expect</span>(mailer).<span class="fn">to</span> <span class="fn">have_received</span>(<span class="sym">:send</span>)
+      .<span class="fn">with</span>(user.email, anything)
+  <span class="kw">end</span>
+<span class="kw">end</span></pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">mocking &amp; test doubles</span></div>
+        <app-code-tabs [tabs]="['Doubles', 'Expect/Allow', 'Integration']">
+          <div class="code-block" ct1><pre><span class="cmt"># double — simple fake</span>
+repo = <span class="fn">double</span>(<span class="str">"UserRepository"</span>)
+<span class="fn">allow</span>(repo).<span class="fn">to</span> <span class="fn">receive</span>(<span class="sym">:find_by_id</span>)
+             .<span class="fn">with</span>(<span class="num">1</span>)
+             .<span class="fn">and_return</span>(<span class="fn">User</span>.<span class="fn">new</span>(<span class="str">"alice"</span>))
+<span class="fn">allow</span>(repo).<span class="fn">to</span> <span class="fn">receive</span>(<span class="sym">:find_by_id</span>)
+             .<span class="fn">with</span>(<span class="num">99</span>)
+             .<span class="fn">and_raise</span>(<span class="tp">NotFoundError</span>)
+<span class="fn">allow</span>(repo).<span class="fn">to</span> <span class="fn">receive</span>(<span class="sym">:save</span>)
+
+<span class="cmt"># instance_double — verifies interface</span>
+repo = <span class="fn">instance_double</span>(<span class="tp">UserRepository</span>)
+
+<span class="cmt"># spy — record without setup</span>
+mailer = <span class="fn">spy</span>(<span class="str">"Mailer"</span>)
+svc.<span class="fn">notify</span>(<span class="str">"alice&#64;example.com"</span>)
+<span class="fn">expect</span>(mailer).<span class="fn">to</span>
+  <span class="fn">have_received</span>(<span class="sym">:send</span>).<span class="fn">once</span></pre></div>
+          <div class="code-block" ct2><pre><span class="cmt"># expect — assert AND stub in one</span>
+<span class="fn">expect</span>(repo).<span class="fn">to</span> <span class="fn">receive</span>(<span class="sym">:save</span>)
+               .<span class="fn">with</span>(<span class="tp">an_instance_of</span>(<span class="tp">User</span>))
+               .<span class="fn">once</span>
+
+<span class="cmt"># verify call count</span>
+<span class="fn">expect</span>(mailer).<span class="fn">to</span>
+  <span class="fn">have_received</span>(<span class="sym">:send</span>).<span class="fn">exactly</span>(<span class="num">2</span>).<span class="fn">times</span>
+<span class="fn">expect</span>(mailer).<span class="fn">not_to</span>
+  <span class="fn">have_received</span>(<span class="sym">:send</span>)
+
+<span class="cmt"># partial stub — mock built-in</span>
+<span class="fn">allow</span>(<span class="tp">Time</span>).<span class="fn">to</span> <span class="fn">receive</span>(<span class="sym">:now</span>)
+            .<span class="fn">and_return</span>(<span class="tp">Time</span>.<span class="fn">new</span>(<span class="num">2024</span>,<span class="num">1</span>,<span class="num">1</span>))
+
+<span class="cmt"># stub chained calls</span>
+<span class="fn">allow</span>(request).<span class="fn">to</span> <span class="fn">receive_message_chain</span>(
+  <span class="sym">:headers</span>, <span class="sym">:authorization</span>)
+  .<span class="fn">and_return</span>(<span class="str">"Bearer token123"</span>)</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt"># integration — real database</span>
+<span class="kw">RSpec</span>.<span class="fn">describe</span> <span class="tp">UserRepository</span>,
+               type: <span class="sym">:integration</span> <span class="kw">do</span>
+  <span class="fn">let</span>(<span class="sym">:db</span>)   &#123; <span class="tp">Database</span>.<span class="fn">connect</span>(<span class="str">":memory:"</span>) &#125;
+  <span class="fn">let</span>(<span class="sym">:repo</span>) &#123; described_class.<span class="fn">new</span>(db) &#125;
+
+  <span class="fn">before</span>(<span class="sym">:all</span>)  &#123; db.<span class="fn">create_tables</span> &#125;
+  <span class="fn">after</span>(<span class="sym">:each</span>) &#123; db.<span class="fn">clear</span> &#125;
+  <span class="fn">after</span>(<span class="sym">:all</span>)  &#123; db.<span class="fn">close</span> &#125;
+
+  <span class="fn">it</span> <span class="str">"saves and retrieves a user"</span> <span class="kw">do</span>
+    repo.<span class="fn">save</span>(<span class="fn">User</span>.<span class="fn">new</span>(id: <span class="num">1</span>, name: <span class="str">"Alice"</span>))
+    found = repo.<span class="fn">find_by_id</span>(<span class="num">1</span>)
+    <span class="fn">expect</span>(found.name).<span class="fn">to</span> <span class="fn">eq</span>(<span class="str">"Alice"</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span></pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">e2e &amp; coverage</span></div>
+        <app-code-tabs [tabs]="['Capybara', 'SimpleCov']" [cols]="2">
+          <div class="code-block" ct1><pre><span class="cmt"># E2E — Capybara + rack-test</span>
+<span class="cmt"># gem 'capybara', group: :test</span>
+<span class="kw">require</span> <span class="str">'capybara/rspec'</span>
+<span class="tp">Capybara</span>.app = <span class="tp">MyApp</span>
+
+<span class="kw">RSpec</span>.<span class="fn">describe</span> <span class="str">"Login flow"</span>,
+               type: <span class="sym">:feature</span> <span class="kw">do</span>
+
+  <span class="fn">it</span> <span class="str">"allows a user to log in"</span> <span class="kw">do</span>
+    <span class="fn">visit</span> <span class="str">"/login"</span>
+    <span class="fn">fill_in</span> <span class="str">"Email"</span>,
+      with: <span class="str">"alice&#64;example.com"</span>
+    <span class="fn">fill_in</span> <span class="str">"Password"</span>, with: <span class="str">"secret"</span>
+    <span class="fn">click_button</span> <span class="str">"Sign in"</span>
+
+    <span class="fn">expect</span>(page).<span class="fn">to</span>
+      <span class="fn">have_current_path</span>(<span class="str">"/dashboard"</span>)
+    <span class="fn">expect</span>(page).<span class="fn">to</span>
+      <span class="fn">have_content</span>(<span class="str">"Welcome"</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span></pre></div>
+          <div class="code-block" ct2><pre><span class="cmt"># SimpleCov — spec/spec_helper.rb</span>
+<span class="kw">require</span> <span class="str">'simplecov'</span>
+<span class="tp">SimpleCov</span>.<span class="fn">start</span> <span class="kw">do</span>
+  <span class="fn">add_filter</span> <span class="str">'/spec/'</span>
+  minimum_coverage <span class="num">80</span>
+<span class="kw">end</span>
+
+<span class="cmt"># run tests — coverage auto-generated</span>
+bundle exec rspec
+open coverage/index.html
+
+<span class="cmt"># sample output</span>
+<span class="tp">Coverage report generated</span>
+<span class="tp">All Files</span> (<span class="num">92.37</span>% covered)
+<span class="num">34</span> files in total, <span class="num">3</span> missed lines
+
+<span class="cmt"># group by source area</span>
+<span class="tp">SimpleCov</span>.<span class="fn">start</span> <span class="kw">do</span>
+  <span class="fn">add_group</span> <span class="str">"Models"</span>,  <span class="str">"app/models"</span>
+  <span class="fn">add_group</span> <span class="str">"Services"</span>, <span class="str">"app/services"</span>
+<span class="kw">end</span></pre></div>
+        </app-code-tabs>
+      </div>
+
+    </div>
   </div>
 </div>
 

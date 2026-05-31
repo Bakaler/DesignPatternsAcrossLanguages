@@ -514,3 +514,13 @@ body::before {
 .viewer-card.zoom-3 .rm-list li { font-size: 1.1rem;  }
 .viewer-card.zoom-3 .rm-table  { font-size: 1.05rem; }
 .viewer-card.zoom-3 .rm-diagram { font-size: 0.92rem; }
+
+/* ── CHEATSHEET TESTING SECTION (shared across all language pages) ─────────── */
+.testing-section { margin-top: 3.5rem; }
+.testing-header { display: flex; align-items: baseline; gap: 1.5rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+.testing-header-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; font-family: var(--sans); }
+.testing-header-title span { color: var(--accent); }
+.testing-header-stack { font-size: 0.78rem; color: var(--muted); font-family: var(--mono); letter-spacing: 0.05em; }
+.testing-header-stack a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; transition: color 0.15s; }
+.testing-header-stack a:hover { color: var(--fg); }
+

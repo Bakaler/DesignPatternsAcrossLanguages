@@ -110,11 +110,26 @@
           </div>
         </div>
 
+        <!-- View mode toggle: Code | Unit | Integration (code tabs only) -->
+        @if (activeLang !== 'readme' && tabAvailable(activeLang)) {
+          <div class="viewer-mode-bar">
+            <span class="mode-label">view</span>
+            <button [class]="'mode-btn' + (viewMode === 'code' ? ' active' : '')"
+                    (click)="setViewMode('code')">Code</button>
+            <button [class]="'mode-btn mode-unit' + (viewMode === 'unit' ? ' active' : '')"
+                    [disabled]="!testAvailable.unit"
+                    (click)="setViewMode('unit')">Unit</button>
+            <button [class]="'mode-btn mode-integration' + (viewMode === 'integration' ? ' active' : '')"
+                    [disabled]="!testAvailable.integration"
+                    (click)="setViewMode('integration')">Integration</button>
+          </div>
+        }
+
         <!-- Loading -->
-        @if (loading) {
+        @if (activeLoading) {
           <div class="viewer-state">
             <div class="viewer-spinner"></div>
-            <span>Loading...</span>
+            <span>{{ isTestMode ? 'Loading tests...' : 'Loading...' }}</span>
           </div>
         }
 
@@ -133,32 +148,37 @@
         }
 
         <!-- Not implemented yet -->
-        @if (!loading && notFound) {
+        @if (!activeLoading && activeNotFound) {
           <div class="viewer-state viewer-state--empty">
             <div class="viewer-coming-soon-icon">[ ]</div>
-            <p class="viewer-state-title">Not implemented yet</p>
+            <p class="viewer-state-title">{{ isTestMode ? 'No tests yet' : 'Not implemented yet' }}</p>
             <p class="viewer-state-sub">
-              Create the file at:<br>
-              <code class="viewer-path">patterns/{{ selected.category }}/{{ selected.slug }}/{{ activeLang }}.{{ langExt(activeLang) }}</code>
+              @if (isTestMode) {
+                Create the file at:<br>
+                <code class="viewer-path">patterns/_tests/{{ selected.category }}/{{ selected.slug }}/{{ activeLang }}/{{ viewMode }}.test.{{ langExt(activeLang) }}</code>
+              } @else {
+                Create the file at:<br>
+                <code class="viewer-path">patterns/{{ selected.category }}/{{ selected.slug }}/{{ activeLang }}.{{ langExt(activeLang) }}</code>
+              }
             </p>
           </div>
         }
 
-        <!-- Code -->
-        @if (!loading && !keepReadme && highlightedCode) {
+        <!-- Code / Test file -->
+        @if (!activeLoading && !keepReadme && activeHighlightedCode) {
           <div class="viewer-code-wrap">
             <div class="viewer-code-topbar">
-              <span class="viewer-code-file">{{ selected.slug }}/{{ activeLang }}.{{ langExt(activeLang) }}</span>
+              <span class="viewer-code-file">{{ activeCodeFile }}</span>
               <div class="viewer-topbar-right">
-                <span class="viewer-code-lines">{{ code!.split('\n').length }} lines</span>
+                <span class="viewer-code-lines">{{ activeRawCode!.split('\n').length }} lines</span>
                 <button [class]="'copy-btn' + (codeCopied ? ' copied' : '')" (click)="copyCode()">
                   {{ codeCopied ? '✓ copied' : 'copy' }}
                 </button>
               </div>
             </div>
             <div class="viewer-code-body">
-              <pre class="viewer-pre"><code [innerHTML]="highlightedCode"></code></pre>
-              @if (codeSections.length) {
+              <pre class="viewer-pre"><code [innerHTML]="activeHighlightedCode"></code></pre>
+              @if (!isTestMode && codeSections.length) {
                 <nav class="viewer-toc">
                   @for (s of codeSections; track s.line) {
                     <button [class]="'toc-btn' + ($index === activeCodeSection ? ' active' : '')"
@@ -169,26 +189,28 @@
             </div>
           </div>
 
-          <!-- Output -->
+          <!-- Output / Test runner output -->
           <div class="viewer-output-wrap">
             <div class="viewer-output-topbar">
-              <span class="viewer-output-label">
-                <span class="viewer-output-dot"></span>
-                console output
+              <span [class]="'viewer-output-label' + (isTestMode ? ' viewer-output-label--test' : '')">
+                <span [class]="'viewer-output-dot' + (isTestMode ? ' viewer-output-dot--test' : '')"></span>
+                {{ isTestMode ? viewMode + ' test output' : 'console output' }}
               </span>
               <div class="viewer-topbar-right">
-                @if (!output) {
-                  <span class="viewer-output-empty-note">no output file — add {{ activeLang }}.output to see results here</span>
+                @if (!activeOutput) {
+                  <span class="viewer-output-empty-note">
+                    {{ isTestMode ? 'add ' + viewMode + '.output to see results' : 'no output file — add ' + activeLang + '.output to see results here' }}
+                  </span>
                 }
-                @if (output) {
+                @if (activeOutput) {
                   <button [class]="'copy-btn' + (outputCopied ? ' copied' : '')" (click)="copyOutput()">
                     {{ outputCopied ? '✓ copied' : 'copy' }}
                   </button>
                 }
               </div>
             </div>
-            @if (output) {
-              <pre class="viewer-output-pre">{{ output }}</pre>
+            @if (activeOutput) {
+              <pre [class]="'viewer-output-pre' + (isTestMode ? ' viewer-output-pre--test' : '')">{{ activeOutput }}</pre>
             } @else {
               <div class="viewer-output-empty">—</div>
             }

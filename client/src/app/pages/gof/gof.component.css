@@ -630,6 +630,76 @@
   .viewer-header { flex-direction: column; align-items: flex-start; }
 }
 
+/* ── View mode toggle bar ────────────────────────────────────────────────────── */
+.viewer-mode-bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 1.4rem;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+
+.mode-label {
+  font-family: var(--mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-right: 6px;
+}
+
+.mode-btn {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 3px 10px;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+
+.mode-btn:hover:not(:disabled) { color: var(--text); border-color: var(--dim); }
+.mode-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+
+.mode-btn.active {
+  color: var(--text);
+  background: var(--bg4);
+  border-color: var(--dim);
+}
+
+.mode-btn.mode-unit.active {
+  color: #f0a500;
+  border-color: #f0a50060;
+  background: #f0a50010;
+}
+
+.mode-btn.mode-integration.active {
+  color: #4a9eff;
+  border-color: #4a9eff60;
+  background: #4a9eff10;
+}
+
+/* ── Test runner output variants ─────────────────────────────────────────────── */
+.viewer-output-label--test { color: #f0a500; }
+
+.viewer-output-dot--test {
+  background: #f0a500;
+  box-shadow: 0 0 4px #f0a500;
+}
+
+.viewer-output-pre--test {
+  color: #e8e0c8;
+  background: #0d0d10;
+}
+
+/* Pass/fail colour hints inside Jest output */
+.viewer-output-pre--test { white-space: pre; }
+
 /* ── Comment section wrapper ─────────────────────────────────────────────────── */
 .comment-section-wrap {
   padding-top: 0;

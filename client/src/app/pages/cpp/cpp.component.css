@@ -56,3 +56,5 @@ pre { font-family: var(--mono); font-size: 0.78rem; line-height: 1.75; color: va
 .pill-amber  { color: #f0a500;        border-color: #f0a50044; background: #f0a50011; }
 .pill-red    { color: var(--accent2); border-color: #e05c5c44; background: #e05c5c11; }
 .pill-purple { color: #c792ea;        border-color: #c792ea44; background: #c792ea11; }
+
+/* ── Testing Section ─────────────────────────────────────────────────────────── */

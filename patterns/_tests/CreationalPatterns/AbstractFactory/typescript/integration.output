@@ -1,0 +1,26 @@
+  WorldGenerator — Desert Biome
+    ✓ output contains desert terrain name
+    ✓ output contains all 3 default desert enemies
+    ✓ output contains Sandstorm weather
+    ✓ output contains desert loot table name
+
+  WorldGenerator — Arctic Biome
+    ✓ output contains Frozen Tundra terrain
+    ✓ output contains all 3 arctic enemies
+    ✓ output contains Blizzard weather
+
+  WorldGenerator — Forest Biome
+    ✓ output contains Dense Forest Floor terrain
+    ✓ output contains all 3 forest enemies
+
+  Product Family Consistency
+    ✓ swapping factory changes every part of the output
+    ✓ desert loot table never appears in arctic output
+    ✓ weather events are biome-specific
+
+  Prototype Registration (runtime enemy injection)
+    ✓ registerEnemy adds a new enemy to the next generate() call
+    ✓ registration is isolated — arctic kit is unaffected by desert registration
+    ✓ registered enemy is cloned on generate() — clone() is called
+
+  15 passing (71ms)

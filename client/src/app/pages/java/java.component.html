@@ -81,15 +81,15 @@ java Main.java</pre></div>
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">oop - repository pattern</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// interface</span>
+      <app-code-tabs [tabs]="['Interface', 'Implementation', 'Service']">
+        <div class="code-block" ct1><pre><span class="cmt">// interface</span>
 <span class="kw">interface</span> <span class="tp">UserRepository</span> &#123;
     <span class="tp">User</span> <span class="fn">findById</span>(<span class="tp">long</span> id);
     <span class="tp">List</span>&lt;<span class="tp">User</span>&gt; <span class="fn">findAll</span>();
     <span class="kw">void</span> <span class="fn">save</span>(<span class="tp">User</span> user);
     <span class="kw">void</span> <span class="fn">delete</span>(<span class="tp">long</span> id);
 &#125;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// concrete implementation</span>
+        <div class="code-block" ct2><pre><span class="cmt">// concrete implementation</span>
 <span class="kw">class</span> <span class="tp">PostgresUserRepo</span>
     <span class="kw">implements</span> <span class="tp">UserRepository</span> &#123;
 
@@ -100,7 +100,7 @@ java Main.java</pre></div>
         <span class="kw">return</span> ds.<span class="fn">query</span>(sql, id);
     &#125;
 &#125;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// service layer</span>
+        <div class="code-block" ct3><pre><span class="cmt">// service layer</span>
 <span class="kw">class</span> <span class="tp">UserService</span> &#123;
     <span class="kw">private final</span> <span class="tp">UserRepository</span> repo;
 
@@ -114,28 +114,28 @@ java Main.java</pre></div>
         <span class="kw">return</span> u;
     &#125;
 &#125;</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">collections - query results &amp; routing</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// list of DB rows</span>
+      <app-code-tabs [tabs]="['List', 'Map', 'Set']">
+        <div class="code-block" ct1><pre><span class="cmt">// list of DB rows</span>
 <span class="kw">var</span> users = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;<span class="tp">User</span>&gt;();
 users.<span class="fn">add</span>(newUser);
 users.<span class="fn">get</span>(<span class="num">0</span>);
 users.<span class="fn">size</span>();</pre></div>
-        <div class="code-block"><pre><span class="cmt">// map: route -> handler</span>
+        <div class="code-block" ct2><pre><span class="cmt">// map: route -> handler</span>
 <span class="kw">var</span> routes = <span class="kw">new</span> <span class="tp">HashMap</span>&lt;<span class="tp">String</span>, <span class="tp">Handler</span>&gt;();
 routes.<span class="fn">put</span>(<span class="str">"/users"</span>, userHandler);
 routes.<span class="fn">get</span>(<span class="str">"/users"</span>);
 routes.<span class="fn">containsKey</span>(<span class="str">"/health"</span>);</pre></div>
-        <div class="code-block"><pre><span class="cmt">// set: unique active sessions</span>
+        <div class="code-block" ct3><pre><span class="cmt">// set: unique active sessions</span>
 <span class="kw">var</span> activeSessions = <span class="kw">new</span> <span class="tp">HashSet</span>&lt;<span class="tp">String</span>&gt;();
 activeSessions.<span class="fn">add</span>(sessionToken);
 activeSessions.<span class="fn">contains</span>(token);
 activeSessions.<span class="fn">remove</span>(expiredToken);</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card">
@@ -187,6 +187,83 @@ token.<span class="fn">substring</span>(<span class="num">7</span>)     <span cl
       </div>
     </div>
 
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">testing — junit 5 + mockito</span></div>
+      <app-code-tabs [tabs]="['Setup', 'Lifecycle', 'Mockito']">
+        <div class="code-block" ct1><pre><span class="cmt"># add to pom.xml (Maven)</span>
+<span class="cmt"># junit-jupiter + mockito-core</span>
+
+<span class="cmt"># run</span>
+mvn test
+gradle test
+
+<span class="cmt">// structure</span>
+<span class="ann">&#64;ExtendWith</span>(<span class="tp">MockitoExtension</span>.<span class="kw">class</span>)
+<span class="kw">class</span> <span class="tp">MyServiceTest</span> &#123;
+
+    &#64;<span class="tp">BeforeEach</span>
+    <span class="kw">void</span> <span class="fn">setUp</span>() &#123; <span class="cmt">/* runs before each test */</span> &#125;
+
+    &#64;<span class="tp">AfterEach</span>
+    <span class="kw">void</span> <span class="fn">tearDown</span>() &#123; &#125;
+
+    &#64;<span class="tp">Test</span>
+    <span class="kw">void</span> <span class="fn">doesTheThing</span>() &#123; <span class="cmt">/* assert here */</span> &#125;
+&#125;</pre></div>
+        <div class="code-block" ct2><pre><span class="ann">&#64;ExtendWith</span>(<span class="tp">MockitoExtension</span>.<span class="kw">class</span>)
+<span class="kw">class</span> <span class="tp">StackTest</span> &#123;
+
+    <span class="kw">private</span> <span class="tp">Stack</span>&lt;<span class="tp">Integer</span>&gt; stack;
+
+    &#64;<span class="tp">BeforeEach</span>
+    <span class="kw">void</span> <span class="fn">setUp</span>() &#123; stack = <span class="kw">new</span> <span class="tp">Stack</span>&lt;&gt;(); &#125;
+
+    &#64;<span class="tp">Test</span>
+    <span class="kw">void</span> <span class="fn">pushIncreasesSize</span>() &#123;
+        stack.<span class="fn">push</span>(<span class="num">1</span>);
+        <span class="fn">assertEquals</span>(<span class="num">1</span>, stack.<span class="fn">size</span>());
+    &#125;
+
+    &#64;<span class="tp">Test</span>
+    <span class="kw">void</span> <span class="fn">popOnEmptyThrows</span>() &#123;
+        <span class="fn">assertThrows</span>(<span class="tp">EmptyStackException</span>.<span class="kw">class</span>,
+            () -&gt; stack.<span class="fn">pop</span>());
+    &#125;
+
+    &#64;<span class="tp">ParameterizedTest</span>
+    &#64;<span class="tp">ValueSource</span>(ints = &#123;<span class="num">1</span>, <span class="num">5</span>, <span class="num">10</span>&#125;)
+    <span class="kw">void</span> <span class="fn">pushAndPop</span>(<span class="kw">int</span> val) &#123;
+        stack.<span class="fn">push</span>(val);
+        <span class="fn">assertEquals</span>(val, stack.<span class="fn">pop</span>());
+    &#125;
+&#125;</pre></div>
+        <div class="code-block" ct3><pre><span class="cmt">// Mockito — mock + verify</span>
+&#64;<span class="tp">Mock</span> <span class="tp">UserRepository</span> repo;
+
+&#64;<span class="tp">Test</span>
+<span class="kw">void</span> <span class="fn">savesNewUser</span>() &#123;
+    <span class="tp">UserService</span> svc = <span class="kw">new</span> <span class="fn">UserService</span>(repo);
+    <span class="tp">User</span> user = <span class="kw">new</span> <span class="fn">User</span>(<span class="str">"alice"</span>);
+    svc.<span class="fn">create</span>(user);
+    <span class="fn">verify</span>(repo, <span class="fn">times</span>(<span class="num">1</span>)).<span class="fn">save</span>(user);
+&#125;
+
+&#64;<span class="tp">Test</span>
+<span class="kw">void</span> <span class="fn">throwsWhenUserNotFound</span>() &#123;
+    <span class="fn">when</span>(repo.<span class="fn">findById</span>(<span class="num">99L</span>)).<span class="fn">thenReturn</span>(<span class="kw">null</span>);
+    <span class="tp">UserService</span> svc = <span class="kw">new</span> <span class="fn">UserService</span>(repo);
+    <span class="fn">assertThrows</span>(<span class="tp">NotFoundException</span>.<span class="kw">class</span>,
+        () -&gt; svc.<span class="fn">getOrThrow</span>(<span class="num">99L</span>));
+&#125;
+
+<span class="cmt">// common assertions</span>
+<span class="fn">assertEquals</span>(expected, actual);
+<span class="fn">assertNotNull</span>(value);
+<span class="fn">assertTrue</span>(condition);
+<span class="fn">assertIterableEquals</span>(listA, listB);</pre></div>
+      </app-code-tabs>
+    </div>
+
     <div class="card">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">useful keywords</span></div>
       <div class="pills-body">
@@ -199,6 +276,193 @@ token.<span class="fn">substring</span>(<span class="num">7</span>)     <span cl
       </div>
     </div>
 
+  </div>
+
+  <div class="testing-section">
+    <div class="testing-header">
+      <div class="testing-header-title">// <span>testing</span></div>
+      <div class="testing-header-stack"><a href="https://junit.org/junit5" target="_blank" rel="noopener">JUnit 5</a> · <a href="https://site.mockito.org" target="_blank" rel="noopener">Mockito</a> · <a href="https://www.jacoco.org" target="_blank" rel="noopener">JaCoCo</a> · <a href="https://www.selenium.dev" target="_blank" rel="noopener">Selenium</a></div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">concepts</span></div>
+        <div class="pills-body">
+          <span class="pill pill-blue">unit — single class, all deps mocked</span>
+          <span class="pill pill-teal">integration — real dependencies, no browser</span>
+          <span class="pill pill-amber">e2e — full user flow via browser (Selenium)</span>
+          <span class="pill pill-red">mock — Mockito.mock() swaps a dependency</span>
+          <span class="pill pill-purple">stub — when().thenReturn() forces a response</span>
+          <span class="pill pill-blue">spy — wraps real object, records calls</span>
+          <span class="pill pill-teal">ArgumentCaptor — inspect what was passed to a mock</span>
+          <span class="pill pill-amber">&#64;InjectMocks — wires mocks into the class under test</span>
+          <span class="pill pill-purple">coverage — % lines/branches (JaCoCo)</span>
+          <span class="pill pill-red">AAA — Arrange · Act · Assert</span>
+          <span class="pill pill-blue">TDD — write the failing test before the code</span>
+          <span class="pill pill-teal">test pyramid — many unit · some integration · few e2e</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">setup &amp; run</span></div>
+        <div class="code-block"><pre><span class="cmt">&lt;!-- pom.xml --&gt;</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.junit.jupiter&lt;/groupId&gt;
+  &lt;artifactId&gt;junit-jupiter&lt;/artifactId&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.mockito&lt;/groupId&gt;
+  &lt;artifactId&gt;mockito-core&lt;/artifactId&gt;
+  &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+
+<span class="cmt"># run</span>
+mvn test
+gradle test
+mvn test -Dtest=<span class="tp">UserServiceTest</span>  <span class="cmt"># filter</span>
+
+<span class="cmt"># coverage (JaCoCo)</span>
+mvn test jacoco:report
+open target/site/jacoco/index.html</pre></div>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">unit tests</span></div>
+        <app-code-tabs [tabs]="['Lifecycle', 'Assert API', '@InjectMocks']">
+          <div class="code-block" ct1><pre><span class="ann">&#64;ExtendWith</span>(<span class="tp">MockitoExtension</span>.<span class="kw">class</span>)
+<span class="kw">class</span> <span class="tp">CalculatorTest</span> &#123;
+    <span class="kw">private</span> <span class="tp">Calculator</span> calc;
+
+    &#64;<span class="tp">BeforeAll</span>
+    <span class="kw">static void</span> <span class="fn">globalSetup</span>() &#123; &#125;
+
+    &#64;<span class="tp">BeforeEach</span>
+    <span class="kw">void</span> <span class="fn">setUp</span>() &#123;
+      calc = <span class="kw">new</span> <span class="tp">Calculator</span>();
+    &#125;
+
+    &#64;<span class="tp">AfterEach</span>
+    <span class="kw">void</span> <span class="fn">tearDown</span>() &#123; &#125;
+
+    &#64;<span class="tp">Test</span>
+    <span class="kw">void</span> <span class="fn">addsTwoNumbers</span>() &#123;
+        <span class="fn">assertEquals</span>(<span class="num">5</span>, calc.<span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>));
+    &#125;
+
+    &#64;<span class="tp">Test</span>
+    <span class="kw">void</span> <span class="fn">divideByZeroThrows</span>() &#123;
+        <span class="fn">assertThrows</span>(<span class="tp">ArithmeticException</span>.<span class="kw">class</span>,
+            () -&gt; calc.<span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>));
+    &#125;
+&#125;</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// assert API</span>
+<span class="fn">assertEquals</span>(expected, actual);
+<span class="fn">assertNotEquals</span>(a, b);
+<span class="fn">assertTrue</span>(condition);
+<span class="fn">assertFalse</span>(condition);
+<span class="fn">assertNull</span>(value);
+<span class="fn">assertNotNull</span>(value);
+<span class="fn">assertIterableEquals</span>(listA, listB);
+<span class="fn">assertThrows</span>(<span class="tp">NotFoundException</span>.<span class="kw">class</span>,
+    () -&gt; svc.<span class="fn">get</span>(<span class="num">99L</span>));
+<span class="fn">assertDoesNotThrow</span>(() -&gt; svc.<span class="fn">process</span>());
+
+<span class="cmt">// data-driven</span>
+&#64;<span class="tp">ParameterizedTest</span>
+&#64;<span class="tp">CsvSource</span>(&#123;<span class="str">"1,1,2"</span>, <span class="str">"0,5,5"</span>, <span class="str">"-1,1,0"</span>&#125;)
+<span class="kw">void</span> <span class="fn">addCases</span>(<span class="kw">int</span> a, <span class="kw">int</span> b, <span class="kw">int</span> expected) &#123;
+    <span class="fn">assertEquals</span>(expected, calc.<span class="fn">add</span>(a, b));
+&#125;</pre></div>
+          <div class="code-block" ct3><pre><span class="ann">&#64;ExtendWith</span>(<span class="tp">MockitoExtension</span>.<span class="kw">class</span>)
+<span class="kw">class</span> <span class="tp">UserServiceTest</span> &#123;
+
+    &#64;<span class="tp">Mock</span> <span class="tp">UserRepository</span> repo;
+    &#64;<span class="tp">Mock</span> <span class="tp">Mailer</span> mailer;
+    &#64;<span class="tp">InjectMocks</span> <span class="tp">UserService</span> svc;
+
+    &#64;<span class="tp">Test</span>
+    <span class="kw">void</span> <span class="fn">savesNewUser</span>() &#123;
+        <span class="tp">User</span> user = <span class="kw">new</span> <span class="fn">User</span>(<span class="str">"alice"</span>);
+        svc.<span class="fn">create</span>(user);
+        <span class="fn">verify</span>(repo, <span class="fn">times</span>(<span class="num">1</span>)).<span class="fn">save</span>(user);
+    &#125;
+
+    &#64;<span class="tp">Test</span>
+    <span class="kw">void</span> <span class="fn">throwsWhenNotFound</span>() &#123;
+        <span class="fn">when</span>(repo.<span class="fn">findById</span>(<span class="num">99L</span>))
+            .<span class="fn">thenReturn</span>(<span class="kw">null</span>);
+        <span class="fn">assertThrows</span>(
+            <span class="tp">NotFoundException</span>.<span class="kw">class</span>,
+            () -&gt; svc.<span class="fn">getOrThrow</span>(<span class="num">99L</span>));
+    &#125;
+&#125;</pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">mocking &amp; test doubles</span></div>
+        <app-code-tabs [tabs]="['Matchers', 'Captor / Spy', 'Integration']">
+          <div class="code-block" ct1><pre><span class="cmt">// argument matchers</span>
+<span class="fn">verify</span>(repo).<span class="fn">save</span>(<span class="fn">any</span>(<span class="tp">User</span>.<span class="kw">class</span>));
+<span class="fn">verify</span>(mailer).<span class="fn">send</span>(
+    <span class="fn">eq</span>(<span class="str">"alice&#64;example.com"</span>), <span class="fn">anyString</span>());
+<span class="fn">verify</span>(repo, <span class="fn">never</span>()).<span class="fn">delete</span>(<span class="fn">anyLong</span>());
+<span class="fn">verify</span>(mailer, <span class="fn">atLeast</span>(<span class="num">1</span>))
+    .<span class="fn">send</span>(<span class="fn">any</span>(), <span class="fn">any</span>());
+
+<span class="cmt">// stub chaining</span>
+<span class="fn">when</span>(repo.<span class="fn">findById</span>(<span class="num">1L</span>))
+    .<span class="fn">thenReturn</span>(user)         <span class="cmt">// first call</span>
+    .<span class="fn">thenThrow</span>(<span class="tp">DbException</span>.<span class="kw">class</span>); <span class="cmt">// next</span>
+
+<span class="cmt">// stub void method</span>
+<span class="fn">doNothing</span>().<span class="fn">when</span>(mailer)
+    .<span class="fn">send</span>(<span class="fn">any</span>(), <span class="fn">any</span>());
+<span class="fn">doThrow</span>(<span class="kw">new</span> <span class="tp">MailException</span>())
+    .<span class="fn">when</span>(mailer).<span class="fn">send</span>(<span class="fn">any</span>(), <span class="fn">any</span>());</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// ArgumentCaptor — inspect call args</span>
+<span class="tp">ArgumentCaptor</span>&lt;<span class="tp">User</span>&gt; captor =
+    <span class="tp">ArgumentCaptor</span>.<span class="fn">forClass</span>(<span class="tp">User</span>.<span class="kw">class</span>);
+<span class="fn">verify</span>(repo).<span class="fn">save</span>(captor.<span class="fn">capture</span>());
+<span class="fn">assertEquals</span>(<span class="str">"alice"</span>,
+    captor.<span class="fn">getValue</span>().<span class="fn">getName</span>());
+
+<span class="cmt">// spy — wraps real object</span>
+<span class="tp">List</span>&lt;<span class="tp">String</span>&gt; real = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;&gt;();
+<span class="tp">List</span>&lt;<span class="tp">String</span>&gt; spied = <span class="fn">spy</span>(real);
+
+spied.<span class="fn">add</span>(<span class="str">"hello"</span>);
+<span class="fn">verify</span>(spied).<span class="fn">add</span>(<span class="str">"hello"</span>);
+<span class="fn">assertEquals</span>(<span class="num">1</span>, spied.<span class="fn">size</span>());
+
+<span class="cmt">// partial stub on spy</span>
+<span class="fn">doReturn</span>(<span class="num">42</span>).<span class="fn">when</span>(spied).<span class="fn">size</span>();</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt">// integration — real file I/O</span>
+&#64;<span class="tp">TempDir</span>
+<span class="tp">Path</span> tmpDir;
+
+&#64;<span class="tp">Test</span>
+<span class="kw">void</span> <span class="fn">logsToFile</span>() <span class="kw">throws</span> <span class="tp">IOException</span> &#123;
+    <span class="tp">Path</span> log = tmpDir.<span class="fn">resolve</span>(<span class="str">"app.log"</span>);
+    <span class="kw">new</span> <span class="tp">FileLogger</span>(log).<span class="fn">log</span>(<span class="str">"hello"</span>);
+
+    <span class="tp">String</span> content =
+        <span class="tp">Files</span>.<span class="fn">readString</span>(log);
+    <span class="fn">assertTrue</span>(content
+        .<span class="fn">contains</span>(<span class="str">"hello"</span>));
+&#125;
+
+<span class="cmt">// coverage enforcement (pom.xml)</span>
+&lt;limit&gt;
+  &lt;counter&gt;LINE&lt;/counter&gt;
+  &lt;minimum&gt;0.80&lt;/minimum&gt;
+&lt;/limit&gt;
+<span class="cmt">// mvn verify fails if under 80%</span></pre></div>
+        </app-code-tabs>
+      </div>
+
+    </div>
   </div>
 </div>
 

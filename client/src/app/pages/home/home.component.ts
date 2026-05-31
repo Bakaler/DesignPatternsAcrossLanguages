@@ -38,7 +38,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.startTypewriter();
-    this.animateCount(5, v => this.displayLanguages  = v, 0);
+    this.animateCount(6, v => this.displayLanguages  = v, 0);
     this.animateCount(3, v => this.displayCategories = v, 120);
 
     this.http.get<{ implementations: number; patterns: number }>('/api/stats').subscribe({

@@ -832,6 +832,9 @@
   margin: 0;
 }
 
+::ng-deep .feature-body a { color: #8a8a9e; text-decoration: underline; text-underline-offset: 3px; transition: color 0.15s; }
+::ng-deep .feature-body a:hover { color: var(--fg); }
+
 .feature-body code {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.7rem;

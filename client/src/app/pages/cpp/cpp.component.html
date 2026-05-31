@@ -75,8 +75,8 @@ g++ -std=c++17 -o app *.cpp
     <!-- classes & OOP -->
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">classes &amp; OOP</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// abstract base class</span>
+      <app-code-tabs [tabs]="['Abstract', 'Implementation', 'Rule of Five']">
+        <div class="code-block" ct1><pre><span class="cmt">// abstract base class</span>
 <span class="kw">class</span> <span class="tp">Repository</span> &#123;
 <span class="kw">public</span>:
     <span class="kw">virtual</span> ~<span class="tp">Repository</span>() = <span class="kw">default</span>;
@@ -85,7 +85,7 @@ g++ -std=c++17 -o app *.cpp
 <span class="kw">protected</span>:
     <span class="tp">std::string</span> connStr;
 &#125;;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// concrete implementation</span>
+        <div class="code-block" ct2><pre><span class="cmt">// concrete implementation</span>
 <span class="kw">class</span> <span class="tp">PgRepository</span> : <span class="kw">public</span> <span class="tp">Repository</span> &#123;
 <span class="kw">public</span>:
     <span class="kw">explicit</span> <span class="tp">PgRepository</span>(<span class="tp">std::string</span> conn)
@@ -96,7 +96,7 @@ g++ -std=c++17 -o app *.cpp
 <span class="kw">private</span>:
     <span class="kw">void</span> <span class="fn">connect</span>();
 &#125;;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// constructor member init list</span>
+        <div class="code-block" ct3><pre><span class="cmt">// constructor member init list</span>
 <span class="tp">Server</span>::<span class="fn">Server</span>(<span class="tp">std::string</span> h, <span class="kw">int</span> p)
     : host&#123;<span class="fn">std::move</span>(h)&#125;
     , port&#123;p&#125;
@@ -111,21 +111,21 @@ g++ -std=c++17 -o app *.cpp
 <span class="tp">MyClass</span>(<span class="tp">MyClass</span>&amp;&amp;) <span class="kw">noexcept</span>;         <span class="cmt">// move ctor</span>
 <span class="tp">MyClass</span>&amp; <span class="kw">operator</span>=(<span class="tp">MyClass</span>&amp;&amp;);       <span class="cmt">// move assign</span>
 ~<span class="tp">MyClass</span>();                           <span class="cmt">// destructor</span></pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <!-- templates -->
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">templates</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// function template</span>
+      <app-code-tabs [tabs]="['Function', 'Class', 'Concept (C++20)']">
+        <div class="code-block" ct1><pre><span class="cmt">// function template</span>
 <span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="tp">T</span>&gt;
 <span class="tp">T</span> <span class="fn">clamp</span>(<span class="tp">T</span> val, <span class="tp">T</span> lo, <span class="tp">T</span> hi) &#123;
     <span class="kw">return</span> val &lt; lo ? lo : val &gt; hi ? hi : val;
 &#125;
 
 <span class="kw">auto</span> p = <span class="fn">clamp</span>(<span class="num">8080</span>, <span class="num">1024</span>, <span class="num">65535</span>); <span class="cmt">// int</span></pre></div>
-        <div class="code-block"><pre><span class="cmt">// class template — typed cache</span>
+        <div class="code-block" ct2><pre><span class="cmt">// class template — typed cache</span>
 <span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="tp">K</span>, <span class="kw">typename</span> <span class="tp">V</span>&gt;
 <span class="kw">class</span> <span class="tp">Cache</span> &#123;
 <span class="kw">public</span>:
@@ -136,7 +136,7 @@ g++ -std=c++17 -o app *.cpp
 <span class="kw">private</span>:
     <span class="tp">std::unordered_map</span>&lt;<span class="tp">K</span>, <span class="tp">V</span>&gt; store;
 &#125;;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// concept constraint (C++20)</span>
+        <div class="code-block" ct3><pre><span class="cmt">// concept constraint (C++20)</span>
 <span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="tp">T</span>&gt;
 <span class="kw">concept</span> <span class="tp">Serialisable</span> =
     <span class="kw">requires</span>(<span class="tp">T</span> t) &#123;
@@ -147,14 +147,14 @@ g++ -std=c++17 -o app *.cpp
 <span class="kw">void</span> <span class="fn">send</span>(<span class="kw">const</span> <span class="tp">T</span>&amp; payload) &#123;
     <span class="fn">transmit</span>(payload.<span class="fn">toJson</span>());
 &#125;</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <!-- STL containers -->
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">STL containers</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// vector — dynamic array</span>
+      <app-code-tabs [tabs]="['vector', 'map', 'queue / set']">
+        <div class="code-block" ct1><pre><span class="cmt">// vector — dynamic array</span>
 <span class="tp">std::vector</span>&lt;<span class="tp">std::string</span>&gt; routes;
 routes.<span class="fn">push_back</span>(<span class="str">"/api/users"</span>);
 routes.<span class="fn">emplace_back</span>(<span class="str">"/api/orders"</span>);
@@ -163,7 +163,7 @@ routes.<span class="fn">reserve</span>(<span class="num">64</span>);   <span cla
 <span class="cmt">// range-for</span>
 <span class="kw">for</span> (<span class="kw">const auto</span>&amp; r : routes)
     <span class="fn">registerRoute</span>(r);</pre></div>
-        <div class="code-block"><pre><span class="cmt">// unordered_map — O(1) lookup</span>
+        <div class="code-block" ct2><pre><span class="cmt">// unordered_map — O(1) lookup</span>
 <span class="tp">std::unordered_map</span>&lt;<span class="tp">std::string</span>, <span class="tp">User</span>&gt; cache;
 cache[<span class="str">"usr_42"</span>] = user;
 
@@ -174,7 +174,7 @@ cache[<span class="str">"usr_42"</span>] = user;
 
 <span class="cmt">// ordered map — sorted keys</span>
 <span class="tp">std::map</span>&lt;<span class="tp">int</span>, <span class="tp">Order</span>&gt; orderById;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// queue / stack</span>
+        <div class="code-block" ct3><pre><span class="cmt">// queue / stack</span>
 <span class="tp">std::queue</span>&lt;<span class="tp">Task</span>&gt; jobQueue;
 jobQueue.<span class="fn">push</span>(task);
 <span class="kw">auto</span> next = jobQueue.<span class="fn">front</span>();
@@ -185,7 +185,7 @@ jobQueue.<span class="fn">pop</span>();
 <span class="cmt">// set — unique sorted values</span>
 <span class="tp">std::unordered_set</span>&lt;<span class="tp">std::string</span>&gt; seen;
 <span class="kw">if</span> (!seen.<span class="fn">count</span>(id)) seen.<span class="fn">insert</span>(id);</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <!-- memory management -->
@@ -357,6 +357,272 @@ handler = [&amp;](<span class="kw">const</span> <span class="tp">Request</span>&
       </div>
     </div>
 
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">testing — google test + mock</span></div>
+      <app-code-tabs [tabs]="['Setup', 'TEST_F', 'Mock']">
+        <div class="code-block" ct1><pre><span class="cmt"># CMakeLists.txt (FetchContent)</span>
+<span class="fn">FetchContent_Declare</span>(googletest ...)
+<span class="fn">target_link_libraries</span>(tests gtest_main gmock)
+
+<span class="cmt"># compile + run</span>
+cmake --build build
+ctest --test-dir build
+
+<span class="cmt"># or single file</span>
+g++ -std=c++17 -lgtest -lgtest_main \
+    unit_test.cpp -o test &amp;&amp; ./test
+
+<span class="cmt">// structure — free test</span>
+<span class="pp">#include</span> <span class="str">&lt;gtest/gtest.h&gt;</span>
+
+<span class="fn">TEST</span>(<span class="tp">SuiteName</span>, <span class="tp">TestName</span>) &#123;
+    <span class="fn">EXPECT_EQ</span>(<span class="num">2</span> + <span class="num">2</span>, <span class="num">4</span>);
+&#125;</pre></div>
+        <div class="code-block" ct2><pre><span class="pp">#include</span> <span class="str">&lt;gtest/gtest.h&gt;</span>
+<span class="pp">#include</span> <span class="str">"Stack.hpp"</span>
+
+<span class="cmt">// fixture — shared setup</span>
+<span class="kw">class</span> <span class="tp">StackTest</span> : <span class="kw">public</span> <span class="tp">testing::Test</span> &#123;
+<span class="kw">protected</span>:
+    <span class="tp">Stack</span>&lt;<span class="kw">int</span>&gt; stack;
+&#125;;
+
+<span class="fn">TEST_F</span>(<span class="tp">StackTest</span>, <span class="tp">PushIncreasesSize</span>) &#123;
+    stack.<span class="fn">push</span>(<span class="num">1</span>);
+    <span class="fn">EXPECT_EQ</span>(stack.<span class="fn">size</span>(), <span class="num">1u</span>);
+&#125;
+
+<span class="fn">TEST_F</span>(<span class="tp">StackTest</span>, <span class="tp">PopReturnsLastValue</span>) &#123;
+    stack.<span class="fn">push</span>(<span class="num">42</span>);
+    <span class="fn">EXPECT_EQ</span>(stack.<span class="fn">pop</span>(), <span class="num">42</span>);
+&#125;
+
+<span class="fn">TEST_F</span>(<span class="tp">StackTest</span>, <span class="tp">PopOnEmptyThrows</span>) &#123;
+    <span class="fn">EXPECT_THROW</span>(stack.<span class="fn">pop</span>(),
+                 <span class="tp">std::underflow_error</span>);
+&#125;</pre></div>
+        <div class="code-block" ct3><pre><span class="pp">#include</span> <span class="str">&lt;gmock/gmock.h&gt;</span>
+<span class="kw">using</span> <span class="kw">namespace</span> testing;
+
+<span class="cmt">// mock class</span>
+<span class="kw">class</span> <span class="tp">MockUserRepo</span> : <span class="kw">public</span> <span class="tp">UserRepository</span> &#123;
+<span class="kw">public</span>:
+    <span class="fn">MOCK_METHOD</span>(<span class="tp">User</span>, <span class="fn">findById</span>, (<span class="kw">int</span> id), (<span class="kw">override</span>));
+    <span class="fn">MOCK_METHOD</span>(<span class="kw">void</span>, <span class="fn">save</span>, (<span class="kw">const</span> <span class="tp">User</span>&amp;), (<span class="kw">override</span>));
+&#125;;
+
+<span class="fn">TEST</span>(<span class="tp">UserServiceTest</span>, <span class="tp">SavesNewUser</span>) &#123;
+    <span class="tp">MockUserRepo</span> repo;
+    <span class="fn">EXPECT_CALL</span>(repo, <span class="fn">save</span>(<span class="fn">_</span>)).<span class="fn">Times</span>(<span class="num">1</span>);
+
+    <span class="tp">UserService</span> <span class="fn">svc</span>(repo);
+    svc.<span class="fn">create</span>(&#123;<span class="str">"alice"</span>&#125;);
+&#125;
+
+<span class="cmt">// common macros</span>
+<span class="fn">EXPECT_EQ</span>(a, b);      <span class="cmt">// non-fatal ==</span>
+<span class="fn">ASSERT_EQ</span>(a, b);      <span class="cmt">// fatal ==</span>
+<span class="fn">EXPECT_TRUE</span>(cond);
+<span class="fn">EXPECT_THAT</span>(vec, <span class="fn">Contains</span>(<span class="num">42</span>));</pre></div>
+      </app-code-tabs>
+    </div>
+
+  </div>
+
+  <div class="testing-section">
+    <div class="testing-header">
+      <div class="testing-header-title">// <span>testing</span></div>
+      <div class="testing-header-stack"><a href="https://google.github.io/googletest" target="_blank" rel="noopener">Google Test</a> · <a href="https://google.github.io/googletest" target="_blank" rel="noopener">Google Mock</a> · <a href="https://gcc.gnu.org/onlinedocs/gcc/Gcov.html" target="_blank" rel="noopener">gcov</a>/<a href="https://github.com/linux-test-project/lcov" target="_blank" rel="noopener">lcov</a> · sanitizers</div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">concepts</span></div>
+        <div class="pills-body">
+          <span class="pill pill-blue">unit — single class, all deps mocked</span>
+          <span class="pill pill-teal">integration — real dependencies, file/socket I/O</span>
+          <span class="pill pill-amber">TEST() — free-standing test (no fixture)</span>
+          <span class="pill pill-red">TEST_F() — test with a fixture class</span>
+          <span class="pill pill-purple">MOCK_METHOD() — declares a mockable method</span>
+          <span class="pill pill-blue">EXPECT_CALL() — sets expectation + stub</span>
+          <span class="pill pill-teal">ON_CALL() — stub without expectation</span>
+          <span class="pill pill-amber">EXPECT_ — non-fatal, test continues on fail</span>
+          <span class="pill pill-purple">ASSERT_ — fatal, stops the test on fail</span>
+          <span class="pill pill-red">coverage — gcov/lcov line + branch tracking</span>
+          <span class="pill pill-blue">sanitizers — ASan/UBSan catch memory bugs</span>
+          <span class="pill pill-teal">test pyramid — many unit · some integration · few e2e</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">setup &amp; run</span></div>
+        <div class="code-block"><pre><span class="cmt"># CMakeLists.txt</span>
+<span class="fn">FetchContent_Declare</span>(googletest
+  <span class="tp">URL</span> https://github.com/google/
+      googletest/archive/main.zip)
+<span class="fn">FetchContent_MakeAvailable</span>(googletest)
+
+<span class="fn">add_executable</span>(unit_tests
+  test/calc_test.cpp
+  test/service_test.cpp)
+<span class="fn">target_link_libraries</span>(unit_tests
+  gtest gmock gtest_main)
+
+<span class="cmt"># build + run</span>
+cmake -B build
+cmake --build build
+ctest --test-dir build -V
+
+<span class="cmt"># or directly</span>
+./build/unit_tests --gtest_filter=<span class="str">"Stack*"</span></pre></div>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">unit tests</span></div>
+        <app-code-tabs [tabs]="['TEST_F Fixture', 'Macros', 'GoogleMock']">
+          <div class="code-block" ct1><pre><span class="pp">#include</span> <span class="str">&lt;gtest/gtest.h&gt;</span>
+<span class="pp">#include</span> <span class="str">"Calculator.hpp"</span>
+
+<span class="cmt">// fixture — shared setup/teardown</span>
+<span class="kw">class</span> <span class="tp">CalculatorTest</span>
+    : <span class="kw">public</span> <span class="tp">testing::Test</span> &#123;
+<span class="kw">protected</span>:
+    <span class="tp">Calculator</span> calc;
+
+    <span class="kw">void</span> <span class="fn">SetUp</span>() <span class="kw">override</span>
+      &#123; <span class="cmt">/* before each */</span> &#125;
+    <span class="kw">void</span> <span class="fn">TearDown</span>() <span class="kw">override</span>
+      &#123; <span class="cmt">/* after each */</span> &#125;
+&#125;;
+
+<span class="fn">TEST_F</span>(<span class="tp">CalculatorTest</span>, <span class="tp">AddsTwoNumbers</span>) &#123;
+    <span class="fn">EXPECT_EQ</span>(calc.<span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>), <span class="num">5</span>);
+&#125;
+
+<span class="fn">TEST_F</span>(<span class="tp">CalculatorTest</span>, <span class="tp">DivideByZeroThrows</span>) &#123;
+    <span class="fn">EXPECT_THROW</span>(calc.<span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>),
+                 <span class="tp">std::domain_error</span>);
+&#125;</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// assert macros</span>
+<span class="fn">EXPECT_EQ</span>(actual, expected);  <span class="cmt">// non-fatal</span>
+<span class="fn">ASSERT_EQ</span>(actual, expected);  <span class="cmt">// fatal</span>
+<span class="fn">EXPECT_NE</span>(a, b);
+<span class="fn">EXPECT_LT</span>(a, b);   <span class="cmt">// a &lt; b</span>
+<span class="fn">EXPECT_TRUE</span>(condition);
+<span class="fn">EXPECT_FALSE</span>(condition);
+<span class="fn">ASSERT_NE</span>(ptr, <span class="kw">nullptr</span>);
+<span class="fn">EXPECT_STREQ</span>(<span class="str">"hello"</span>, cstr);
+<span class="fn">EXPECT_NEAR</span>(<span class="num">3.14</span>, result, <span class="num">1e-2</span>);
+<span class="fn">EXPECT_THROW</span>(fn(), <span class="tp">std::runtime_error</span>);
+<span class="fn">EXPECT_NO_THROW</span>(fn());
+
+<span class="cmt">// parametrized test</span>
+<span class="kw">class</span> <span class="tp">AddTest</span>
+    : <span class="kw">public</span> <span class="tp">testing::TestWithParam</span>&lt;
+        <span class="tp">std::tuple</span>&lt;<span class="kw">int</span>,<span class="kw">int</span>,<span class="kw">int</span>&gt;&gt; &#123;&#125;;
+
+<span class="fn">TEST_P</span>(<span class="tp">AddTest</span>, <span class="tp">Cases</span>) &#123;
+    <span class="kw">auto</span> [a, b, want] = <span class="fn">GetParam</span>();
+    <span class="fn">EXPECT_EQ</span>(<span class="tp">Calculator</span>&#123;&#125;.<span class="fn">add</span>(a,b), want);
+&#125;
+<span class="fn">INSTANTIATE_TEST_SUITE_P</span>(<span class="tp">AddCases</span>, <span class="tp">AddTest</span>,
+    <span class="fn">testing::Values</span>(
+        std::<span class="fn">make_tuple</span>(<span class="num">1</span>,<span class="num">1</span>,<span class="num">2</span>),
+        std::<span class="fn">make_tuple</span>(<span class="num">0</span>,<span class="num">5</span>,<span class="num">5</span>)));</pre></div>
+          <div class="code-block" ct3><pre><span class="pp">#include</span> <span class="str">&lt;gmock/gmock.h&gt;</span>
+<span class="kw">using namespace</span> testing;
+
+<span class="kw">class</span> <span class="tp">MockUserRepo</span>
+    : <span class="kw">public</span> <span class="tp">UserRepository</span> &#123;
+<span class="kw">public</span>:
+    <span class="fn">MOCK_METHOD</span>(<span class="tp">User</span>, <span class="fn">findById</span>,
+                (<span class="kw">int</span> id), (<span class="kw">override</span>));
+    <span class="fn">MOCK_METHOD</span>(<span class="kw">void</span>, <span class="fn">save</span>,
+                (<span class="kw">const</span> <span class="tp">User</span>&amp;), (<span class="kw">override</span>));
+&#125;;
+
+<span class="fn">TEST</span>(<span class="tp">UserServiceTest</span>, <span class="tp">SavesNewUser</span>) &#123;
+    <span class="tp">MockUserRepo</span> repo;
+    <span class="fn">EXPECT_CALL</span>(repo, <span class="fn">save</span>(<span class="fn">_</span>)).<span class="fn">Times</span>(<span class="num">1</span>);
+
+    <span class="tp">UserService</span> <span class="fn">svc</span>(repo);
+    svc.<span class="fn">create</span>(&#123;<span class="str">"alice"</span>&#125;);
+&#125;</pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">mocking, integration &amp; coverage</span></div>
+        <app-code-tabs [tabs]="['Mocks', 'Integration', 'Coverage']">
+          <div class="code-block" ct1><pre><span class="cmt">// stub return + throw</span>
+<span class="fn">ON_CALL</span>(repo, <span class="fn">findById</span>(<span class="num">1</span>))
+    .<span class="fn">WillByDefault</span>(<span class="fn">Return</span>(<span class="tp">User</span>&#123;<span class="str">"alice"</span>&#125;));
+<span class="fn">ON_CALL</span>(repo, <span class="fn">findById</span>(<span class="num">99</span>))
+    .<span class="fn">WillByDefault</span>(
+        <span class="fn">Throw</span>(<span class="tp">NotFoundException</span>&#123;&#125;));
+
+<span class="cmt">// argument matchers</span>
+<span class="fn">EXPECT_CALL</span>(repo,
+    <span class="fn">save</span>(<span class="fn">Field</span>(&amp;<span class="tp">User</span>::name,
+               <span class="fn">Eq</span>(<span class="str">"alice"</span>))));
+<span class="fn">EXPECT_CALL</span>(repo,
+    <span class="fn">findById</span>(<span class="fn">Gt</span>(<span class="num">0</span>))).<span class="fn">Times</span>(<span class="fn">AnyNumber</span>());
+
+<span class="cmt">// enforce order</span>
+<span class="tp">InSequence</span> seq;
+<span class="fn">EXPECT_CALL</span>(repo, <span class="fn">findById</span>(<span class="num">1</span>));
+<span class="fn">EXPECT_CALL</span>(repo, <span class="fn">save</span>(<span class="fn">_</span>));</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// integration — real file system</span>
+<span class="kw">class</span> <span class="tp">FileLoggerTest</span>
+    : <span class="kw">public</span> <span class="tp">testing::Test</span> &#123;
+<span class="kw">protected</span>:
+    <span class="tp">fs::path</span> tmpDir;
+    <span class="kw">void</span> <span class="fn">SetUp</span>() <span class="kw">override</span> &#123;
+        tmpDir = <span class="tp">fs</span>::<span class="fn">temp_directory_path</span>()
+               / <span class="str">"test_logger"</span>;
+        <span class="tp">fs</span>::<span class="fn">create_directory</span>(tmpDir);
+    &#125;
+    <span class="kw">void</span> <span class="fn">TearDown</span>() <span class="kw">override</span> &#123;
+        <span class="tp">fs</span>::<span class="fn">remove_all</span>(tmpDir);
+    &#125;
+&#125;;
+
+<span class="fn">TEST_F</span>(<span class="tp">FileLoggerTest</span>, <span class="tp">WritesToDisk</span>) &#123;
+    <span class="tp">FileLogger</span> <span class="fn">log</span>(tmpDir / <span class="str">"app.log"</span>);
+    log.<span class="fn">write</span>(<span class="str">"hello world"</span>);
+    <span class="tp">std::ifstream</span> <span class="fn">f</span>(tmpDir / <span class="str">"app.log"</span>);
+    <span class="tp">std::string</span> content&#123;
+        <span class="tp">std::istreambuf_iterator</span>&lt;<span class="kw">char</span>&gt;(f),&#123;&#125;&#125;;
+    <span class="fn">EXPECT_THAT</span>(content,
+        <span class="fn">HasSubstr</span>(<span class="str">"hello world"</span>));
+&#125;</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt"># coverage — compile with --coverage</span>
+g++ -std=c++<span class="num">17</span> --coverage \
+    -fprofile-arcs -ftest-coverage \
+    -o tests src/*.cpp test/*.cpp
+./tests
+
+<span class="cmt"># generate HTML report</span>
+gcov src/*.cpp
+lcov --capture --directory . \
+     --output-file cov.info
+genhtml cov.info --output-directory cov/
+open cov/index.html
+
+<span class="cmt"># AddressSanitizer — memory errors</span>
+g++ -fsanitize=address,undefined \
+    -fno-omit-frame-pointer -g \
+    -o tests src/*.cpp test/*.cpp
+./tests
+<span class="cmt"># catches: use-after-free,</span>
+<span class="cmt">#          buffer overflow, UB</span>
+
+<span class="cmt"># ThreadSanitizer — data races</span>
+g++ -fsanitize=thread -g -o tests ...</pre></div>
+        </app-code-tabs>
+      </div>
+
+    </div>
   </div>
 </div>
 

@@ -503,11 +503,16 @@ export class AboutComponent implements AfterViewInit, OnDestroy {
     },
     {
       num: '05',
+      title: 'Testing Sections',
+      body: 'Every cheatsheet includes a dedicated testing chapter covering the canonical framework for that language — <a href="https://pytest.org" target="_blank" rel="noopener">pytest</a>, <a href="https://rspec.info" target="_blank" rel="noopener">RSpec</a>, <a href="https://junit.org/junit5" target="_blank" rel="noopener">JUnit 5</a>, <a href="https://xunit.net" target="_blank" rel="noopener">xUnit</a>, <a href="https://google.github.io/googletest" target="_blank" rel="noopener">Google Test</a>, and <a href="https://playwright.dev" target="_blank" rel="noopener">Playwright</a> (TypeScript). Each chapter covers setup, unit tests with fixtures and lifecycle hooks, mocking and test doubles, integration tests against real I/O, end-to-end tests, and coverage tooling.'
+    },
+    {
+      num: '06',
       title: 'Section Navigator',
       body: 'Code files use a <code>// SECTION::</code> comment convention. The viewer parses these at load time and builds a sticky TOC sidebar, letting you jump to any structural block without scrolling the whole file.'
     },
     {
-      num: '06',
+      num: '07',
       title: 'Output Panel',
       body: 'Each implementation ships with its captured console output displayed alongside the code. Both the code and output panels include a one-click copy button that confirms with a brief "✓ copied" state.'
     },
@@ -537,6 +542,11 @@ export class AboutComponent implements AfterViewInit, OnDestroy {
     },
     {
       num: '05',
+      title: 'Tabbed Code Panels',
+      body: 'Multi-column cheatsheet cards gain an "All / Column" tab bar. Clicking a tab isolates that column to full width; clicking the column directly does the same. A distance threshold on mousedown/mouseup distinguishes a click from a text-selection drag so copying code is never interrupted. Each interaction fires a sound cue through the shared audio engine.'
+    },
+    {
+      num: '06',
       title: 'Comment System',
       body: 'Each pattern has its own threaded comment section backed by PostgreSQL. Authentication is handled via GitHub or LinkedIn OAuth through Better Auth. Comments support rich text (bold, italic, code blocks, lists) via Quill, infinite reply threading capped at four visual levels, helpful/unhelpful voting with ratio-based sort order, and soft deletion. A server-side ban list silently discards flagged content without signalling the poster.'
     },

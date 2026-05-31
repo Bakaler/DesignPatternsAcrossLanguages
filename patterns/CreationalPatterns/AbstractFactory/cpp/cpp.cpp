@@ -531,6 +531,7 @@ public:
 
 static const std::string SEP(64, static_cast<char>(0xE2));  // visual separator
 
+#ifndef TESTING
 int main() {
     const std::string sep(64, '=');
 
@@ -577,3 +578,4 @@ int main() {
 
     return 0;
 }
+#endif // TESTING

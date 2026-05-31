@@ -96,6 +96,58 @@ app.get('/api/patterns/:category/:name/available', (req: Request, res: Response)
   res.json({ available });
 });
 
+// ── Test file reader ──────────────────────────────────────────────────────────
+const TESTS_DIR = path.join(__dirname, '..', 'patterns', '_tests');
+
+app.get('/api/tests/:category/:name/available', (req: Request, res: Response) => {
+  const { category, name } = req.params;
+  const lang = (req.query['lang'] as string) ?? 'typescript';
+
+  if (!/^[\w-]+$/.test(category) || !/^[\w-]+$/.test(name)) {
+    res.status(400).json({ error: 'Invalid path segment' });
+    return;
+  }
+
+  const ext = LANG_EXT[lang];
+  if (!ext) { res.json({ unit: false, integration: false }); return; }
+
+  const dir = path.join(TESTS_DIR, category, name, lang);
+  res.json({
+    unit:        fs.existsSync(path.join(dir, `unit.test.${ext}`)),
+    integration: fs.existsSync(path.join(dir, `integration.test.${ext}`)),
+  });
+});
+
+app.get('/api/tests/:category/:name', (req: Request, res: Response) => {
+  const { category, name } = req.params;
+  const lang = (req.query['lang'] as string) ?? 'typescript';
+  const type = (req.query['type'] as string) ?? 'unit'; // 'unit' | 'integration'
+
+  if (!/^[\w-]+$/.test(category) || !/^[\w-]+$/.test(name)) {
+    res.status(400).json({ error: 'Invalid path segment' });
+    return;
+  }
+
+  const ext = LANG_EXT[lang];
+  if (!ext) {
+    res.status(400).json({ error: `Unknown language: ${lang}` });
+    return;
+  }
+
+  const filePath   = path.join(TESTS_DIR, category, name, lang, `${type}.test.${ext}`);
+  const outputPath = path.join(TESTS_DIR, category, name, lang, `${type}.output`);
+
+  fs.readFile(filePath, 'utf-8', (err, content) => {
+    if (err) {
+      res.status(404).json({ exists: false, content: null, output: null });
+      return;
+    }
+    let output: string | null = null;
+    try { output = fs.readFileSync(outputPath, 'utf-8'); } catch { /* no output file */ }
+    res.json({ exists: true, content, lang, output });
+  });
+});
+
 app.get('/api/stats', (_req: Request, res: Response) => {
   let implementations = 0;
   const patterns      = new Set<string>();

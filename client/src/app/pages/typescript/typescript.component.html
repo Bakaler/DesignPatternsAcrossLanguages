@@ -59,15 +59,15 @@ tsc --watch</pre></div>
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">interfaces &amp; classes - repository pattern</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// repository interface</span>
+      <app-code-tabs [tabs]="['Interface', 'Implementation', 'Abstract Base']">
+        <div class="code-block" ct1><pre><span class="cmt">// repository interface</span>
 <span class="kw">interface</span> <span class="tp">IUserRepository</span> &#123;
     <span class="fn">findById</span>(id: <span class="tp">UserId</span>): <span class="tp">Promise</span>&lt;<span class="tp">User</span> | <span class="tp">null</span>&gt;;
     <span class="fn">findByEmail</span>(email: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">User</span> | <span class="tp">null</span>&gt;;
     <span class="fn">save</span>(user: <span class="tp">User</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;
     <span class="fn">delete</span>(id: <span class="tp">UserId</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;
 &#125;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// Postgres implementation</span>
+        <div class="code-block" ct2><pre><span class="cmt">// Postgres implementation</span>
 <span class="kw">class</span> <span class="tp">PgUserRepository</span> <span class="kw">implements</span> <span class="tp">IUserRepository</span> &#123;
     <span class="kw">constructor</span>(<span class="kw">private</span> db: <span class="tp">Pool</span>) &#123;&#125;
 
@@ -78,7 +78,7 @@ tsc --watch</pre></div>
         <span class="kw">return</span> row.rows[<span class="num">0</span>] ?? <span class="kw">null</span>;
     &#125;
 &#125;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// abstract base - shared query logic</span>
+        <div class="code-block" ct3><pre><span class="cmt">// abstract base - shared query logic</span>
 <span class="kw">abstract class</span> <span class="tp">BaseRepository</span>&lt;<span class="tp">T</span>&gt; &#123;
     <span class="kw">constructor</span>(<span class="kw">protected</span> db: <span class="tp">Pool</span>) &#123;&#125;
 
@@ -91,13 +91,13 @@ tsc --watch</pre></div>
         <span class="kw">return</span> res.rows;
     &#125;
 &#125;</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">generics - typed api layer</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// generic HTTP client</span>
+      <app-code-tabs [tabs]="['HTTP Client', 'Service Interface', 'Utility Types']">
+        <div class="code-block" ct1><pre><span class="cmt">// generic HTTP client</span>
 <span class="kw">async function</span> <span class="fn">get</span>&lt;<span class="tp">T</span>&gt;(url: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt; &#123;
     <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url);
     <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="tp">HttpError</span>(res.status);
@@ -105,20 +105,20 @@ tsc --watch</pre></div>
 &#125;
 
 <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">get</span>&lt;<span class="tp">User</span>&gt;(<span class="str">`/users/$&#123;id&#125;`</span>);</pre></div>
-        <div class="code-block"><pre><span class="cmt">// generic service interface</span>
+        <div class="code-block" ct2><pre><span class="cmt">// generic service interface</span>
 <span class="kw">interface</span> <span class="tp">IService</span>&lt;<span class="tp">T</span>, <span class="tp">CreateDto</span>&gt; &#123;
     <span class="fn">findAll</span>(): <span class="tp">Promise</span>&lt;<span class="tp">T</span>[]&gt;;
     <span class="fn">findById</span>(id: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt;;
     <span class="fn">create</span>(dto: <span class="tp">CreateDto</span>): <span class="tp">Promise</span>&lt;<span class="tp">T</span>&gt;;
     <span class="fn">delete</span>(id: <span class="tp">string</span>): <span class="tp">Promise</span>&lt;<span class="tp">void</span>&gt;;
 &#125;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// utility types on DB models</span>
+        <div class="code-block" ct3><pre><span class="cmt">// utility types on DB models</span>
 <span class="kw">type</span> <span class="tp">CreateUserDto</span> = <span class="tp">Omit</span>&lt;<span class="tp">User</span>, <span class="str">"id"</span> | <span class="str">"createdAt"</span>&gt;;
 <span class="kw">type</span> <span class="tp">UpdateUserDto</span> = <span class="tp">Partial</span>&lt;<span class="tp">CreateUserDto</span>&gt;;
 <span class="kw">type</span> <span class="tp">UserRow</span>       = <span class="tp">Readonly</span>&lt;<span class="tp">User</span>&gt;;
 <span class="kw">type</span> <span class="tp">Headers</span>       = <span class="tp">Record</span>&lt;<span class="tp">string</span>, <span class="tp">string</span>&gt;;
 <span class="kw">type</span> <span class="tp">RouteHandler</span>  = <span class="tp">ReturnType</span>&lt;<span class="kw">typeof</span> <span class="fn">createHandler</span>&gt;;</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card">
@@ -207,6 +207,271 @@ tsc --watch</pre></div>
       </div>
     </div>
 
+  </div>
+
+  <div class="testing-section">
+    <div class="testing-header">
+      <div class="testing-header-title">// <span>testing</span></div>
+      <div class="testing-header-stack"><a href="https://mochajs.org" target="_blank" rel="noopener">Mocha</a> · <a href="https://nodejs.org/api/assert.html" target="_blank" rel="noopener">node:assert</a> · <a href="https://github.com/istanbuljs/nyc" target="_blank" rel="noopener">nyc</a> · <a href="https://playwright.dev" target="_blank" rel="noopener">Playwright</a></div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">concepts</span></div>
+        <div class="pills-body">
+          <span class="pill pill-blue">unit — single function or class, all deps faked</span>
+          <span class="pill pill-teal">integration — real dependencies, no browser</span>
+          <span class="pill pill-amber">e2e — full user flow through a real browser</span>
+          <span class="pill pill-red">mock — controlled fake replacing a dependency</span>
+          <span class="pill pill-purple">stub — forces a return value or throws an error</span>
+          <span class="pill pill-blue">spy — records calls while delegating to real logic</span>
+          <span class="pill pill-teal">fake — lightweight in-memory implementation</span>
+          <span class="pill pill-amber">test suite — describe block grouping related tests</span>
+          <span class="pill pill-purple">coverage — % of lines and branches exercised</span>
+          <span class="pill pill-red">AAA — Arrange · Act · Assert</span>
+          <span class="pill pill-blue">TDD — write the failing test before the code</span>
+          <span class="pill pill-teal">test pyramid — many unit · some integration · few e2e</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">setup &amp; run</span></div>
+        <div class="code-block"><pre><span class="cmt"># install</span>
+npm i -D mocha &#64;types/mocha ts-node nyc
+
+<span class="cmt"># .mocharc.json</span>
+&#123; <span class="str">"require"</span>: [<span class="str">"ts-node/register"</span>],
+  <span class="str">"spec"</span>:    <span class="str">"**/*.test.ts"</span> &#125;
+
+<span class="cmt"># run</span>
+npx mocha
+npx mocha --grep <span class="str">"Stack"</span>         <span class="cmt"># filter</span>
+npx mocha test/unit/              <span class="cmt"># folder</span>
+
+<span class="cmt"># coverage (nyc / Istanbul)</span>
+npx nyc mocha
+npx nyc report --reporter=html    <span class="cmt"># → coverage/</span>
+npx nyc check-coverage            <span class="cmt"># enforce</span>
+
+<span class="cmt"># .nycrc</span>
+&#123; <span class="str">"include"</span>: [<span class="str">"src/**/*.ts"</span>],
+  <span class="str">"branches"</span>: <span class="num">80</span>, <span class="str">"lines"</span>: <span class="num">80</span> &#125;</pre></div>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">unit tests</span></div>
+        <app-code-tabs [tabs]="['Lifecycle', 'Assertions', 'Async']">
+          <div class="code-block" ct1><pre><span class="kw">import</span> &#123; describe, it, before,
+         beforeEach, after &#125; <span class="kw">from</span> <span class="str">'mocha'</span>;
+<span class="kw">import</span> assert <span class="kw">from</span> <span class="str">'node:assert/strict'</span>;
+
+<span class="fn">describe</span>(<span class="str">'Calculator'</span>, () =&gt; &#123;
+  <span class="kw">let</span> calc: <span class="tp">Calculator</span>;
+
+  <span class="fn">before</span>(() =&gt; &#123; <span class="cmt">/* one-time setup */</span> &#125;);
+  <span class="fn">beforeEach</span>(() =&gt; &#123;
+    calc = <span class="kw">new</span> <span class="tp">Calculator</span>();
+  &#125;);
+  <span class="fn">after</span>(() =&gt; &#123; <span class="cmt">/* teardown */</span> &#125;);
+
+  <span class="fn">it</span>(<span class="str">'adds two numbers'</span>, () =&gt; &#123;
+    assert.<span class="fn">equal</span>(calc.<span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>), <span class="num">5</span>);
+  &#125;);
+
+  <span class="fn">describe</span>(<span class="str">'divide'</span>, () =&gt; &#123;
+    <span class="fn">it</span>(<span class="str">'throws on zero'</span>, () =&gt; &#123;
+      assert.<span class="fn">throws</span>(
+        () =&gt; calc.<span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>),
+        /<span class="tp">zero</span>/i);
+    &#125;);
+  &#125;);
+&#125;);</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// assert API</span>
+assert.<span class="fn">strictEqual</span>(actual, expected); <span class="cmt">// ===</span>
+assert.<span class="fn">notStrictEqual</span>(a, b);
+assert.<span class="fn">deepStrictEqual</span>(obj,
+  &#123; id: <span class="num">1</span>, name: <span class="str">'alice'</span> &#125;);
+assert.<span class="fn">ok</span>(value);            <span class="cmt">// truthy</span>
+assert.<span class="fn">match</span>(str, /^<span class="tp">Bearer</span> /);
+assert.<span class="fn">throws</span>(() =&gt; <span class="fn">fn</span>(), /msg/);
+<span class="kw">await</span> assert.<span class="fn">rejects</span>(
+  <span class="kw">async</span> () =&gt; <span class="fn">fn</span>(),
+  &#123; message: <span class="str">'not found'</span> &#125;);
+
+<span class="cmt">// data-driven (loop)</span>
+<span class="kw">const</span> cases = [
+  [<span class="num">1</span>, <span class="num">1</span>, <span class="num">2</span>], [<span class="num">0</span>, <span class="num">5</span>, <span class="num">5</span>], [<span class="num">-1</span>, <span class="num">1</span>, <span class="num">0</span>],
+];
+<span class="kw">for</span> (<span class="kw">const</span> [a, b, want] <span class="kw">of</span> cases) &#123;
+  <span class="fn">it</span>(<span class="str">'add case'</span>, () =&gt;
+    assert.<span class="fn">equal</span>(calc.<span class="fn">add</span>(a, b), want));
+&#125;</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt">// async test</span>
+<span class="fn">it</span>(<span class="str">'fetches user'</span>, <span class="kw">async</span> () =&gt; &#123;
+  <span class="kw">const</span> user = <span class="kw">await</span> repo.<span class="fn">findById</span>(<span class="num">1</span>);
+  assert.<span class="fn">ok</span>(user);
+  assert.<span class="fn">strictEqual</span>(user.id, <span class="num">1</span>);
+&#125;);
+
+<span class="cmt">// async throws</span>
+<span class="fn">it</span>(<span class="str">'rejects missing user'</span>, <span class="kw">async</span> () =&gt; &#123;
+  <span class="kw">await</span> assert.<span class="fn">rejects</span>(
+    () =&gt; svc.<span class="fn">getOrThrow</span>(<span class="num">99</span>),
+    &#123; name: <span class="str">'NotFoundError'</span> &#125;);
+&#125;);
+
+<span class="cmt">// per-test timeout</span>
+<span class="fn">it</span>(<span class="str">'slow op'</span>, <span class="kw">async function</span>() &#123;
+  <span class="kw">this</span>.<span class="fn">timeout</span>(<span class="num">5000</span>);
+  <span class="kw">const</span> r = <span class="kw">await</span> <span class="fn">heavyTask</span>();
+  assert.<span class="fn">ok</span>(r);
+&#125;);</pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">mocking &amp; test doubles</span></div>
+        <app-code-tabs [tabs]="['Fakes', 'Spies', 'Stubs']">
+          <div class="code-block" ct1><pre><span class="cmt">// fake — full in-memory stand-in</span>
+<span class="kw">class</span> <span class="tp">FakeUserRepo</span>
+  <span class="kw">implements</span> <span class="tp">UserRepository</span> &#123;
+  <span class="kw">private</span> db = <span class="kw">new</span>
+    <span class="tp">Map</span>&lt;<span class="tp">number</span>, <span class="tp">User</span>&gt;();
+
+  <span class="kw">async</span> <span class="fn">findById</span>(id: <span class="tp">number</span>) &#123;
+    <span class="kw">return</span> <span class="kw">this</span>.db.<span class="fn">get</span>(id) ?? <span class="kw">null</span>;
+  &#125;
+  <span class="kw">async</span> <span class="fn">save</span>(user: <span class="tp">User</span>) &#123;
+    <span class="kw">this</span>.db.<span class="fn">set</span>(user.id, user);
+  &#125;
+&#125;
+
+<span class="fn">it</span>(<span class="str">'round-trips a user'</span>, <span class="kw">async</span> () =&gt; &#123;
+  <span class="kw">const</span> repo = <span class="kw">new</span> <span class="tp">FakeUserRepo</span>();
+  <span class="kw">const</span> svc  = <span class="kw">new</span> <span class="tp">UserService</span>(repo);
+  <span class="kw">await</span> svc.<span class="fn">create</span>(&#123; id: <span class="num">1</span>,
+    name: <span class="str">'alice'</span> &#125;);
+  assert.<span class="fn">strictEqual</span>(
+    (<span class="kw">await</span> svc.<span class="fn">get</span>(<span class="num">1</span>)).name, <span class="str">'alice'</span>);
+&#125;);</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// spy — record calls, delegate behaviour</span>
+<span class="kw">const</span> calls: <span class="tp">unknown</span>[][] = [];
+<span class="kw">const</span> spyRepo: <span class="tp">UserRepository</span> = &#123;
+  <span class="kw">async</span> <span class="fn">findById</span>(id: <span class="tp">number</span>) &#123;
+    calls.<span class="fn">push</span>([<span class="str">'findById'</span>, id]);
+    <span class="kw">return</span> &#123; id, name: <span class="str">'alice'</span> &#125;;
+  &#125;,
+  <span class="kw">async</span> <span class="fn">save</span>(user: <span class="tp">User</span>) &#123;
+    calls.<span class="fn">push</span>([<span class="str">'save'</span>, user]);
+  &#125;,
+&#125;;
+
+<span class="kw">await</span> <span class="kw">new</span> <span class="tp">UserService</span>(spyRepo)
+  .<span class="fn">create</span>(&#123; id: <span class="num">1</span>, name: <span class="str">'bob'</span> &#125;);
+
+assert.<span class="fn">strictEqual</span>(calls.length, <span class="num">1</span>);
+assert.<span class="fn">strictEqual</span>(calls[<span class="num">0</span>][<span class="num">0</span>], <span class="str">'save'</span>);
+assert.<span class="fn">strictEqual</span>(
+  (calls[<span class="num">0</span>][<span class="num">1</span>] <span class="kw">as</span> <span class="tp">User</span>).name, <span class="str">'bob'</span>);</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt">// stub — hard-coded return / throw</span>
+<span class="kw">const</span> stubRepo: <span class="tp">UserRepository</span> = &#123;
+  <span class="fn">findById</span>: <span class="kw">async</span> () =&gt; <span class="kw">null</span>,
+  <span class="fn">save</span>:     <span class="kw">async</span> () =&gt; &#123;&#125;,
+&#125;;
+
+<span class="fn">it</span>(<span class="str">'throws when not found'</span>, <span class="kw">async</span> () =&gt; &#123;
+  <span class="kw">await</span> assert.<span class="fn">rejects</span>(
+    () =&gt; <span class="kw">new</span> <span class="tp">UserService</span>(stubRepo)
+              .<span class="fn">getOrThrow</span>(<span class="num">99</span>));
+&#125;);
+
+<span class="cmt">// stub built-in — freeze time</span>
+<span class="kw">const</span> _now = <span class="tp">Date</span>.now;
+<span class="tp">Date</span>.now = () =&gt; <span class="num">1_700_000_000_000</span>;
+<span class="kw">try</span> &#123;
+  assert.<span class="fn">strictEqual</span>(
+    svc.<span class="fn">epoch</span>(), <span class="num">1_700_000_000_000</span>);
+&#125; <span class="kw">finally</span> &#123;
+  <span class="tp">Date</span>.now = _now; <span class="cmt">// always restore</span>
+&#125;</pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">integration, e2e &amp; coverage</span></div>
+        <app-code-tabs [tabs]="['File I/O', 'HTTP', 'E2E']">
+          <div class="code-block" ct1><pre><span class="cmt">// integration — real file system</span>
+<span class="kw">import</span> fs   <span class="kw">from</span> <span class="str">'node:fs/promises'</span>;
+<span class="kw">import</span> os   <span class="kw">from</span> <span class="str">'node:os'</span>;
+<span class="kw">import</span> path <span class="kw">from</span> <span class="str">'node:path'</span>;
+
+<span class="fn">describe</span>(<span class="str">'FileLogger'</span>, () =&gt; &#123;
+  <span class="kw">let</span> dir: <span class="tp">string</span>;
+
+  <span class="fn">before</span>(<span class="kw">async</span> () =&gt; &#123;
+    dir = <span class="kw">await</span> fs.<span class="fn">mkdtemp</span>(
+      path.<span class="fn">join</span>(os.<span class="fn">tmpdir</span>(), <span class="str">'test-'</span>));
+  &#125;);
+  <span class="fn">after</span>(<span class="kw">async</span> () =&gt;
+    fs.<span class="fn">rm</span>(dir, &#123; recursive: <span class="kw">true</span> &#125;));
+
+  <span class="fn">it</span>(<span class="str">'writes to disk'</span>, <span class="kw">async</span> () =&gt; &#123;
+    <span class="kw">await</span> <span class="kw">new</span> <span class="tp">FileLogger</span>(dir)
+      .<span class="fn">log</span>(<span class="str">'hello world'</span>);
+    <span class="kw">const</span> txt = <span class="kw">await</span> fs.<span class="fn">readFile</span>(
+      path.<span class="fn">join</span>(dir, <span class="str">'app.log'</span>), <span class="str">'utf-8'</span>);
+    assert.<span class="fn">ok</span>(txt.<span class="fn">includes</span>(<span class="str">'hello world'</span>));
+  &#125;);
+&#125;);</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// integration — real HTTP server</span>
+<span class="kw">import</span> http <span class="kw">from</span> <span class="str">'node:http'</span>;
+
+<span class="fn">describe</span>(<span class="str">'GET /health'</span>, () =&gt; &#123;
+  <span class="kw">let</span> server: <span class="tp">http.Server</span>;
+  <span class="kw">let</span> url: <span class="tp">string</span>;
+
+  <span class="fn">before</span>((done) =&gt; &#123;
+    server = app.<span class="fn">listen</span>(<span class="num">0</span>, () =&gt; &#123;
+      <span class="kw">const</span> addr = server.<span class="fn">address</span>() <span class="kw">as any</span>;
+      url = <span class="str">'http://localhost:'</span> + addr.port;
+      <span class="fn">done</span>();
+    &#125;);
+  &#125;);
+  <span class="fn">after</span>((done) =&gt; server.<span class="fn">close</span>(done));
+
+  <span class="fn">it</span>(<span class="str">'returns 200'</span>, <span class="kw">async</span> () =&gt; &#123;
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url + <span class="str">'/health'</span>);
+    assert.<span class="fn">strictEqual</span>(res.status, <span class="num">200</span>);
+    <span class="kw">const</span> b = <span class="kw">await</span> res.<span class="fn">json</span>();
+    assert.<span class="fn">strictEqual</span>(b.status, <span class="str">'ok'</span>);
+  &#125;);
+&#125;);</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt">// E2E — Playwright</span>
+<span class="cmt">// npm i -D &#64;playwright/test</span>
+<span class="kw">import</span> &#123; test, expect &#125; <span class="kw">from</span>
+  <span class="str">'&#64;playwright/test'</span>;
+
+<span class="fn">test</span>(<span class="str">'user can log in'</span>,
+    <span class="kw">async</span> (&#123; page &#125;) =&gt; &#123;
+  <span class="kw">await</span> page.<span class="fn">goto</span>(<span class="str">'/login'</span>);
+  <span class="kw">await</span> page.<span class="fn">fill</span>(
+    <span class="str">'[name=email]'</span>, <span class="str">'alice&#64;example.com'</span>);
+  <span class="kw">await</span> page.<span class="fn">fill</span>(
+    <span class="str">'[name=password]'</span>, <span class="str">'secret'</span>);
+  <span class="kw">await</span> page.<span class="fn">click</span>(<span class="str">'[type=submit]'</span>);
+  <span class="kw">await</span> <span class="fn">expect</span>(page)
+    .<span class="fn">toHaveURL</span>(<span class="str">'/dashboard'</span>);
+&#125;);
+
+<span class="cmt"># coverage output</span>
+<span class="tp">File</span>            | <span class="tp">Stmts</span> | <span class="tp">Branch</span> | <span class="tp">Lines</span>
+calculator.ts   |  <span class="num">100</span>  |   <span class="num">100</span>  |  <span class="num">100</span>
+user-service.ts |   <span class="num">92</span>  |    <span class="num">85</span>  |   <span class="num">92</span>
+<span class="tp">All files</span>       |   <span class="num">95</span>  |    <span class="num">91</span>  |   <span class="num">95</span></pre></div>
+        </app-code-tabs>
+      </div>
+
+    </div>
   </div>
 </div>
 

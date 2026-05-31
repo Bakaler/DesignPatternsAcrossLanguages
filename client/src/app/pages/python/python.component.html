@@ -75,8 +75,8 @@ users = [<span class="fn">row_to_dict</span>(r) <span class="kw">for</span> r <s
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">oop - repository &amp; service pattern</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+      <app-code-tabs [tabs]="['Repository ABC', 'Implementation', 'Model & Service']">
+        <div class="code-block" ct1><pre><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
 
 <span class="kw">class</span> <span class="tp">UserRepository</span>(ABC):
     <span class="dec">&#64;abstractmethod</span>
@@ -87,7 +87,7 @@ users = [<span class="fn">row_to_dict</span>(r) <span class="kw">for</span> r <s
 
     <span class="dec">&#64;abstractmethod</span>
     <span class="kw">def</span> <span class="fn">delete</span>(self, user_id: <span class="tp">int</span>) -&gt; <span class="kw">None</span>: ...</pre></div>
-        <div class="code-block"><pre><span class="kw">class</span> <span class="tp">PostgresUserRepo</span>(<span class="tp">UserRepository</span>):
+        <div class="code-block" ct2><pre><span class="kw">class</span> <span class="tp">PostgresUserRepo</span>(<span class="tp">UserRepository</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(self, conn):
         self._conn = conn
 
@@ -98,7 +98,7 @@ users = [<span class="fn">row_to_dict</span>(r) <span class="kw">for</span> r <s
             (user_id,)
         )
         <span class="kw">return</span> cur.<span class="fn">fetchone</span>()</pre></div>
-        <div class="code-block"><pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+        <div class="code-block" ct3><pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
 
 <span class="dec">&#64;dataclass</span>
 <span class="kw">class</span> <span class="tp">User</span>:
@@ -115,26 +115,26 @@ users = [<span class="fn">row_to_dict</span>(r) <span class="kw">for</span> r <s
         user = self._repo.<span class="fn">find_by_id</span>(user_id)
         <span class="kw">if not</span> user: <span class="kw">raise</span> <span class="tp">NotFoundError</span>(user_id)
         <span class="kw">return</span> user</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">data structures - backend use cases</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt"># list - ordered result set</span>
+      <app-code-tabs [tabs]="['List', 'Dict', 'Set / Tuple']">
+        <div class="code-block" ct1><pre><span class="cmt"># list - ordered result set</span>
 rows = cursor.<span class="fn">fetchall</span>()
 rows.<span class="fn">append</span>(new_row)
 rows[<span class="num">0</span>]
 <span class="fn">len</span>(rows)
 rows[<span class="num">10</span>:<span class="num">20</span>]   <span class="cmt"># page slice</span>
 rows[::-<span class="num">1</span>]   <span class="cmt"># reverse</span></pre></div>
-        <div class="code-block"><pre><span class="cmt"># dict - config, request body, DB row</span>
+        <div class="code-block" ct2><pre><span class="cmt"># dict - config, request body, DB row</span>
 config = &#123;<span class="str">"host"</span>: <span class="str">"localhost"</span>, <span class="str">"port"</span>: <span class="num">5432</span>&#125;
 config.<span class="fn">get</span>(<span class="str">"timeout"</span>, <span class="num">30</span>)   <span class="cmt"># safe get</span>
 config.<span class="fn">keys</span>()
 config.<span class="fn">items</span>()               <span class="cmt"># iterate pairs</span>
 &#123;**config, <span class="str">"port"</span>: <span class="num">5433</span>&#125;     <span class="cmt"># merge/override</span></pre></div>
-        <div class="code-block"><pre><span class="cmt"># set - unique IDs, dedup</span>
+        <div class="code-block" ct3><pre><span class="cmt"># set - unique IDs, dedup</span>
 active_sessions = &#123;<span class="str">"tok1"</span>, <span class="str">"tok2"</span>&#125;
 active_sessions.<span class="fn">add</span>(token)
 active_sessions.<span class="fn">discard</span>(expired)
@@ -143,7 +143,7 @@ token <span class="kw">in</span> active_sessions
 <span class="cmt"># tuple - immutable DB creds</span>
 creds = (host, port, db_name)
 host, port, db = creds   <span class="cmt"># unpack</span></pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card">
@@ -197,6 +197,72 @@ sql = <span class="str">"""
     conn.<span class="fn">execute</span>(sql, params)</pre></div>
     </div>
 
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">testing — pytest</span></div>
+      <app-code-tabs [tabs]="['Setup', 'Fixtures', 'Mocks']">
+        <div class="code-block" ct1><pre><span class="cmt"># install &amp; run</span>
+pip install pytest
+
+<span class="cmt"># run verbose</span>
+pytest unit_test.py -v
+
+<span class="cmt"># filter by name</span>
+pytest -k <span class="str">"test_add"</span> -v
+
+<span class="cmt"># run a whole folder</span>
+pytest tests/ -v
+
+<span class="cmt"># basic test — no class needed</span>
+<span class="kw">def</span> <span class="fn">test_add</span>():
+    <span class="kw">assert</span> <span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>) == <span class="num">5</span>
+
+<span class="kw">def</span> <span class="fn">test_divide_by_zero</span>():
+    <span class="kw">with</span> pytest.<span class="fn">raises</span>(<span class="tp">ZeroDivisionError</span>):
+        <span class="fn">divide</span>(<span class="num">1</span>, <span class="num">0</span>)</pre></div>
+        <div class="code-block" ct2><pre><span class="cmt"># fixture — reusable setup</span>
+<span class="dec">&#64;pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">db_conn</span>():
+    conn = <span class="fn">create_test_db</span>()
+    <span class="kw">yield</span> conn
+    conn.<span class="fn">close</span>()
+
+<span class="kw">def</span> <span class="fn">test_save_user</span>(db_conn):
+    repo = <span class="fn">UserRepo</span>(db_conn)
+    user = repo.<span class="fn">save</span>(&#123;<span class="str">"name"</span>: <span class="str">"Alex"</span>&#125;)
+    <span class="kw">assert</span> user[<span class="str">"id"</span>] <span class="kw">is not</span> <span class="kw">None</span>
+
+<span class="cmt"># parametrize — one test, many inputs</span>
+<span class="dec">&#64;pytest.mark.parametrize</span>(<span class="str">"a,b,expected"</span>, [
+    (<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>),
+    (<span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>),
+    (-<span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>),
+])
+<span class="kw">def</span> <span class="fn">test_add_cases</span>(a, b, expected):
+    <span class="kw">assert</span> <span class="fn">add</span>(a, b) == expected</pre></div>
+        <div class="code-block" ct3><pre><span class="cmt"># monkeypatch — swap at runtime</span>
+<span class="kw">def</span> <span class="fn">test_send_email</span>(monkeypatch):
+    sent = []
+    monkeypatch.<span class="fn">setattr</span>(
+        mailer, <span class="str">"send"</span>,
+        <span class="kw">lambda</span> msg: sent.<span class="fn">append</span>(msg)
+    )
+    <span class="fn">register_user</span>(<span class="str">"alex&#64;example.com"</span>)
+    <span class="kw">assert</span> <span class="fn">len</span>(sent) == <span class="num">1</span>
+
+<span class="cmt"># capsys — capture stdout</span>
+<span class="kw">def</span> <span class="fn">test_print_output</span>(capsys):
+    <span class="fn">greet</span>(<span class="str">"world"</span>)
+    out = capsys.<span class="fn">readouterr</span>().out
+    <span class="kw">assert</span> <span class="str">"Hello, world"</span> <span class="kw">in</span> out
+
+<span class="cmt"># tmp_path — isolated file I/O</span>
+<span class="kw">def</span> <span class="fn">test_write_log</span>(tmp_path):
+    log = tmp_path / <span class="str">"app.log"</span>
+    <span class="fn">write_log</span>(log, <span class="str">"started"</span>)
+    <span class="kw">assert</span> log.<span class="fn">read_text</span>() == <span class="str">"started"</span></pre></div>
+      </app-code-tabs>
+    </div>
+
     <div class="card">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">useful builtins &amp; keywords</span></div>
       <div class="pills-body">
@@ -218,6 +284,254 @@ sql = <span class="str">"""
       </div>
     </div>
 
+  </div>
+
+  <div class="testing-section">
+    <div class="testing-header">
+      <div class="testing-header-title">// <span>testing</span></div>
+      <div class="testing-header-stack"><a href="https://pytest.org" target="_blank" rel="noopener">pytest</a> · <a href="https://docs.python.org/3/library/unittest.mock.html" target="_blank" rel="noopener">unittest.mock</a> · <a href="https://pytest-cov.readthedocs.io" target="_blank" rel="noopener">pytest-cov</a> · <a href="https://playwright.dev" target="_blank" rel="noopener">Playwright</a></div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">concepts</span></div>
+        <div class="pills-body">
+          <span class="pill pill-blue">unit — single function or class, all deps faked</span>
+          <span class="pill pill-teal">integration — real dependencies, no browser</span>
+          <span class="pill pill-amber">e2e — full user flow through a real browser</span>
+          <span class="pill pill-red">mock — controlled fake replacing a dependency</span>
+          <span class="pill pill-orange">stub — forces a return value or raises an error</span>
+          <span class="pill pill-blue">spy — records calls while delegating</span>
+          <span class="pill pill-teal">fake — lightweight in-memory implementation</span>
+          <span class="pill pill-amber">fixture — reusable setup/teardown for tests</span>
+          <span class="pill pill-orange">coverage — % of lines and branches exercised</span>
+          <span class="pill pill-red">AAA — Arrange · Act · Assert</span>
+          <span class="pill pill-blue">TDD — write the failing test before the code</span>
+          <span class="pill pill-teal">test pyramid — many unit · some integration · few e2e</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">setup &amp; run</span></div>
+        <div class="code-block"><pre><span class="cmt"># install</span>
+pip install pytest pytest-cov
+
+<span class="cmt"># run</span>
+pytest
+pytest -v                      <span class="cmt"># verbose</span>
+pytest -k <span class="str">"test_add"</span>           <span class="cmt"># filter</span>
+pytest tests/unit/             <span class="cmt"># folder</span>
+pytest --tb=short              <span class="cmt"># brief tracebacks</span>
+
+<span class="cmt"># coverage</span>
+pytest --cov=src
+pytest --cov=src --cov-report=html <span class="cmt"># → htmlcov/</span>
+pytest --cov=src --cov-fail-under=<span class="num">80</span>
+
+<span class="cmt"># pytest.ini</span>
+[pytest]
+testpaths = tests
+python_files = test_*.py *_test.py</pre></div>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">unit tests</span></div>
+        <app-code-tabs [tabs]="['Fixtures', 'Assertions', 'Capsys / Async']">
+          <div class="code-block" ct1><pre><span class="kw">import</span> pytest
+
+<span class="cmt"># fixture — shared, reusable setup</span>
+<span class="dec">&#64;pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">calculator</span>():
+    <span class="kw">return</span> <span class="fn">Calculator</span>()
+
+<span class="kw">def</span> <span class="fn">test_add</span>(calculator):
+    <span class="kw">assert</span> calculator.<span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>) == <span class="num">5</span>
+
+<span class="kw">def</span> <span class="fn">test_divide_by_zero</span>(calculator):
+    <span class="kw">with</span> pytest.<span class="fn">raises</span>(<span class="tp">ZeroDivisionError</span>):
+        calculator.<span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>)
+
+<span class="cmt"># class-based test suite</span>
+<span class="kw">class</span> <span class="tp">TestCalculator</span>:
+    <span class="kw">def</span> <span class="fn">test_subtract</span>(<span class="kw">self</span>, calculator):
+        <span class="kw">assert</span> calculator.<span class="fn">subtract</span>(<span class="num">5</span>, <span class="num">3</span>) == <span class="num">2</span>
+
+<span class="cmt"># fixture scopes</span>
+<span class="dec">&#64;pytest.fixture</span>(scope=<span class="str">"session"</span>)
+<span class="kw">def</span> <span class="fn">db</span>():          <span class="cmt"># once per test run</span>
+    conn = <span class="fn">connect</span>(<span class="str">":memory:"</span>)
+    <span class="kw">yield</span> conn
+    conn.<span class="fn">close</span>()</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt"># assertions</span>
+<span class="kw">assert</span> result == expected
+<span class="kw">assert</span> result != unexpected
+<span class="kw">assert</span> value <span class="kw">is not None</span>
+<span class="kw">assert</span> <span class="fn">isinstance</span>(obj, <span class="tp">User</span>)
+<span class="kw">assert</span> <span class="str">"key"</span> <span class="kw">in</span> response_dict
+<span class="kw">assert</span> <span class="fn">len</span>(items) &gt; <span class="num">0</span>
+
+<span class="cmt"># approx float</span>
+<span class="kw">assert</span> result == pytest.<span class="fn">approx</span>(<span class="num">3.14</span>)
+
+<span class="cmt"># raises with message match</span>
+<span class="kw">with</span> pytest.<span class="fn">raises</span>(<span class="tp">ValueError</span>,
+    match=<span class="str">"invalid"</span>):
+    <span class="fn">parse</span>(<span class="str">""</span>)
+
+<span class="cmt"># parametrize — one test, many inputs</span>
+<span class="dec">&#64;pytest.mark.parametrize</span>(<span class="str">"a,b,want"</span>, [
+    (<span class="num">1</span>, <span class="num">1</span>, <span class="num">2</span>),
+    (<span class="num">0</span>, <span class="num">5</span>, <span class="num">5</span>),
+    (-<span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>),
+])
+<span class="kw">def</span> <span class="fn">test_add_cases</span>(a, b, want):
+    <span class="kw">assert</span> <span class="fn">Calculator</span>().<span class="fn">add</span>(a, b) == want</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt"># capsys — capture stdout</span>
+<span class="kw">def</span> <span class="fn">test_greet_output</span>(capsys):
+    <span class="fn">greet</span>(<span class="str">"world"</span>)
+    out = capsys.<span class="fn">readouterr</span>().out
+    <span class="kw">assert</span> <span class="str">"Hello, world"</span> <span class="kw">in</span> out
+
+<span class="cmt"># tmp_path — isolated file I/O</span>
+<span class="kw">def</span> <span class="fn">test_write_log</span>(tmp_path):
+    log = tmp_path / <span class="str">"app.log"</span>
+    <span class="fn">write_log</span>(log, <span class="str">"started"</span>)
+    <span class="kw">assert</span> log.<span class="fn">read_text</span>() == <span class="str">"started"</span>
+
+<span class="cmt"># async test</span>
+<span class="dec">&#64;pytest.mark.asyncio</span>
+<span class="kw">async def</span> <span class="fn">test_fetch_user</span>():
+    user = <span class="kw">await</span> repo.<span class="fn">find_by_id</span>(<span class="num">1</span>)
+    <span class="kw">assert</span> user <span class="kw">is not None</span>
+    <span class="kw">assert</span> user.id == <span class="num">1</span></pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">mocking &amp; test doubles</span></div>
+        <app-code-tabs [tabs]="['Monkeypatch', 'MagicMock', 'Fakes']">
+          <div class="code-block" ct1><pre><span class="cmt"># monkeypatch — swap at runtime</span>
+<span class="kw">def</span> <span class="fn">test_send_email</span>(monkeypatch):
+    sent = []
+    monkeypatch.<span class="fn">setattr</span>(
+        <span class="str">"myapp.mailer.send"</span>,
+        <span class="kw">lambda</span> to, body: sent.<span class="fn">append</span>(to))
+
+    <span class="fn">notify</span>(<span class="str">"alice&#64;example.com"</span>, <span class="str">"hello"</span>)
+
+    <span class="kw">assert</span> <span class="fn">len</span>(sent) == <span class="num">1</span>
+    <span class="kw">assert</span> sent[<span class="num">0</span>] == <span class="str">"alice&#64;example.com"</span>
+
+<span class="cmt"># monkeypatch env var</span>
+<span class="kw">def</span> <span class="fn">test_config</span>(monkeypatch):
+    monkeypatch.<span class="fn">setenv</span>(<span class="str">"DB_URL"</span>,
+        <span class="str">"sqlite:///:memory:"</span>)
+    cfg = <span class="fn">load_config</span>()
+    <span class="kw">assert</span> <span class="str">"sqlite"</span> <span class="kw">in</span> cfg.db_url</pre></div>
+          <div class="code-block" ct2><pre><span class="kw">from</span> unittest.mock <span class="kw">import</span> (
+    <span class="tp">MagicMock</span>, patch, call)
+
+<span class="cmt"># MagicMock — auto-fakes everything</span>
+<span class="kw">def</span> <span class="fn">test_saves_user</span>():
+    mock_repo = <span class="fn">MagicMock</span>()
+    svc = <span class="fn">UserService</span>(mock_repo)
+    user = <span class="fn">User</span>(<span class="str">"alice"</span>)
+
+    svc.<span class="fn">create</span>(user)
+
+    mock_repo.save.<span class="fn">assert_called_once_with</span>(user)
+
+<span class="cmt"># patch as decorator</span>
+<span class="dec">&#64;patch</span>(<span class="str">"myapp.services.send_email"</span>)
+<span class="kw">def</span> <span class="fn">test_registration</span>(mock_email):
+    <span class="fn">register</span>(<span class="str">"bob&#64;example.com"</span>)
+    mock_email.<span class="fn">assert_called_once</span>()</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt"># fake — lightweight class stand-in</span>
+<span class="dec">&#64;pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">fake_repo</span>():
+    <span class="kw">class</span> <span class="tp">FakeUserRepo</span>:
+        <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>):
+            <span class="kw">self</span>._store = &#123;&#125;
+        <span class="kw">def</span> <span class="fn">save</span>(<span class="kw">self</span>, user):
+            <span class="kw">self</span>._store[user.id] = user
+        <span class="kw">def</span> <span class="fn">find_by_id</span>(<span class="kw">self</span>, id):
+            <span class="kw">return self</span>._store.<span class="fn">get</span>(id)
+    <span class="kw">return</span> <span class="fn">FakeUserRepo</span>()
+
+<span class="kw">def</span> <span class="fn">test_not_found</span>(fake_repo):
+    svc = <span class="fn">UserService</span>(fake_repo)
+    <span class="kw">with</span> pytest.<span class="fn">raises</span>(<span class="tp">NotFoundError</span>):
+        svc.<span class="fn">get_or_raise</span>(<span class="num">999</span>)</pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">integration, e2e &amp; coverage</span></div>
+        <app-code-tabs [tabs]="['File / DB', 'Playwright', 'Coverage']">
+          <div class="code-block" ct1><pre><span class="cmt"># integration — real file system</span>
+<span class="kw">def</span> <span class="fn">test_file_logger</span>(tmp_path):
+    log_file = tmp_path / <span class="str">"app.log"</span>
+    logger = <span class="fn">FileLogger</span>(log_file)
+
+    logger.<span class="fn">log</span>(<span class="str">"hello world"</span>)
+
+    content = log_file.<span class="fn">read_text</span>()
+    <span class="kw">assert</span> <span class="str">"hello world"</span> <span class="kw">in</span> content
+
+<span class="cmt"># integration — real database</span>
+<span class="dec">&#64;pytest.fixture</span>(scope=<span class="str">"module"</span>)
+<span class="kw">def</span> <span class="fn">db</span>():
+    engine = <span class="fn">create_engine</span>(<span class="str">"sqlite:///:memory:"</span>)
+    <span class="tp">Base</span>.metadata.<span class="fn">create_all</span>(engine)
+    session = <span class="fn">Session</span>(engine)
+    <span class="kw">yield</span> session
+    session.<span class="fn">close</span>()
+
+<span class="kw">def</span> <span class="fn">test_save_and_find</span>(db):
+    repo = <span class="fn">UserRepository</span>(db)
+    repo.<span class="fn">save</span>(<span class="fn">User</span>(id=<span class="num">1</span>, name=<span class="str">"Alice"</span>))
+    found = repo.<span class="fn">find_by_id</span>(<span class="num">1</span>)
+    <span class="kw">assert</span> found.name == <span class="str">"Alice"</span></pre></div>
+          <div class="code-block" ct2><pre><span class="cmt"># E2E — Playwright</span>
+<span class="cmt"># pip install pytest-playwright</span>
+<span class="cmt"># playwright install chromium</span>
+<span class="kw">from</span> playwright.sync_api <span class="kw">import</span> <span class="tp">Page</span>
+
+<span class="kw">def</span> <span class="fn">test_login_flow</span>(page: <span class="tp">Page</span>):
+    page.<span class="fn">goto</span>(<span class="str">"http://localhost:8000/login"</span>)
+    page.<span class="fn">fill</span>(<span class="str">"[name=email]"</span>,
+               <span class="str">"alice&#64;example.com"</span>)
+    page.<span class="fn">fill</span>(<span class="str">"[name=password]"</span>, <span class="str">"secret"</span>)
+    page.<span class="fn">click</span>(<span class="str">"[type=submit]"</span>)
+
+    page.<span class="fn">wait_for_url</span>(<span class="str">"**/dashboard"</span>)
+    heading = page.<span class="fn">locator</span>(<span class="str">"h1"</span>)
+    <span class="kw">assert</span> heading.<span class="fn">text_content</span>() == <span class="str">"Welcome"</span></pre></div>
+          <div class="code-block" ct3><pre><span class="cmt"># coverage — .coveragerc</span>
+[run]
+source = src
+omit = */tests/*
+
+[report]
+show_missing = <span class="kw">true</span>
+fail_under = <span class="num">80</span>
+
+<span class="cmt"># run with coverage</span>
+pytest --cov=src --cov-report=term-missing
+
+<span class="cmt"># sample output</span>
+<span class="tp">Name</span>                <span class="tp">Stmts  Miss  Cover</span>
+<span class="cmt">------------------------------------</span>
+src/calculator.py      <span class="num">12</span>     <span class="num">1</span>    <span class="num">92</span>%
+src/user_service.py    <span class="num">28</span>     <span class="num">3</span>    <span class="num">89</span>%
+
+<span class="cmt"># HTML report</span>
+pytest --cov=src --cov-report=html
+open htmlcov/index.html</pre></div>
+        </app-code-tabs>
+      </div>
+
+    </div>
   </div>
 </div>
 

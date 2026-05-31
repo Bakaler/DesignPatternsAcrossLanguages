@@ -83,14 +83,14 @@ app.<span class="fn">Run</span>();</pre></div>
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">oop - service &amp; repository pattern</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// interface</span>
+      <app-code-tabs [tabs]="['Interface', 'EF Core', 'Record & Controller']">
+        <div class="code-block" ct1><pre><span class="cmt">// interface</span>
 <span class="kw">public interface</span> <span class="tp">IOrderRepository</span> &#123;
     <span class="tp">Task</span>&lt;<span class="tp">Order</span>?&gt; <span class="fn">FindByIdAsync</span>(<span class="tp">Guid</span> id);
     <span class="tp">Task</span>&lt;<span class="tp">IEnumerable</span>&lt;<span class="tp">Order</span>&gt;&gt; <span class="fn">FindByUserAsync</span>(<span class="tp">Guid</span> userId);
     <span class="tp">Task</span> <span class="fn">SaveAsync</span>(<span class="tp">Order</span> order);
 &#125;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// EF Core implementation</span>
+        <div class="code-block" ct2><pre><span class="cmt">// EF Core implementation</span>
 <span class="kw">public class</span> <span class="tp">EfOrderRepository</span> : <span class="tp">IOrderRepository</span> &#123;
     <span class="kw">private readonly</span> <span class="tp">AppDbContext</span> _db;
 
@@ -102,7 +102,7 @@ app.<span class="fn">Run</span>();</pre></div>
         <span class="kw">await</span> _db.<span class="fn">SaveChangesAsync</span>();
     &#125;
 &#125;</pre></div>
-        <div class="code-block"><pre><span class="cmt">// record - immutable API response</span>
+        <div class="code-block" ct3><pre><span class="cmt">// record - immutable API response</span>
 <span class="kw">public record</span> <span class="tp">OrderResponse</span>(
     <span class="tp">Guid</span> Id,
     <span class="tp">string</span> Status,
@@ -116,13 +116,13 @@ app.<span class="fn">Run</span>();</pre></div>
     <span class="kw">var</span> order = <span class="kw">await</span> _repo.<span class="fn">FindByIdAsync</span>(id);
     <span class="kw">return</span> order <span class="kw">is null</span> ? <span class="fn">NotFound</span>() : <span class="fn">Ok</span>(order);
 &#125;</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card wide">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">collections &amp; linq</span></div>
-      <div class="code-grid">
-        <div class="code-block"><pre><span class="cmt">// list of pending orders</span>
+      <app-code-tabs [tabs]="['List / Dict', 'LINQ', 'C# 12 / Async']">
+        <div class="code-block" ct1><pre><span class="cmt">// list of pending orders</span>
 <span class="kw">var</span> pending = <span class="kw">new</span> <span class="tp">List</span>&lt;<span class="tp">Order</span>&gt;();
 pending.<span class="fn">Add</span>(order);
 pending.<span class="fn">Count</span>;
@@ -131,7 +131,7 @@ pending.<span class="fn">Count</span>;
 <span class="kw">var</span> limits = <span class="kw">new</span> <span class="tp">Dictionary</span>&lt;<span class="tp">string</span>, <span class="tp">int</span>&gt;();
 limits[<span class="str">"/api/orders"</span>] = <span class="num">100</span>;
 limits.<span class="fn">ContainsKey</span>(<span class="str">"/api/users"</span>);</pre></div>
-        <div class="code-block"><pre><span class="cmt">// LINQ - aggregate revenue</span>
+        <div class="code-block" ct2><pre><span class="cmt">// LINQ - aggregate revenue</span>
 <span class="kw">var</span> revenue = orders
     .<span class="fn">Where</span>(o =&gt; o.Status == <span class="str">"completed"</span>)
     .<span class="fn">Sum</span>(o =&gt; o.Total);
@@ -139,14 +139,14 @@ limits.<span class="fn">ContainsKey</span>(<span class="str">"/api/users"</span>
 <span class="kw">var</span> byUser = orders
     .<span class="fn">GroupBy</span>(o =&gt; o.UserId)
     .<span class="fn">ToDictionary</span>(g =&gt; g.Key, g =&gt; g.<span class="fn">ToList</span>());</pre></div>
-        <div class="code-block"><pre><span class="cmt">// collection init (C# 12)</span>
+        <div class="code-block" ct3><pre><span class="cmt">// collection init (C# 12)</span>
 <span class="tp">List</span>&lt;<span class="tp">string</span>&gt; allowedMethods = [<span class="str">"GET"</span>, <span class="str">"POST"</span>, <span class="str">"DELETE"</span>];
 
 <span class="cmt">// async stream - DB cursor</span>
 <span class="kw">await foreach</span> (<span class="kw">var</span> row <span class="kw">in</span> db.<span class="fn">StreamRowsAsync</span>(query)) &#123;
     <span class="kw">await</span> <span class="fn">ProcessAsync</span>(row);
 &#125;</pre></div>
-      </div>
+      </app-code-tabs>
     </div>
 
     <div class="card">
@@ -213,6 +213,83 @@ logger.<span class="fn">Info</span>(<span class="str">$"Query: &#123;sql&#125; |
       </div>
     </div>
 
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">testing — xunit + moq</span></div>
+      <app-code-tabs [tabs]="['Setup', 'Fact / Theory', 'Moq']">
+        <div class="code-block" ct1><pre><span class="cmt">// add packages</span>
+dotnet add package xunit
+dotnet add package Moq
+dotnet add package xunit.runner.visualstudio
+
+<span class="cmt">// run</span>
+dotnet test
+
+<span class="cmt">// structure</span>
+<span class="kw">public class</span> <span class="tp">MyServiceTests</span> &#123;
+    <span class="kw">private readonly</span> <span class="tp">MyService</span> _svc;
+
+    <span class="kw">public</span> <span class="fn">MyServiceTests</span>() &#123;
+        <span class="cmt">// constructor = BeforeEach in xUnit</span>
+        _svc = <span class="kw">new</span> <span class="tp">MyService</span>();
+    &#125;
+
+    [<span class="tp">Fact</span>]
+    <span class="kw">public void</span> <span class="fn">DoesTheThing</span>() &#123;
+        <span class="cmt">/* assert here */</span>
+    &#125;
+&#125;</pre></div>
+        <div class="code-block" ct2><pre><span class="kw">public class</span> <span class="tp">StackTests</span> &#123;
+    <span class="kw">private readonly</span> <span class="tp">Stack</span>&lt;<span class="tp">int</span>&gt; _stack = <span class="kw">new</span>();
+
+    [<span class="tp">Fact</span>]
+    <span class="kw">public void</span> <span class="fn">Push_IncreasesCount</span>() &#123;
+        _stack.<span class="fn">Push</span>(<span class="num">1</span>);
+        <span class="tp">Assert</span>.<span class="fn">Equal</span>(<span class="num">1</span>, _stack.Count);
+    &#125;
+
+    [<span class="tp">Fact</span>]
+    <span class="kw">public void</span> <span class="fn">Pop_OnEmpty_Throws</span>() &#123;
+        <span class="tp">Assert</span>.<span class="fn">Throws</span>&lt;<span class="tp">InvalidOperationException</span>&gt;(
+            () =&gt; _stack.<span class="fn">Pop</span>());
+    &#125;
+
+    [<span class="tp">Theory</span>]
+    [<span class="tp">InlineData</span>(<span class="num">1</span>)]
+    [<span class="tp">InlineData</span>(<span class="num">5</span>)]
+    [<span class="tp">InlineData</span>(<span class="num">10</span>)]
+    <span class="kw">public void</span> <span class="fn">PushAndPop_RoundTrips</span>(<span class="kw">int</span> val) &#123;
+        _stack.<span class="fn">Push</span>(val);
+        <span class="tp">Assert</span>.<span class="fn">Equal</span>(val, _stack.<span class="fn">Pop</span>());
+    &#125;
+&#125;</pre></div>
+        <div class="code-block" ct3><pre><span class="cmt">// Moq — mock + verify</span>
+<span class="kw">var</span> mockRepo = <span class="kw">new</span> <span class="tp">Mock</span>&lt;<span class="tp">IUserRepository</span>&gt;();
+
+[<span class="tp">Fact</span>]
+<span class="kw">public void</span> <span class="fn">Create_SavesUser</span>() &#123;
+    <span class="kw">var</span> user = <span class="kw">new</span> <span class="tp">User</span>(<span class="str">"alice"</span>);
+    <span class="kw">var</span> svc = <span class="kw">new</span> <span class="fn">UserService</span>(mockRepo.Object);
+    svc.<span class="fn">Create</span>(user);
+    mockRepo.<span class="fn">Verify</span>(r =&gt; r.<span class="fn">Save</span>(user), <span class="tp">Times</span>.Once);
+&#125;
+
+[<span class="tp">Fact</span>]
+<span class="kw">public void</span> <span class="fn">GetOrThrow_WhenMissing_Throws</span>() &#123;
+    mockRepo.<span class="fn">Setup</span>(r =&gt; r.<span class="fn">FindById</span>(<span class="num">99</span>))
+            .<span class="fn">Returns</span>((<span class="tp">User</span>?)<span class="kw">null</span>);
+    <span class="kw">var</span> svc = <span class="kw">new</span> <span class="fn">UserService</span>(mockRepo.Object);
+    <span class="tp">Assert</span>.<span class="fn">Throws</span>&lt;<span class="tp">NotFoundException</span>&gt;(
+        () =&gt; svc.<span class="fn">GetOrThrow</span>(<span class="num">99</span>));
+&#125;
+
+<span class="cmt">// common assertions</span>
+<span class="tp">Assert</span>.<span class="fn">Equal</span>(expected, actual);
+<span class="tp">Assert</span>.<span class="fn">NotNull</span>(value);
+<span class="tp">Assert</span>.<span class="fn">True</span>(condition);
+<span class="tp">Assert</span>.<span class="fn">Contains</span>(item, collection);</pre></div>
+      </app-code-tabs>
+    </div>
+
     <div class="card">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">useful keywords</span></div>
       <div class="pills-body">
@@ -227,6 +304,198 @@ logger.<span class="fn">Info</span>(<span class="str">$"Query: &#123;sql&#125; |
       </div>
     </div>
 
+  </div>
+
+  <div class="testing-section">
+    <div class="testing-header">
+      <div class="testing-header-title">// <span>testing</span></div>
+      <div class="testing-header-stack"><a href="https://xunit.net" target="_blank" rel="noopener">xUnit</a> · <a href="https://github.com/devlooped/moq" target="_blank" rel="noopener">Moq</a> · <a href="https://github.com/coverlet-coverage/coverlet" target="_blank" rel="noopener">coverlet</a> · <a href="https://playwright.dev" target="_blank" rel="noopener">Playwright</a></div>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">concepts</span></div>
+        <div class="pills-body">
+          <span class="pill pill-blue">unit — single class, all deps mocked</span>
+          <span class="pill pill-teal">integration — real dependencies, no browser</span>
+          <span class="pill pill-amber">e2e — full user flow via Playwright</span>
+          <span class="pill pill-red">Mock&lt;T&gt; — Moq fake replacing a dependency</span>
+          <span class="pill pill-purple">Setup() — stubs a return value or throw</span>
+          <span class="pill pill-blue">Verify() — asserts a method was called</span>
+          <span class="pill pill-teal">It.IsAny&lt;T&gt;() — wildcard argument matcher</span>
+          <span class="pill pill-amber">[Fact] — single test method</span>
+          <span class="pill pill-purple">[Theory] + [InlineData] — data-driven test</span>
+          <span class="pill pill-red">coverage — % lines/branches (coverlet)</span>
+          <span class="pill pill-blue">AAA — Arrange · Act · Assert</span>
+          <span class="pill pill-teal">test pyramid — many unit · some integration · few e2e</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">setup &amp; run</span></div>
+        <div class="code-block"><pre><span class="cmt">// add packages</span>
+dotnet add package xunit
+dotnet add package Moq
+dotnet add package xunit.runner.visualstudio
+dotnet add package coverlet.collector
+
+<span class="cmt">// run</span>
+dotnet test
+dotnet test --filter <span class="str">"CalculatorTests"</span>
+dotnet test --collect:<span class="str">"XPlat Code Coverage"</span>
+
+<span class="cmt">// coverage report</span>
+dotnet tool install -g dotnet-reportgenerator-globaltool
+reportgenerator \
+  -reports:<span class="str">"**/coverage.cobertura.xml"</span> \
+  -targetdir:<span class="str">"coverage"</span> \
+  -reporttypes:<span class="tp">Html</span>
+open coverage/index.html</pre></div>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">unit tests</span></div>
+        <app-code-tabs [tabs]="['Lifecycle', 'Theory / Assert', 'Service Test']">
+          <div class="code-block" ct1><pre><span class="kw">public class</span> <span class="tp">CalculatorTests</span>
+&#123;
+    <span class="kw">private readonly</span> <span class="tp">Calculator</span> _calc;
+
+    <span class="cmt">// constructor = BeforeEach in xUnit</span>
+    <span class="kw">public</span> <span class="fn">CalculatorTests</span>() =&gt;
+        _calc = <span class="kw">new</span> <span class="tp">Calculator</span>();
+
+    [<span class="tp">Fact</span>]
+    <span class="kw">public void</span> <span class="fn">Add_ReturnsSum</span>()
+    &#123;
+        <span class="kw">var</span> result = _calc.<span class="fn">Add</span>(<span class="num">2</span>, <span class="num">3</span>);
+        <span class="tp">Assert</span>.<span class="fn">Equal</span>(<span class="num">5</span>, result);
+    &#125;
+
+    [<span class="tp">Fact</span>]
+    <span class="kw">public void</span> <span class="fn">Divide_ByZero_Throws</span>()
+    &#123;
+        <span class="tp">Assert</span>.<span class="fn">Throws</span>&lt;<span class="tp">DivideByZeroException</span>&gt;(
+            () =&gt; _calc.<span class="fn">Divide</span>(<span class="num">10</span>, <span class="num">0</span>));
+    &#125;
+&#125;</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// data-driven</span>
+[<span class="tp">Theory</span>]
+[<span class="tp">InlineData</span>(<span class="num">1</span>, <span class="num">1</span>, <span class="num">2</span>)]
+[<span class="tp">InlineData</span>(<span class="num">0</span>, <span class="num">5</span>, <span class="num">5</span>)]
+[<span class="tp">InlineData</span>(-<span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>)]
+<span class="kw">public void</span> <span class="fn">Add_Cases</span>(<span class="kw">int</span> a, <span class="kw">int</span> b, <span class="kw">int</span> want)
+&#123;
+    <span class="tp">Assert</span>.<span class="fn">Equal</span>(want, _calc.<span class="fn">Add</span>(a, b));
+&#125;
+
+<span class="cmt">// assert API</span>
+<span class="tp">Assert</span>.<span class="fn">Equal</span>(expected, actual);
+<span class="tp">Assert</span>.<span class="fn">NotEqual</span>(a, b);
+<span class="tp">Assert</span>.<span class="fn">True</span>(condition);
+<span class="tp">Assert</span>.<span class="fn">False</span>(condition);
+<span class="tp">Assert</span>.<span class="fn">Null</span>(value);
+<span class="tp">Assert</span>.<span class="fn">NotNull</span>(value);
+<span class="tp">Assert</span>.<span class="fn">Contains</span>(item, collection);
+<span class="tp">Assert</span>.<span class="fn">Throws</span>&lt;<span class="tp">NotFoundException</span>&gt;(
+    () =&gt; svc.<span class="fn">Get</span>(<span class="num">99</span>));
+<span class="kw">await</span> <span class="tp">Assert</span>.<span class="fn">ThrowsAsync</span>&lt;<span class="tp">DbException</span>&gt;(
+    () =&gt; repo.<span class="fn">SaveAsync</span>(<span class="kw">null</span>));</pre></div>
+          <div class="code-block" ct3><pre><span class="kw">public class</span> <span class="tp">UserServiceTests</span>
+&#123;
+    <span class="kw">private readonly</span> <span class="tp">Mock</span>&lt;<span class="tp">IUserRepository</span>&gt;
+        _mockRepo = <span class="kw">new</span>();
+    <span class="kw">private readonly</span> <span class="tp">Mock</span>&lt;<span class="tp">IMailer</span>&gt;
+        _mockMailer = <span class="kw">new</span>();
+
+    [<span class="tp">Fact</span>]
+    <span class="kw">public void</span> <span class="fn">Create_SavesUser</span>()
+    &#123;
+        <span class="kw">var</span> svc = <span class="kw">new</span> <span class="fn">UserService</span>(
+            _mockRepo.Object,
+            _mockMailer.Object);
+        <span class="kw">var</span> user = <span class="kw">new</span> <span class="tp">User</span>(<span class="str">"alice"</span>);
+        svc.<span class="fn">Create</span>(user);
+        _mockRepo.<span class="fn">Verify</span>(
+            r =&gt; r.<span class="fn">Save</span>(user), <span class="tp">Times</span>.Once);
+    &#125;
+&#125;</pre></div>
+        </app-code-tabs>
+      </div>
+
+      <div class="card wide">
+        <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">mocking, integration &amp; e2e</span></div>
+        <app-code-tabs [tabs]="['Moq', 'Integration', 'Playwright']">
+          <div class="code-block" ct1><pre><span class="cmt">// Moq — stub return + throw</span>
+_mockRepo.<span class="fn">Setup</span>(r =&gt; r.<span class="fn">FindById</span>(<span class="num">1</span>))
+         .<span class="fn">Returns</span>(<span class="kw">new</span> <span class="tp">User</span>(<span class="str">"alice"</span>));
+
+_mockRepo.<span class="fn">Setup</span>(r =&gt; r.<span class="fn">FindById</span>(<span class="num">99</span>))
+         .<span class="fn">Throws</span>&lt;<span class="tp">NotFoundException</span>&gt;();
+
+<span class="cmt">// async stub</span>
+_mockRepo.<span class="fn">Setup</span>(r =&gt; r.<span class="fn">FindByIdAsync</span>(<span class="num">1</span>))
+         .<span class="fn">ReturnsAsync</span>(<span class="kw">new</span> <span class="tp">User</span>(<span class="str">"alice"</span>));
+
+<span class="cmt">// argument matching</span>
+_mockRepo.<span class="fn">Setup</span>(r =&gt;
+    r.<span class="fn">FindById</span>(<span class="tp">It</span>.<span class="fn">IsAny</span>&lt;<span class="kw">int</span>&gt;()))
+    .<span class="fn">Returns</span>((int id) =&gt; <span class="kw">new</span> <span class="tp">User</span>($<span class="str">"u&#123;id&#125;"</span>));
+
+<span class="cmt">// capture via Callback</span>
+<span class="tp">User</span>? saved = <span class="kw">null</span>;
+_mockRepo.<span class="fn">Setup</span>(r =&gt; r.<span class="fn">Save</span>(
+    <span class="tp">It</span>.<span class="fn">IsAny</span>&lt;<span class="tp">User</span>&gt;()))
+    .<span class="fn">Callback</span>&lt;<span class="tp">User</span>&gt;(u =&gt; saved = u);</pre></div>
+          <div class="code-block" ct2><pre><span class="cmt">// integration — file system</span>
+[<span class="tp">Fact</span>]
+<span class="kw">public async</span> <span class="tp">Task</span>
+    <span class="fn">FileLogger_WritesToDisk</span>()
+&#123;
+    <span class="kw">var</span> dir = <span class="tp">Path</span>.<span class="fn">Combine</span>(
+        <span class="tp">Path</span>.<span class="fn">GetTempPath</span>(),
+        <span class="tp">Guid</span>.<span class="fn">NewGuid</span>().<span class="fn">ToString</span>());
+    <span class="tp">Directory</span>.<span class="fn">CreateDirectory</span>(dir);
+    <span class="kw">try</span> &#123;
+        <span class="kw">var</span> logger = <span class="kw">new</span> <span class="tp">FileLogger</span>(dir);
+        <span class="kw">await</span> logger.<span class="fn">LogAsync</span>(<span class="str">"hello"</span>);
+        <span class="kw">var</span> content = <span class="kw">await</span>
+            <span class="tp">File</span>.<span class="fn">ReadAllTextAsync</span>(
+                <span class="tp">Path</span>.<span class="fn">Combine</span>(dir, <span class="str">"app.log"</span>));
+        <span class="tp">Assert</span>.<span class="fn">Contains</span>(<span class="str">"hello"</span>, content);
+    &#125; <span class="kw">finally</span> &#123;
+        <span class="tp">Directory</span>.<span class="fn">Delete</span>(dir, <span class="kw">true</span>);
+    &#125;
+&#125;</pre></div>
+          <div class="code-block" ct3><pre><span class="cmt">// E2E — Playwright</span>
+<span class="cmt">// dotnet add package</span>
+<span class="cmt">//   Microsoft.Playwright.NUnit</span>
+<span class="kw">using</span> <span class="tp">Microsoft</span>.<span class="tp">Playwright</span>;
+
+[<span class="tp">Test</span>]
+<span class="kw">public async</span> <span class="tp">Task</span> <span class="fn">LoginFlow</span>()
+&#123;
+    <span class="kw">using var</span> pw =
+        <span class="kw">await</span> <span class="tp">Playwright</span>.<span class="fn">CreateAsync</span>();
+    <span class="kw">var</span> browser = <span class="kw">await</span>
+        pw.Chromium.<span class="fn">LaunchAsync</span>();
+    <span class="kw">var</span> page = <span class="kw">await</span>
+        browser.<span class="fn">NewPageAsync</span>();
+
+    <span class="kw">await</span> page.<span class="fn">GotoAsync</span>(<span class="str">"/login"</span>);
+    <span class="kw">await</span> page.<span class="fn">FillAsync</span>(
+        <span class="str">"[name=email]"</span>,
+        <span class="str">"alice&#64;example.com"</span>);
+    <span class="kw">await</span> page.<span class="fn">ClickAsync</span>(<span class="str">"[type=submit]"</span>);
+    <span class="kw">await</span> page.<span class="fn">WaitForURLAsync</span>(
+        <span class="str">"**/dashboard"</span>);
+    <span class="tp">Assert</span>.<span class="fn">AreEqual</span>(<span class="str">"Welcome"</span>,
+        <span class="kw">await</span> page.<span class="fn">Locator</span>(<span class="str">"h1"</span>)
+                  .<span class="fn">TextContentAsync</span>());
+&#125;</pre></div>
+        </app-code-tabs>
+      </div>
+
+    </div>
   </div>
 </div>
 

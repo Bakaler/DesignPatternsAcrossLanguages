@@ -1,0 +1,28 @@
+  Terrain Products
+    ✓ SandTerrain satisfies the Terrain contract
+    ✓ IceTerrain satisfies the Terrain contract
+    ✓ MudTerrain satisfies the Terrain contract
+
+  Enemy Prototype Cloning
+    ✓ Scorpion clone is a distinct object with identical stats
+    ✓ PolarBear clone preserves all stats
+    ✓ Wolf clone is independent — mutating clone does not affect original
+
+  Factory Method Isolation — DesertBiomeKit
+    ✓ createTerrain returns Sand Dunes terrain
+    ✓ createEnemies returns clones (not registry references)
+    ✓ createWeather has Sandstorm as base weather
+    ✓ createLoot rolls at least one item
+    ✓ registerEnemy expands the enemy pool
+
+  Factory Method Isolation — ArcticBiomeKit
+    ✓ createTerrain returns Frozen Tundra
+    ✓ createWeather has Blizzard as base weather
+
+  WorldGenerator — BiomeKit Interface Contract
+    ✓ calls every factory method exactly once during construction
+    ✓ never references a concrete class — only the BiomeKit interface
+    ✓ swapping factory completely changes terrain and weather
+    ✓ desert output never contains arctic product names
+
+  17 passing (48ms)

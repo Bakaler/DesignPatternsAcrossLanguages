@@ -38,7 +38,7 @@
 
 // ── Abstract Product A — Terrain ─────────────────────────────────────────────
 
-interface Terrain {
+export interface Terrain {
   readonly name:            string;
   readonly movementPenalty: string;
   readonly description:     string;
@@ -46,7 +46,7 @@ interface Terrain {
 
 // ── Abstract Product B — Enemy (also a Prototype) ────────────────────────────
 
-interface Enemy {
+export interface Enemy {
   clone():               Enemy;
   readonly name:         string;
   readonly health:       number;
@@ -57,18 +57,18 @@ interface Enemy {
 
 // ── Abstract Product C — Weather ─────────────────────────────────────────────
 
-interface Weather {
+export interface Weather {
   readonly name:   string;
   readonly effect: string;
 }
 
-interface WeatherEvent {
+export interface WeatherEvent {
   readonly name:        string;
   readonly trigger:     string;
   readonly consequence: string;
 }
 
-class WeatherSystem {
+export class WeatherSystem {
   constructor(
     public readonly a: Weather,                           // base conditions
     public readonly b: Map<string, WeatherEvent>          // triggerable events
@@ -85,7 +85,7 @@ class WeatherSystem {
 
 // ── Abstract Product D — LootTable ───────────────────────────────────────────
 
-interface LootTable {
+export interface LootTable {
   readonly name: string;
   roll():        string[];
 }
@@ -96,7 +96,7 @@ interface LootTable {
 //  ABSTRACT FACTORY
 // ═════════════════════════════════════════════════════════════
 
-interface BiomeKit {
+export interface BiomeKit {
   createTerrain():       Terrain;
   createEnemies():       Enemy[];       // cloned from prototype registry
   createWeather():       WeatherSystem;
@@ -111,13 +111,13 @@ interface BiomeKit {
 //  DESERT — Concrete Products
 // ═════════════════════════════════════════════════════════════
 
-class SandTerrain implements Terrain {
+export class SandTerrain implements Terrain {
   readonly name            = 'Sand Dunes';
   readonly movementPenalty = '-20% speed, doubles stamina drain';
   readonly description     = 'Endless shifting dunes, brutal heat, no cover';
 }
 
-class Scorpion implements Enemy {
+export class Scorpion implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new Scorpion(this.health, this.damage); }
   readonly name   = 'Scorpion';
@@ -125,7 +125,7 @@ class Scorpion implements Enemy {
   readonly drop   = 'Scorpion Venom Gland';
 }
 
-class SandWorm implements Enemy {
+export class SandWorm implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new SandWorm(this.health, this.damage); }
   readonly name   = 'Sand Worm';
@@ -133,7 +133,7 @@ class SandWorm implements Enemy {
   readonly drop   = 'Worm Scale';
 }
 
-class DesertBandit implements Enemy {
+export class DesertBandit implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new DesertBandit(this.health, this.damage); }
   readonly name   = 'Desert Bandit';
@@ -181,13 +181,13 @@ class SpiceLoot implements LootTable {
 //  ARCTIC — Concrete Products
 // ═════════════════════════════════════════════════════════════
 
-class IceTerrain implements Terrain {
+export class IceTerrain implements Terrain {
   readonly name            = 'Frozen Tundra';
   readonly movementPenalty = '-15% speed, risk of slip on ice tiles';
   readonly description     = 'Vast frozen plains, cracking ice sheets, permafrost';
 }
 
-class PolarBear implements Enemy {
+export class PolarBear implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new PolarBear(this.health, this.damage); }
   readonly name   = 'Polar Bear';
@@ -195,7 +195,7 @@ class PolarBear implements Enemy {
   readonly drop   = 'Polar Bear Pelt';
 }
 
-class IceWolf implements Enemy {
+export class IceWolf implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new IceWolf(this.health, this.damage); }
   readonly name   = 'Ice Wolf';
@@ -203,7 +203,7 @@ class IceWolf implements Enemy {
   readonly drop   = 'Frost Fang';
 }
 
-class FrostTroll implements Enemy {
+export class FrostTroll implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new FrostTroll(this.health, this.damage); }
   readonly name   = 'Frost Troll';
@@ -251,13 +251,13 @@ class FurLoot implements LootTable {
 //  FOREST — Concrete Products
 // ═════════════════════════════════════════════════════════════
 
-class MudTerrain implements Terrain {
+export class MudTerrain implements Terrain {
   readonly name            = 'Dense Forest Floor';
   readonly movementPenalty = '-10% speed in mud, stealth bonus in undergrowth';
   readonly description     = 'Ancient trees, thick undergrowth, soft mud paths';
 }
 
-class Wolf implements Enemy {
+export class Wolf implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new Wolf(this.health, this.damage); }
   readonly name   = 'Wolf';
@@ -265,7 +265,7 @@ class Wolf implements Enemy {
   readonly drop   = 'Wolf Pelt';
 }
 
-class WildBoar implements Enemy {
+export class WildBoar implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new WildBoar(this.health, this.damage); }
   readonly name   = 'Wild Boar';
@@ -273,7 +273,7 @@ class WildBoar implements Enemy {
   readonly drop   = 'Boar Tusk';
 }
 
-class ForestBandit implements Enemy {
+export class ForestBandit implements Enemy {
   constructor(readonly health: number, readonly damage: number) {}
   clone()         { return new ForestBandit(this.health, this.damage); }
   readonly name   = 'Forest Bandit';
@@ -321,7 +321,7 @@ class HerbLoot implements LootTable {
 //  CONCRETE FACTORIES — Singleton + Prototype Registry
 // ═════════════════════════════════════════════════════════════
 
-class DesertBiomeKit implements BiomeKit {
+export class DesertBiomeKit implements BiomeKit {
   private static readonly _instance = new DesertBiomeKit();
   private constructor() {}
   static getInstance(): DesertBiomeKit { return DesertBiomeKit._instance; }
@@ -350,7 +350,7 @@ class DesertBiomeKit implements BiomeKit {
   readonly kitName                = 'DesertBiomeKit';
 }
 
-class ArcticBiomeKit implements BiomeKit {
+export class ArcticBiomeKit implements BiomeKit {
   private static readonly _instance = new ArcticBiomeKit();
   private constructor() {}
   static getInstance(): ArcticBiomeKit { return ArcticBiomeKit._instance; }
@@ -379,7 +379,7 @@ class ArcticBiomeKit implements BiomeKit {
   readonly kitName                = 'ArcticBiomeKit';
 }
 
-class ForestBiomeKit implements BiomeKit {
+export class ForestBiomeKit implements BiomeKit {
   private static readonly _instance = new ForestBiomeKit();
   private constructor() {}
   static getInstance(): ForestBiomeKit { return ForestBiomeKit._instance; }
@@ -417,7 +417,7 @@ class ForestBiomeKit implements BiomeKit {
 //  WorldGenerator references zero concrete classes.
 //  It only knows BiomeKit, Terrain, Enemy, WeatherSystem, LootTable.
 
-class WorldGenerator {
+export class WorldGenerator {
   private readonly terrain: Terrain;
   private readonly enemies: Enemy[];
   private readonly weather: WeatherSystem;
@@ -455,6 +455,7 @@ class WorldGenerator {
 //  ENTRY POINT
 // ═════════════════════════════════════════════════════════════
 
+if (require.main === module) {
 const SEP = '═'.repeat(64);
 
 console.log('╔══════════════════════════════════════════════════════════════╗');
@@ -495,3 +496,4 @@ new WorldGenerator(DesertBiomeKit.getInstance()).generate();
 console.log('\n╔══════════════════════════════════════════════════════════════╗');
 console.log('║  Done                                                        ║');
 console.log('╚══════════════════════════════════════════════════════════════╝');
+} // end if (require.main === module)

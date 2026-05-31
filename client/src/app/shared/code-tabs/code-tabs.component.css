@@ -1,0 +1,68 @@
+/* ── tab bar ─────────────────────────────────────── */
+.ct-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.ct-tab {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.70rem;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.6rem;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.ct-tab:hover {
+  border-color: var(--border);
+  color: var(--fg);
+}
+
+.ct-tab.ct-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── column grid ─────────────────────────────────── */
+.ct-grid {
+  display: grid;
+  gap: var(--gap, 1rem);
+}
+
+.ct-cols-1 { grid-template-columns: 1fr; }
+.ct-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.ct-cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+.ct-col {
+  min-width: 0;
+  cursor: pointer;
+}
+
+.ct-col:hover {
+  /* subtle hint that columns are clickable */
+  outline: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 6px;
+}
+
+.ct-hide {
+  display: none;
+}
+
+/* when a column is expanded, remove the hover hint */
+.ct-cols-1 .ct-col {
+  cursor: default;
+}
+.ct-cols-1 .ct-col:hover {
+  outline: none;
+}
