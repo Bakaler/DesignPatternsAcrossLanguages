@@ -1,0 +1,19 @@
+TestEndToEnd
+  three level nested tree
+  tree reuse three contexts
+  display produces fully parenthesised string
+
+TestErrorPropagation
+  missing variable in deep subtree
+  division by zero in subtree
+
+TestContextIndependence
+  parallel evaluations do not interfere
+
+TestArithmeticCorrectness
+  addition is commutative
+  multiply by zero gives zero
+  divide by one gives same value
+
+Finished in 0.00581 seconds (files took 0.19 seconds to load)
+9 examples, 0 failures

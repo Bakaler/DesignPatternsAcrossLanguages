@@ -1,0 +1,31 @@
+PaymentFacade
+  #charge
+    returns transaction_id and success status
+    routes to paymentprocessortp.com base URL
+  #refund
+    returns refund_id and refunded status
+  #get_transaction
+    returns settled transaction details
+
+AuthFacade
+  #validate_token
+    returns user_id and email
+    routes to authprovidertp.com base URL
+  #get_user
+    returns user_id, name, and email
+
+MessagingFacade
+  #send
+    returns message_id and queued status
+    routes to messagingtp.com /v1/dispatch
+  #get_status
+    returns delivered status
+
+PurchaseService
+  produces [Auth], [Payment], [Messaging] labels
+  calls Auth before Payment
+  calls Payment before Messaging
+  never exposes raw credentials in output
+
+Finished in 0.00812 seconds (files took 0.21 seconds to load)
+16 examples, 0 failures

@@ -1,0 +1,32 @@
+CsvPipeline — full run()
+  all five step labels present
+  validate catches missing name
+  report shows warning
+  Alice and Bob appear in load output
+  whitespace trimmed
+
+JsonPipeline — full run()
+  all five step labels present
+  no validation errors
+  nested key appears flattened
+  coerced age in output
+  all three names in output
+
+XmlPipeline — full run()
+  all five step labels present
+  no validation errors
+  coerced bool in output
+  float score in output
+  all three names in output
+
+Shared skeleton across all pipelines
+  all pipelines share the same step labels
+  extract always before transform
+  validate always after transform
+  report always last
+
+Hook override
+  overriding report changes only the last step
+
+Finished in 0.01024 seconds (files took 0.21 seconds to load)
+20 examples, 0 failures

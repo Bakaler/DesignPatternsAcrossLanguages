@@ -191,33 +191,34 @@ class PurchaseService:
 #  CLIENT
 # ═════════════════════════════════════════════════════════════
 
-SEP = "═" * 64
+if __name__ == "__main__":
+    SEP = "═" * 64
 
-print("╔══════════════════════════════════════════════════════════════╗")
-print("║           Facade — Third Party API Hub                      ║")
-print("╚══════════════════════════════════════════════════════════════╝")
+    print("╔══════════════════════════════════════════════════════════════╗")
+    print("║           Facade — Third Party API Hub                      ║")
+    print("╚══════════════════════════════════════════════════════════════╝")
 
-print(f"\n{SEP}")
-print("  Scenario: PurchaseService.make_purchase()")
-print(f"{SEP}\n")
+    print(f"\n{SEP}")
+    print("  Scenario: PurchaseService.make_purchase()")
+    print(f"{SEP}\n")
 
-PurchaseService().make_purchase("tok_user_jane", 49.99, "+15550142")
+    PurchaseService().make_purchase("tok_user_jane", 49.99, "+15550142")
 
-print(f"\n{SEP}")
-print("  Without the Facade")
-print(SEP)
-print("")
-print('  PurchaseService would need to know:')
-print('    auth:      base URL, bearer format, client ID header name')
-print('    payment:   base URL, merchant ID header, charge endpoint path')
-print('    messaging: base URL, account SID + auth token, dispatch endpoint')
-print('    — plus JSON serialization and error handling per TP')
-print("")
-print("  With the facade:")
-print("    auth.validate_token(token)")
-print("    payment.charge(user_id, amount)")
-print("    messaging.send(phone, message)")
+    print(f"\n{SEP}")
+    print("  Without the Facade")
+    print(SEP)
+    print("")
+    print('  PurchaseService would need to know:')
+    print('    auth:      base URL, bearer format, client ID header name')
+    print('    payment:   base URL, merchant ID header, charge endpoint path')
+    print('    messaging: base URL, account SID + auth token, dispatch endpoint')
+    print('    — plus JSON serialization and error handling per TP')
+    print("")
+    print("  With the facade:")
+    print("    auth.validate_token(token)")
+    print("    payment.charge(user_id, amount)")
+    print("    messaging.send(phone, message)")
 
-print("\n╔══════════════════════════════════════════════════════════════╗")
-print("║  Done                                                        ║")
-print("╚══════════════════════════════════════════════════════════════╝")
+    print("\n╔══════════════════════════════════════════════════════════════╗")
+    print("║  Done                                                        ║")
+    print("╚══════════════════════════════════════════════════════════════╝")

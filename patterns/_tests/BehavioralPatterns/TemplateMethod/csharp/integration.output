@@ -1,0 +1,30 @@
+  Passed! - Failed: 0, Passed: 18, Skipped: 0, Total: 18
+
+  CsvFullRun
+    ✓ All_Five_Labels_Present
+    ✓ Validate_Catches_Missing_Name
+    ✓ Report_Shows_Warning
+    ✓ Alice_And_Bob_In_Output
+  JsonFullRun
+    ✓ All_Five_Labels_Present
+    ✓ No_Errors
+    ✓ Nested_Key_Flattened
+    ✓ Coerced_Age_In_Output
+    ✓ All_Names_In_Output
+  XmlFullRun
+    ✓ All_Five_Labels_Present
+    ✓ No_Errors
+    ✓ Coerced_Bool_In_Output
+    ✓ Float_Score_In_Output
+  SharedSkeleton
+    ✓ All_Pipelines_Share_Step_Labels
+    ✓ Extract_Before_Transform_In_All
+    ✓ Validate_After_Transform_In_All
+    ✓ Report_Last_In_All
+  HookOverride
+    ✓ Overriding_Report_Only_Affects_Last_Step
+
+  Test Run Successful.
+  Total tests: 18
+  Passed:      18
+  Total time:  0.8 Seconds

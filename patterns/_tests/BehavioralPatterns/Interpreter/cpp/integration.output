@@ -1,0 +1,15 @@
+  Integration Tests — Interpreter (C++)
+  --------------------------------------------------
+
+  PASS  Three-level nested tree evaluates correctly
+  PASS  Tree reuse: three different contexts
+  PASS  Display produces fully parenthesised string
+  PASS  Missing variable in deep subtree surfaces
+  PASS  Division by zero in subtree surfaces
+  PASS  Parallel evaluations do not interfere
+  PASS  Addition is commutative
+  PASS  Multiply by zero gives zero
+  PASS  Divide by one gives same value
+
+  --------------------------------------------------
+  9 passed, 0 failed

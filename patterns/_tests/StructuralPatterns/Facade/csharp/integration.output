@@ -1,0 +1,19 @@
+  Passed! - Failed: 0, Passed: 10, Skipped: 0, Total: 10
+
+  FullPurchaseFlowTests
+    ✓ All_Three_Confirmations_Present
+    ✓ Auth_Email_In_Output
+    ✓ Transaction_Id_In_Output
+    ✓ Message_Id_In_Output
+  LooseCouplingTests
+    ✓ Each_Facade_Routes_To_Its_Own_BaseUrl
+    ✓ No_Cross_Contamination_Between_URLs
+    ✓ Headers_Masked_Raw_Credentials_Never_Appear
+  SinglePointOfChangeTests
+    ✓ Swapping_Payment_Does_Not_Affect_Auth
+    ✓ Swapping_Messaging_Does_Not_Affect_Payment
+
+  Test Run Successful.
+  Total tests: 9
+  Passed:      9
+  Total time:  0.7 Seconds

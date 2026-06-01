@@ -1,0 +1,17 @@
+PurchaseService — full make_purchase() flow
+  all three confirmation lines appear
+  auth email propagates into output
+  transaction id propagates into output
+  message id propagates into output
+
+Facade — loose coupling
+  each facade routes exclusively to its own base URL
+  no cross-contamination between facade URLs
+  headers are masked — raw credentials never appear
+
+Facade — single point of change
+  swapping PaymentFacade subclass does not affect AuthFacade
+  swapping MessagingFacade does not affect PaymentFacade
+
+Finished in 0.00634 seconds (files took 0.19 seconds to load)
+10 examples, 0 failures

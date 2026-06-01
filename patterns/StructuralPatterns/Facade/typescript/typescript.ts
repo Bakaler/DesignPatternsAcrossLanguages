@@ -26,9 +26,9 @@
 //  Handles the HTTP plumbing once. Subclasses only define
 //  their config (baseUrl, headers) and their domain methods.
 
-type HttpBody = Record<string, unknown>;
+export type HttpBody = Record<string, unknown>;
 
-abstract class ThirdPartyClient {
+export abstract class ThirdPartyClient {
   protected abstract baseUrl: string;
   protected abstract headers: Record<string, string>;
 
@@ -73,7 +73,7 @@ abstract class ThirdPartyClient {
 //  Wraps PaymentProcessorTP. Callers never see the base URL,
 //  the merchant ID header, or the raw endpoint paths.
 
-class PaymentFacade extends ThirdPartyClient {
+export class PaymentFacade extends ThirdPartyClient {
   protected baseUrl = 'https://api.paymentprocessortp.com';
   protected headers = {
     'Content-Type':  'application/json',
@@ -102,7 +102,7 @@ class PaymentFacade extends ThirdPartyClient {
 //  Wraps AuthProviderTP. Callers never see the bearer format,
 //  client ID header, or the token validation endpoint.
 
-class AuthFacade extends ThirdPartyClient {
+export class AuthFacade extends ThirdPartyClient {
   protected baseUrl = 'https://api.authprovidertp.com';
   protected headers = {
     'Content-Type':  'application/json',
@@ -127,7 +127,7 @@ class AuthFacade extends ThirdPartyClient {
 //  Wraps MessagingTP. Callers never see the account SID,
 //  auth token, or the dispatch endpoint structure.
 
-class MessagingFacade extends ThirdPartyClient {
+export class MessagingFacade extends ThirdPartyClient {
   protected baseUrl = 'https://api.messagingtp.com';
   protected headers = {
     'Content-Type':  'application/json',
@@ -152,7 +152,7 @@ class MessagingFacade extends ThirdPartyClient {
 //  Knows nothing about HTTP, auth headers, or base URLs.
 //  Each facade call reads like a plain domain method.
 
-class PurchaseService {
+export class PurchaseService {
   private auth      = new AuthFacade();
   private payment   = new PaymentFacade();
   private messaging = new MessagingFacade();
@@ -178,6 +178,7 @@ class PurchaseService {
 //  CLIENT
 // ═════════════════════════════════════════════════════════════
 
+if (require.main === module) {
 const SEP = '═'.repeat(64);
 
 console.log('╔══════════════════════════════════════════════════════════════╗');
@@ -208,3 +209,4 @@ console.log('    messaging.send(phone, message)');
 console.log('\n╔══════════════════════════════════════════════════════════════╗');
 console.log('║  Done                                                        ║');
 console.log('╚══════════════════════════════════════════════════════════════╝');
+} // require.main === module

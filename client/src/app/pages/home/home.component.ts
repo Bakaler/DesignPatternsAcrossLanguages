@@ -123,7 +123,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         { id: 'bridge',    name: 'Bridge',    done: false },
         { id: 'composite', name: 'Composite', done: false },
         { id: 'decorator', name: 'Decorator', done: false },
-        { id: 'facade',    name: 'Facade',    done: false, inWorks: true },
+        { id: 'facade',    name: 'Facade',    done: true  },
         { id: 'flyweight', name: 'Flyweight', done: false },
         { id: 'proxy',     name: 'Proxy',     done: false },
       ]

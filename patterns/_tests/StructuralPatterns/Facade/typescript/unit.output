@@ -1,0 +1,24 @@
+  PaymentFacade
+    ✓ charge() returns transaction_id and success status
+    ✓ refund() returns refund_id and refunded status
+    ✓ getTransaction() returns settled transaction details
+    ✓ charge() routes to paymentprocessortp.com base URL
+    ✓ refund() routes to /v1/refund endpoint
+
+  AuthFacade
+    ✓ validateToken() returns user_id and email
+    ✓ getUser() returns user_id, name, and email
+    ✓ validateToken() routes to authprovidertp.com base URL
+
+  MessagingFacade
+    ✓ send() returns message_id and queued status
+    ✓ getStatus() returns delivered status
+    ✓ send() routes to messagingtp.com /v1/dispatch
+
+  PurchaseService — facade isolation
+    ✓ produces [Auth], [Payment], [Messaging] labels in output
+    ✓ calls Auth before Payment
+    ✓ calls Payment before Messaging
+    ✓ output never exposes raw credential values
+
+  16 passing (14ms)

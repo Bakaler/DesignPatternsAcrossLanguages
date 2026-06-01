@@ -30,7 +30,7 @@ using System.Text;
 //  Handles the HTTP plumbing once. Subclasses only define
 //  their config (BaseUrl, Headers) and their domain methods.
 
-abstract class ThirdPartyClient {
+public abstract class ThirdPartyClient {
 
     protected abstract string BaseUrl { get; }
     protected abstract Dictionary<string, string> Headers { get; }
@@ -85,7 +85,7 @@ abstract class ThirdPartyClient {
 //  Wraps PaymentProcessorTP. Callers never see the base URL,
 //  the merchant ID header, or the raw endpoint paths.
 
-class PaymentFacade : ThirdPartyClient {
+public class PaymentFacade : ThirdPartyClient {
     protected override string BaseUrl => "https://api.paymentprocessortp.com";
     protected override Dictionary<string, string> Headers => new() {
         ["Content-Type"]  = "application/json",
@@ -114,7 +114,7 @@ class PaymentFacade : ThirdPartyClient {
 //  Wraps AuthProviderTP. Callers never see the bearer format,
 //  client ID header, or the token validation endpoint.
 
-class AuthFacade : ThirdPartyClient {
+public class AuthFacade : ThirdPartyClient {
     protected override string BaseUrl => "https://api.authprovidertp.com";
     protected override Dictionary<string, string> Headers => new() {
         ["Content-Type"]  = "application/json",
@@ -140,7 +140,7 @@ class AuthFacade : ThirdPartyClient {
 //  Wraps MessagingTP. Callers never see the account SID,
 //  auth token, or the dispatch endpoint structure.
 
-class MessagingFacade : ThirdPartyClient {
+public class MessagingFacade : ThirdPartyClient {
     protected override string BaseUrl => "https://api.messagingtp.com";
     protected override Dictionary<string, string> Headers => new() {
         ["Content-Type"]  = "application/json",
@@ -166,7 +166,7 @@ class MessagingFacade : ThirdPartyClient {
 //  Knows nothing about HTTP, auth headers, or base URLs.
 //  Each facade call reads like a plain domain method.
 
-class PurchaseService {
+public class PurchaseService {
     private readonly AuthFacade      auth      = new();
     private readonly PaymentFacade   payment   = new();
     private readonly MessagingFacade messaging = new();

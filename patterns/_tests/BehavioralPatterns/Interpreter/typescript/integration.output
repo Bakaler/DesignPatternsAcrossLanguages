@@ -1,0 +1,18 @@
+  End-to-end expression evaluation
+    ✓ evaluates a three-level nested tree correctly
+    ✓ tree reuse: same tree, three different contexts
+    ✓ toString() produces a fully parenthesised string
+
+  Error propagation through tree
+    ✓ missing variable in deep sub-tree surfaces the error
+    ✓ division by zero in sub-tree surfaces the error
+
+  Context independence
+    ✓ two parallel evaluations with different contexts do not interfere
+
+  Commutative and associativity checks
+    ✓ addition is commutative
+    ✓ subtraction is not commutative
+    ✓ multiply by zero always gives zero
+
+  9 passing (8ms)

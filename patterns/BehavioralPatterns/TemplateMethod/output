@@ -1,0 +1,51 @@
+╔══════════════════════════════════════════════════════════════╗
+║       Template Method: Data Pipeline                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+════════════════════════════════════════════════════════════════
+  Three pipelines, same skeleton, different formats
+════════════════════════════════════════════════════════════════
+
+  Pipeline : CSV Data Pipeline
+  ────────────────────────────────────────────────────────────
+  [Extract]   3 raw rows parsed from CSV source
+  [Transform] whitespace trimmed · empty strings → None
+  [Validate]  3 records checked: 2 passed, 1 error(s)
+  [Load]      writing 3 record(s)
+              id:1  name:Alice  age:30  city:London
+              id:2  name:Bob    age:25  city:New York
+              id:3  name:None   age:28  city:Paris
+  [Report]  ⚠  row 2: missing required field 'name'
+
+  Pipeline : JSON Data Pipeline
+  ────────────────────────────────────────────────────────────
+  [Extract]   3 objects parsed from JSON array
+  [Transform] nested keys flattened · numeric strings coerced
+  [Validate]  3 records checked: 3 passed, 0 error(s)
+  [Load]      writing 3 record(s)
+              id:1  name:Dave   age:31  meta_role:admin  meta_level:3
+              id:2  name:Eve    age:27  meta_role:user   meta_level:1
+              id:3  name:Frank  age:35  meta_role:mod    meta_level:2
+  [Report]    Pipeline complete. No issues.
+
+  Pipeline : XML Data Pipeline
+  ────────────────────────────────────────────────────────────
+  [Extract]   3 <record> elements parsed from XML
+  [Transform] type attrs stripped · values coerced (int/float/bool)
+  [Validate]  3 records checked: 3 passed, 0 error(s)
+  [Load]      writing 3 record(s)
+              id:1  name:Grace  active:True   score:9.4
+              id:2  name:Henry  active:False  score:7.8
+              id:3  name:Isla   active:True   score:8.9
+  [Report]    Pipeline complete. No issues.
+
+════════════════════════════════════════════════════════════════
+  The template method in action:
+    Every pipeline ran: extract → transform → validate → load → report
+    validate() and load() are identical across all three; written once.
+    Only extract() and transform() differed per format.
+════════════════════════════════════════════════════════════════
+
+╔══════════════════════════════════════════════════════════════╗
+║  Done                                                        ║
+╚══════════════════════════════════════════════════════════════╝

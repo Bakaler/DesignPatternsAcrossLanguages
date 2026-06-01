@@ -2,6 +2,32 @@ import { Router, Request, Response } from 'express';
 import { pool } from '../db/client';
 import { auth } from '../auth';
 import { fromNodeHeaders } from 'better-auth/node';
+import sanitizeHtml from 'sanitize-html';
+
+// Allowlist tuned to Quill's output — keeps formatting, strips everything dangerous
+const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: [
+    'p', 'br', 'strong', 'em', 'u', 's', 'a',
+    'ol', 'ul', 'li', 'blockquote',
+    'h1', 'h2', 'h3', 'pre', 'code', 'span',
+  ],
+  allowedAttributes: {
+    'a':    ['href', 'target', 'rel'],
+    'pre':  ['class'],   // ql-syntax
+    'code': ['class'],
+    'span': ['class'],
+  },
+  allowedClasses: {
+    'pre':  ['ql-syntax'],
+    'code': ['ql-*'],
+    'span': ['ql-*'],
+  },
+  allowedSchemes: ['http', 'https', 'mailto'],
+  transformTags: {
+    // Force all links to open safely in a new tab
+    'a': sanitizeHtml.simpleTransform('a', { target: '_blank', rel: 'noopener noreferrer' }),
+  },
+};
 
 const router = Router();
 
@@ -100,8 +126,15 @@ router.post('/', async (req: Request, res: Response) => {
     return;
   }
 
+  if (bodyHtml.length > 20_000) {
+    res.status(400).json({ error: 'Comment too long' });
+    return;
+  }
+
+  const clean = sanitizeHtml(bodyHtml, SANITIZE_OPTIONS);
+
   // Silent ban — return 201 without inserting
-  if (await isBanned(bodyHtml)) {
+  if (await isBanned(clean)) {
     res.status(201).json({ ok: true });
     return;
   }
@@ -109,7 +142,7 @@ router.post('/', async (req: Request, res: Response) => {
   await pool.query(
     `INSERT INTO comments (pattern_key, user_id, parent_id, body_html)
      VALUES ($1, $2, $3, $4)`,
-    [patternKey, session.user.id, parentId ?? null, bodyHtml]
+    [patternKey, session.user.id, parentId ?? null, clean]
   );
 
   res.status(201).json({ ok: true });
@@ -123,7 +156,14 @@ router.patch('/:id', async (req: Request, res: Response) => {
   const { bodyHtml } = req.body as { bodyHtml: string };
   if (!bodyHtml?.trim()) { res.status(400).json({ error: 'Missing body' }); return; }
 
-  if (await isBanned(bodyHtml)) {
+  if (bodyHtml.length > 20_000) {
+    res.status(400).json({ error: 'Comment too long' });
+    return;
+  }
+
+  const clean = sanitizeHtml(bodyHtml, SANITIZE_OPTIONS);
+
+  if (await isBanned(clean)) {
     res.status(200).json({ ok: true });
     return;
   }
@@ -132,7 +172,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
     `UPDATE comments
      SET body_html = $1, updated_at = NOW()
      WHERE id = $2 AND user_id = $3 AND deleted_at IS NULL`,
-    [bodyHtml, req.params['id'], session.user.id]
+    [clean, req.params['id'], session.user.id]
   );
 
   if (!rowCount) { res.status(404).json({ error: 'Not found' }); return; }

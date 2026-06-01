@@ -1,0 +1,14 @@
+├─ InterpreterIntegrationTests ✔
+│  ├─ threeLevelNestedTreeEvaluatesCorrectly() ✔
+│  ├─ treeReuseThreeContexts() ✔
+│  ├─ displayProducesFullyParenthesisedString() ✔
+│  ├─ missingVariableInDeepSubtreeSurfaces() ✔
+│  ├─ divisionByZeroInSubtreeSurfaces() ✔
+│  ├─ parallelEvaluationsDoNotInterfere() ✔
+│  ├─ additionIsCommutative() ✔
+│  └─ multiplyByZeroGivesZero() ✔
+
+Test run finished after 261 ms
+[  8 tests found     ]
+[  8 tests successful]
+[  0 tests failed    ]

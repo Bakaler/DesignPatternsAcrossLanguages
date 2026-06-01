@@ -18,7 +18,7 @@ async function runMigration() {
   console.log('[db] Migration complete.');
 }
 
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet());
 app.use(cors({
   origin:      process.env['CLIENT_ORIGIN'] ?? 'http://localhost:4200',
   credentials: true,
@@ -65,6 +65,12 @@ app.get('/api/patterns/:category/:name', (req: Request, res: Response) => {
 
   const filePath   = path.join(PATTERNS_DIR, category, name, lang, `${lang}.${ext}`);
   const outputPath = path.join(PATTERNS_DIR, category, name, 'output');
+
+  // Containment check — prevent any path from escaping PATTERNS_DIR
+  if (!path.resolve(filePath).startsWith(path.resolve(PATTERNS_DIR))) {
+    res.status(403).json({ error: 'Forbidden' });
+    return;
+  }
 
   fs.readFile(filePath, 'utf-8', (err, content) => {
     if (err) {
@@ -121,10 +127,16 @@ app.get('/api/tests/:category/:name/available', (req: Request, res: Response) =>
 app.get('/api/tests/:category/:name', (req: Request, res: Response) => {
   const { category, name } = req.params;
   const lang = (req.query['lang'] as string) ?? 'typescript';
-  const type = (req.query['type'] as string) ?? 'unit'; // 'unit' | 'integration'
+  const type = (req.query['type'] as string) ?? 'unit';
 
   if (!/^[\w-]+$/.test(category) || !/^[\w-]+$/.test(name)) {
     res.status(400).json({ error: 'Invalid path segment' });
+    return;
+  }
+
+  // Whitelist type — only 'unit' or 'integration' are valid
+  if (type !== 'unit' && type !== 'integration') {
+    res.status(400).json({ error: 'Invalid type' });
     return;
   }
 
@@ -136,6 +148,12 @@ app.get('/api/tests/:category/:name', (req: Request, res: Response) => {
 
   const filePath   = path.join(TESTS_DIR, category, name, lang, `${type}.test.${ext}`);
   const outputPath = path.join(TESTS_DIR, category, name, lang, `${type}.output`);
+
+  // Containment check — prevent any path from escaping TESTS_DIR
+  if (!path.resolve(filePath).startsWith(path.resolve(TESTS_DIR))) {
+    res.status(403).json({ error: 'Forbidden' });
+    return;
+  }
 
   fs.readFile(filePath, 'utf-8', (err, content) => {
     if (err) {

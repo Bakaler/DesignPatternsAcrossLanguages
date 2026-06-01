@@ -1,0 +1,26 @@
+├─ CsvFullRun ✔
+│  ├─ all_five_labels_present() ✔
+│  ├─ validate_catches_missing_name() ✔
+│  ├─ report_shows_warning() ✔
+│  └─ alice_and_bob_in_output() ✔
+├─ JsonFullRun ✔
+│  ├─ all_five_labels_present() ✔
+│  ├─ no_errors() ✔
+│  ├─ nested_key_flattened() ✔
+│  ├─ coerced_age_in_output() ✔
+│  └─ all_names_in_output() ✔
+├─ XmlFullRun ✔
+│  ├─ all_five_labels_present() ✔
+│  ├─ no_errors() ✔
+│  ├─ coerced_bool_in_output() ✔
+│  └─ float_score_in_output() ✔
+└─ SharedSkeleton ✔
+   ├─ all_pipelines_share_step_labels() ✔
+   ├─ extract_before_transform_in_all() ✔
+   ├─ validate_after_transform_in_all() ✔
+   └─ report_last_in_all() ✔
+
+Test run finished after 298 ms
+[ 18 tests found     ]
+[ 18 tests successful]
+[  0 tests failed    ]

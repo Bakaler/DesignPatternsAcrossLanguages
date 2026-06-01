@@ -259,6 +259,14 @@ body::before {
 }
 
 /* ── Diagram / monospace block ───────────────────────────────────────────────*/
+.rm-diagram-img {
+  width: 100%;
+  max-width: 760px;
+  display: block;
+  margin: 0 auto;
+  border-radius: 6px;
+}
+
 .rm-diagram {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.73rem;

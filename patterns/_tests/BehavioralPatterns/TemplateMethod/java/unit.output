@@ -1,0 +1,29 @@
+├─ ValidateTests ✔
+│  ├─ passes_records_with_id_and_name() ✔
+│  ├─ catches_missing_name() ✔
+│  ├─ catches_missing_id() ✔
+│  └─ output_contains_records_checked() ✔
+├─ ReportHookTests ✔
+│  ├─ prints_no_issues_when_clean() ✔
+│  └─ prints_warning_when_errors_exist() ✔
+├─ CsvPipelineTests ✔
+│  ├─ extract_loads_three_records() ✔
+│  ├─ transform_trims_whitespace() ✔
+│  └─ transform_nulls_empty_string() ✔
+├─ JsonPipelineTests ✔
+│  ├─ extract_loads_three_records() ✔
+│  ├─ transform_flattens_nested() ✔
+│  └─ transform_coerces_numeric_string() ✔
+├─ XmlPipelineTests ✔
+│  ├─ extract_loads_three_records() ✔
+│  ├─ transform_coerces_int() ✔
+│  ├─ transform_coerces_float() ✔
+│  ├─ transform_coerces_bool_true() ✔
+│  └─ transform_coerces_bool_false() ✔
+└─ RunOrderTests ✔
+   └─ calls_steps_in_correct_order() ✔
+
+Test run finished after 341 ms
+[ 20 tests found     ]
+[ 20 tests successful]
+[  0 tests failed    ]

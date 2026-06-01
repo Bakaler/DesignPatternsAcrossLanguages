@@ -1,0 +1,74 @@
+  Passed! - Failed: 0, Passed: 49, Skipped: 0, Total: 49
+
+  ContextTests
+    ✓ StoresAndRetrievesVariable
+    ✓ ThrowsOnMissingVariable
+    ✓ OverwritesExistingVariable
+    ✓ SetReturnsSelfForChaining
+  NumberExpressionTests
+    ✓ ReturnsLiteralValue
+    ✓ IgnoresContext
+    ✓ DisplayRendersInteger
+  VariableExpressionTests
+    ✓ ResolvesFromContext
+    ✓ ThrowsWhenNotInContext
+    ✓ DisplayReturnsName
+  AddExpressionTests
+    ✓ AddsTwoNumbers
+    ✓ DisplayContainsPlusAndParens
+  SubtractExpressionTests
+    ✓ SubtractsRightFromLeft
+    ✓ ResultCanBeNegative
+  MultiplyExpressionTests
+    ✓ MultipliesTwoNumbers
+  DivideExpressionTests
+    ✓ DividesLeftByRight
+    ✓ ThrowsOnDivisionByZero
+    ✓ ProducesFractionalResult
+  FloorDivideExpressionTests
+    ✓ FloorsTheQuotient
+    ✓ ThrowsOnDivisionByZero
+    ✓ DisplayContainsSlashes
+  ModuloExpressionTests
+    ✓ ReturnsRemainder
+    ✓ ThrowsOnDivisionByZero
+    ✓ DisplayContainsPercent
+  PowerExpressionTests
+    ✓ RaisesBaseToExponent
+    ✓ HandlesFractionalPower
+    ✓ DisplayContainsStars
+  NegateExpressionTests
+    ✓ NegatesPositive
+    ✓ NegatesNegative
+  AbsExpressionTests
+    ✓ AbsoluteValueOfNegative
+    ✓ LeavesPositiveUnchanged
+  SqrtExpressionTests
+    ✓ CorrectSquareRoot
+    ✓ ThrowsOnNegativeInput
+  InverseExpressionTests
+    ✓ ReturnsInverse
+    ✓ ThrowsOnZero
+  FactorialExpressionTests
+    ✓ ZeroFactorial
+    ✓ FiveFactorial
+    ✓ SixFactorial
+    ✓ ThrowsOnNegative
+  PowerOfTenExpressionTests
+    ✓ TenSquared
+    ✓ TenToZero
+  LogExpressionTests
+    ✓ Log100Equals2
+    ✓ Log1Equals0
+    ✓ ThrowsOnZero
+    ✓ ThrowsOnNegative
+  CompositTreeTests
+    ✓ DiffOfSquares
+    ✓ SqrtAbsComposition
+    ✓ SameTreeDifferentContexts
+    ✓ Pow10AbsComposition
+
+  Test Run Successful.
+  Total tests: 49
+  Passed:      49
+  Total time:  0.9 Seconds

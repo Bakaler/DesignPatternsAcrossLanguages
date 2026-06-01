@@ -1,0 +1,339 @@
+<div class="rm-wrap">
+
+  <!-- ── Hero ── -->
+  <div class="rm-hero">
+    <span class="rm-badge behavioral">Behavioral</span>
+    <h1 class="rm-hero-title">Template Method</h1>
+    <div class="rm-hero-meta">
+      <span>GoF pg. 325</span>
+      <span>Also known as: Template Pattern</span>
+    </div>
+  </div>
+
+  <!-- ── Power Words ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Power Words</h2>
+    <div class="rm-powerword-block">
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word amber">Power Word: Skeleton</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word teal">Power Word: Invariant</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word pink">Power Word: Hollywood</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Attributions ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Attributions</h2>
+
+    <div class="rm-attribution-book">
+      <div class="rm-attribution-book-title">Design Patterns: Elements of Reusable Object-Oriented Software</div>
+      <div class="rm-attribution-book-authors">Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides</div>
+      <div class="rm-attribution-book-forward">Forward by Grady Booch</div>
+    </div>
+
+    <ul class="rm-list plain" style="margin-top: 1rem;">
+      <li>
+        <a class="rm-link" href="https://refactoring.guru/design-patterns/template-method" target="_blank">
+          refactoring.guru &rarr; Template Method
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://www.cs.unc.edu/~stotts/GOF/hires/pat5mfso.htm" target="_blank">
+          cs.unc.edu &rarr; GoF Pattern Reference (Template Method)
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://stackoverflow.com/questions/669271/what-is-the-hollywood-principle" target="_blank">
+          stackoverflow.com &rarr; What is the Hollywood Principle?
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ── Intent ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Intent</h2>
+    <div class="rm-callout">
+      Define the <strong>skeleton of an algorithm</strong> in a base class, deferring some steps
+      to subclasses. Subclasses can redefine certain steps without changing the algorithm's structure.
+    </div>
+    <p class="rm-p">
+      The base class owns the <em>sequence</em>. Subclasses own the <em>variation</em>.
+      The template method says: here are the steps and their fixed order. Fill in the ones
+      that differ per context. Everything that is invariant (shared validation, shared output)
+      is written once and inherited by all.
+    </p>
+  </section>
+
+  <!-- ── The Hollywood Principle ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Hollywood Principle</h2>
+    <p class="rm-p">
+      <em>"Don't call us, we'll call you."</em>
+    </p>
+    <p class="rm-p">
+      In Template Method, the <strong>base class calls the subclass</strong>, never the other way around.
+      <span class="rm-code">DataPipeline.run()</span> calls <span class="rm-code">_extract()</span>,
+      which is implemented by <span class="rm-code">CsvPipeline</span>. The subclass never calls
+      <span class="rm-code">run()</span> itself. It just provides its piece; the base orchestrates.
+    </p>
+    <p class="rm-p">
+      This inversion of control is the defining characteristic of the pattern and the source of its
+      code reuse. The expensive shared logic (<span class="rm-code">_validate()</span>,
+      <span class="rm-code">_load()</span>) lives in the base and runs automatically for every
+      subclass without any cooperation required from the subclass author.
+    </p>
+  </section>
+
+  <!-- ── Abstract vs Hook ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Abstract Steps vs. Hook Methods</h2>
+    <p class="rm-p">
+      Not all steps are the same kind of override point. The GoF distinguishes two types:
+    </p>
+    <table class="rm-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>In This Implementation</th>
+          <th>Behaviour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Abstract step</strong></td>
+          <td><span class="rm-code">_extract()</span> · <span class="rm-code">_transform()</span></td>
+          <td>No default. Subclass <em>must</em> implement. Raises <span class="rm-code">TypeError</span> if not.</td>
+        </tr>
+        <tr>
+          <td><strong>Concrete step</strong></td>
+          <td><span class="rm-code">_validate()</span> · <span class="rm-code">_load()</span></td>
+          <td>Full implementation in base. Subclasses should not override.</td>
+        </tr>
+        <tr>
+          <td><strong>Hook</strong></td>
+          <td><span class="rm-code">_report()</span></td>
+          <td>Default implementation provided (prints errors or "no issues"). Subclasses <em>may</em> override for custom post-run messaging.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="rm-p" style="margin-top: 0.8rem;">
+      Hooks are the escape valve. They give subclasses a sanctioned extension point without
+      forcing them to implement something. A subclass that doesn't need custom reporting
+      ignores <span class="rm-code">_report()</span> entirely and gets the default for free.
+    </p>
+  </section>
+
+  <!-- ── Structure ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Structure</h2>
+
+    <pre class="rm-diagram"><span class="uml-arrow">┌──────────────────────────────────────────────────────────────────┐</span>
+<span class="uml-arrow">│</span>                  <span class="uml-title">TEMPLATE METHOD PATTERN</span>                          <span class="uml-arrow">│</span>
+<span class="uml-arrow">└──────────────────────────────────────────────────────────────────┘</span>
+
+           <span class="uml-stereotype">«abstract»</span>
+         <span class="uml-iface">┌───────────────────────────┐</span>
+         <span class="uml-iface">│       AbstractClass        │</span>
+         <span class="uml-iface">├───────────────────────────┤</span>
+         <span class="uml-iface">│</span> <span class="uml-method">+ templateMethod()  «final»</span> <span class="uml-iface">│</span>  ← calls steps in fixed order
+         <span class="uml-iface">│</span>   <span class="uml-method">  step1()         «abstract»</span><span class="uml-iface">│</span>  ← must be overridden
+         <span class="uml-iface">│</span>   <span class="uml-method">  step2()         «abstract»</span><span class="uml-iface">│</span>  ← must be overridden
+         <span class="uml-iface">│</span>   <span class="uml-method">  step3()         «concrete»</span><span class="uml-iface">│</span>  ← shared, do not override
+         <span class="uml-iface">│</span>   <span class="uml-method">  hook()          «hook»    </span><span class="uml-iface">│</span>  ← optional override
+         <span class="uml-iface">└──────────────┬────────────┘</span>
+                        <span class="uml-arrow">△</span>
+          <span class="uml-arrow">┌─────────────┼─────────────┐</span>
+          <span class="uml-arrow">│             │             │</span>
+  <span class="uml-concrete">┌──────────────┐</span> <span class="uml-concrete">┌──────────────┐</span> <span class="uml-concrete">┌──────────────┐</span>
+  <span class="uml-concrete">│ConcreteClassA│</span> <span class="uml-concrete">│ConcreteClassB│</span> <span class="uml-concrete">│ConcreteClassC│</span>
+  <span class="uml-concrete">├──────────────┤</span> <span class="uml-concrete">├──────────────┤</span> <span class="uml-concrete">├──────────────┤</span>
+  <span class="uml-concrete">│</span><span class="uml-method">step1() impl  </span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">step1() impl  </span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">step1() impl  </span><span class="uml-concrete">│</span>
+  <span class="uml-concrete">│</span><span class="uml-method">step2() impl  </span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">step2() impl  </span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">step2() impl  </span><span class="uml-concrete">│</span>
+  <span class="uml-concrete">└──────────────┘</span> <span class="uml-concrete">└──────────────┘</span> <span class="uml-concrete">└──────────────┘</span></pre>
+
+    <h3 class="rm-h3">Mapped to this implementation</h3>
+    <pre class="rm-diagram"><span class="uml-stereotype">«abstract»</span>  <span class="uml-iface">DataPipeline</span>
+  <span class="uml-method">run()          «template  final»</span>   extract → transform → validate → load → report
+  <span class="uml-method">_extract()     «abstract»</span>
+  <span class="uml-method">_transform()   «abstract»</span>
+  <span class="uml-method">_validate()    «concrete»</span>           checks id + name present
+  <span class="uml-method">_load()        «concrete»</span>           prints formatted record table
+  <span class="uml-method">_report()      «hook»</span>               default: print errors or "no issues"
+              <span class="uml-arrow">△</span>
+  <span class="uml-arrow">┌──────────────┼──────────────┐</span>
+  <span class="uml-arrow">│              │              │</span>
+<span class="uml-concrete">CsvPipeline</span>   <span class="uml-concrete">JsonPipeline</span>   <span class="uml-concrete">XmlPipeline</span>
+<span class="uml-method">_extract()    _extract()     _extract()</span>     format-specific parsers
+<span class="uml-method">_transform()  _transform()   _transform()</span>   format-specific cleaners</pre>
+  </section>
+
+  <!-- ── Participants ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Participants</h2>
+    <table class="rm-table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>In This Implementation</th>
+          <th>Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Abstract Class</td>
+          <td><span class="rm-code">DataPipeline</span></td>
+          <td>Defines <span class="rm-code">run()</span>, the template method. Implements shared steps. Declares abstract steps.</td>
+        </tr>
+        <tr>
+          <td>Concrete Class</td>
+          <td><span class="rm-code">CsvPipeline</span></td>
+          <td>Parses CSV rows. Trims whitespace, normalises empty values to <span class="rm-code">None</span>.</td>
+        </tr>
+        <tr>
+          <td>Concrete Class</td>
+          <td><span class="rm-code">JsonPipeline</span></td>
+          <td>Parses a JSON array. Flattens nested dicts, coerces numeric strings.</td>
+        </tr>
+        <tr>
+          <td>Concrete Class</td>
+          <td><span class="rm-code">XmlPipeline</span></td>
+          <td>Walks XML elements. Strips type attributes, coerces values to int / float / bool / str.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ── Consequences ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Consequences</h2>
+
+    <h3 class="rm-h3">✓ Code Reuse</h3>
+    <p class="rm-p">
+      <span class="rm-code">_validate()</span> and <span class="rm-code">_load()</span> are written
+      exactly once in <span class="rm-code">DataPipeline</span>. All three concrete pipelines get
+      them for free. Add a fourth format and you get validation and load output without writing a line.
+    </p>
+
+    <h3 class="rm-h3">✓ Enforced Sequence</h3>
+    <p class="rm-p">
+      <span class="rm-code">run()</span> is the template. It is not virtual. No subclass can
+      call the steps in a different order, skip validation, or run load before extract.
+      The invariant sequence is a guarantee, not a convention.
+    </p>
+
+    <h3 class="rm-h3">✓ Hollywood Principle</h3>
+    <p class="rm-p">
+      The base class drives. Subclasses are passive: they provide implementations and wait to be called.
+      A new pipeline author only needs to think about parsing and cleaning.
+      The orchestration is not their problem.
+    </p>
+
+    <h3 class="rm-h3">✗ Inheritance Lock</h3>
+    <p class="rm-p">
+      The algorithm lives in the class hierarchy. Adding a new step (say, <span class="rm-code">_audit()</span>
+      after <span class="rm-code">_load()</span>) requires editing <span class="rm-code">DataPipeline</span>
+      and potentially adding abstract or hook methods that all existing subclasses must satisfy.
+      Deep inheritance also becomes hard to read when subclasses override multiple steps -
+      following the execution path requires jumping between files.
+    </p>
+  </section>
+
+  <!-- ── Template Method vs Strategy ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Template Method vs. Strategy</h2>
+    <p class="rm-p">
+      These two patterns solve the same problem (varying part of an algorithm) but in opposite ways.
+    </p>
+    <table class="rm-table">
+      <thead>
+        <tr><th></th><th>Template Method</th><th>Strategy</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Mechanism</strong></td>
+          <td>Inheritance</td>
+          <td>Composition</td>
+        </tr>
+        <tr>
+          <td><strong>Variation</strong></td>
+          <td>Subclass overrides steps</td>
+          <td>Inject a different object</td>
+        </tr>
+        <tr>
+          <td><strong>Algorithm owner</strong></td>
+          <td>Base class</td>
+          <td>Context class</td>
+        </tr>
+        <tr>
+          <td><strong>Runtime switch</strong></td>
+          <td>No (fixed at class definition)</td>
+          <td>Yes (swap the strategy object)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="rm-p" style="margin-top: 0.8rem;">
+      Prefer Strategy when you need to switch algorithms at runtime or compose behaviours.
+      Prefer Template Method when the algorithm structure is fixed and subclassing is natural.
+    </p>
+  </section>
+
+  <!-- ── When to Reach For It ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">When to Reach For It</h2>
+    <ul class="rm-list plain">
+      <li>Multiple classes share the same algorithm structure but differ in specific steps</li>
+      <li>You want to enforce a sequence of operations that subclasses cannot bypass</li>
+      <li>You want shared "before" and "after" logic (validation, logging, teardown) without repeating it</li>
+      <li>The variation is best expressed as a class, not a callable</li>
+    </ul>
+  </section>
+
+  <!-- ── Trade-offs ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Trade-offs</h2>
+    <div class="rm-grid-2">
+      <div class="rm-card">
+        <div class="rm-card-title good">Strengths</div>
+        <ul class="rm-list good">
+          <li>Shared steps written once; DRY by design</li>
+          <li>Algorithm sequence is a hard guarantee</li>
+          <li>Adding a new variant is a single new class</li>
+          <li>Hollywood principle keeps subclasses simple</li>
+        </ul>
+      </div>
+      <div class="rm-card">
+        <div class="rm-card-title bad">Weaknesses</div>
+        <ul class="rm-list bad">
+          <li>Inheritance couples subclass to base class</li>
+          <li>New required steps require touching every subclass</li>
+          <li>Can't swap algorithm variants at runtime</li>
+          <li>Deep hierarchies become hard to trace</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Related Patterns ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Related Patterns</h2>
+    <span class="rm-tag">Strategy</span>
+    <span class="rm-tag">Factory Method</span>
+    <span class="rm-tag">Hook Method</span>
+    <p class="rm-p" style="margin-top: 0.8rem;">
+      <strong>Strategy.</strong> Achieves the same variation goal via composition instead of inheritance. Prefer Strategy when runtime switching is needed.<br>
+      <strong>Factory Method.</strong> Is often a special case of Template Method: the template method calls a factory method as one of its steps, letting subclasses decide what to instantiate.<br>
+      <strong>Hook Method.</strong> Not a GoF pattern on its own, but a technique used within Template Method. A hook is a concrete method with a default no-op or default behaviour that subclasses may override.
+    </p>
+  </section>
+
+</div>

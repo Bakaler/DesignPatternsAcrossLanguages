@@ -1,0 +1,33 @@
+  DataPipeline.validate()
+    ✓ passes records that have both id and name
+    ✓ catches a missing name
+    ✓ catches a missing id
+    ✓ output line contains "records checked"
+
+  DataPipeline.report() hook
+    ✓ prints "No issues." when no errors
+    ✓ prints warning symbol when errors exist
+    ✓ can be overridden in a subclass
+
+  CsvPipeline
+    ✓ extract loads 3 records
+    ✓ transform trims whitespace
+    ✓ transform converts empty string to null
+    ✓ transform output mentions whitespace trimming
+
+  JsonPipeline
+    ✓ extract loads 3 records
+    ✓ transform flattens nested objects
+    ✓ transform coerces numeric string to number
+
+  XmlPipeline
+    ✓ extract loads 3 records
+    ✓ transform coerces int
+    ✓ transform coerces float
+    ✓ transform coerces bool true
+    ✓ transform coerces bool false
+
+  run() step ordering
+    ✓ calls steps in correct order
+
+  20 passing (18ms)

@@ -1,0 +1,33 @@
+[==========] Running 13 tests from 4 test suites.
+[----------] 4 tests from CsvTest
+[ RUN      ] CsvTest.Extract_Loads_Three_Records
+[       OK ] CsvTest.Extract_Loads_Three_Records (0 ms)
+[ RUN      ] CsvTest.Transform_Trims_Whitespace
+[       OK ] CsvTest.Transform_Trims_Whitespace (0 ms)
+[ RUN      ] CsvTest.Transform_Empty_Name_Becomes_Empty
+[       OK ] CsvTest.Transform_Empty_Name_Becomes_Empty (0 ms)
+[ RUN      ] CsvTest.Extract_Output_Mentions_CSV
+[       OK ] CsvTest.Extract_Output_Mentions_CSV (0 ms)
+[----------] 3 tests from JsonTest
+[ RUN      ] JsonTest.Extract_Loads_Three_Records
+[       OK ] JsonTest.Extract_Loads_Three_Records (0 ms)
+[ RUN      ] JsonTest.Transform_Flattens_Meta_Role
+[       OK ] JsonTest.Transform_Flattens_Meta_Role (0 ms)
+[ RUN      ] JsonTest.Extract_Has_All_Names
+[       OK ] JsonTest.Extract_Has_All_Names (0 ms)
+[----------] 5 tests from XmlTest
+[ RUN      ] XmlTest.Extract_Loads_Three_Records
+[       OK ] XmlTest.Extract_Loads_Three_Records (0 ms)
+[ RUN      ] XmlTest.Transform_Strips_Type_Keys
+[       OK ] XmlTest.Transform_Strips_Type_Keys (0 ms)
+[ RUN      ] XmlTest.Transform_Bool_True
+[       OK ] XmlTest.Transform_Bool_True (0 ms)
+[ RUN      ] XmlTest.Transform_Bool_False
+[       OK ] XmlTest.Transform_Bool_False (0 ms)
+[ RUN      ] XmlTest.Transform_Preserves_Float_String
+[       OK ] XmlTest.Transform_Preserves_Float_String (0 ms)
+[----------] 1 test from RunOrderTest
+[ RUN      ] RunOrderTest.Steps_Called_In_Correct_Order
+[       OK ] RunOrderTest.Steps_Called_In_Correct_Order (0 ms)
+[==========] 13 tests from 4 test suites ran. (1 ms total)
+[  PASSED  ] 13 tests.

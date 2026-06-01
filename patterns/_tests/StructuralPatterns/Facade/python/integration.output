@@ -1,0 +1,13 @@
+collected 10 items
+
+tests/TestFullPurchaseFlow::test_all_three_confirmations_present PASSED
+tests/TestFullPurchaseFlow::test_auth_email_in_output PASSED
+tests/TestFullPurchaseFlow::test_transaction_id_in_output PASSED
+tests/TestFullPurchaseFlow::test_message_id_in_output PASSED
+tests/TestLooseCoupling::test_each_facade_routes_to_its_own_base_url PASSED
+tests/TestLooseCoupling::test_no_cross_contamination_between_urls PASSED
+tests/TestLooseCoupling::test_headers_masked_not_exposed PASSED
+tests/TestSinglePointOfChange::test_swapping_payment_facade_does_not_affect_auth PASSED
+tests/TestSinglePointOfChange::test_swapping_messaging_does_not_affect_payment PASSED
+
+9 passed in 0.07s

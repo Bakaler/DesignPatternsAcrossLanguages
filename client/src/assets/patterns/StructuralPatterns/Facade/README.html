@@ -101,31 +101,9 @@
   <section class="rm-section">
     <h2 class="rm-h2">Structure</h2>
 
-    <pre class="rm-diagram"><span class="uml-arrow">┌─────────────────────────────────────────────────────────────────────────────────┐</span>
-<span class="uml-arrow">│</span>                              <span class="uml-title">FACADE PATTERN</span>                                    <span class="uml-arrow">│</span>
-<span class="uml-arrow">└─────────────────────────────────────────────────────────────────────────────────┘</span>
-
-                         <span class="uml-client">┌──────────┐</span>
-                         <span class="uml-client">│  Client  │</span>
-                         <span class="uml-client">└────┬─────┘</span>
-                              <span class="uml-arrow">│</span> <span class="uml-rel">«use»</span>
-                              <span class="uml-arrow">▼</span>
-                  <span class="uml-concrete">┌───────────────────────┐</span>
-                  <span class="uml-concrete">│        Facade         │</span>
-                  <span class="uml-concrete">├───────────────────────┤</span>
-                  <span class="uml-concrete">│</span> <span class="uml-method">+ operationA()</span>        <span class="uml-concrete">│</span>
-                  <span class="uml-concrete">│</span> <span class="uml-method">+ operationB()</span>        <span class="uml-concrete">│</span>
-                  <span class="uml-concrete">└───────────┬───────────┘</span>
-                              <span class="uml-arrow">│  delegates</span>
-          <span class="uml-arrow">┌───────────────────┼───────────────────┐</span>
-          <span class="uml-arrow">▼</span>                  <span class="uml-arrow">▼</span>                  <span class="uml-arrow">▼</span>
-  <span class="uml-iface">┌────────────────┐</span>  <span class="uml-iface">┌────────────────┐</span>  <span class="uml-iface">┌────────────────┐</span>
-  <span class="uml-iface">│  Subsystem 1   │</span>  <span class="uml-iface">│  Subsystem 2   │</span>  <span class="uml-iface">│  Subsystem 3   │</span>
-  <span class="uml-iface">├────────────────┤</span>  <span class="uml-iface">├────────────────┤</span>  <span class="uml-iface">├────────────────┤</span>
-  <span class="uml-iface">│</span> <span class="uml-method">method()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">method()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">method()</span>       <span class="uml-iface">│</span>
-  <span class="uml-iface">└────────────────┘</span>  <span class="uml-iface">└────────────────┘</span>  <span class="uml-iface">└────────────────┘</span>
-  <span class="uml-arrow">  Subsystem layereach class is independently usable.</span>
-  <span class="uml-arrow">  The facade coordinates them. The client sees none of it.</span></pre>
+  <img class="rm-diagram-img"
+    src="assets/patterns/StructuralPatterns/Facade/Facade.png"
+    alt="Facade UML diagram" />
 
     <h3 class="rm-h3">Mapped to this implementation</h3>
     <pre class="rm-diagram"><span class="uml-client">PurchaseService</span>  (Consumer)

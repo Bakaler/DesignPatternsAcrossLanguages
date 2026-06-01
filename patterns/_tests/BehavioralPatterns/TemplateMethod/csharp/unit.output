@@ -1,0 +1,32 @@
+  Passed! - Failed: 0, Passed: 20, Skipped: 0, Total: 20
+
+  ValidateTests
+    ✓ Passes_Records_With_Id_And_Name
+    ✓ Catches_Missing_Name
+    ✓ Catches_Missing_Id
+    ✓ Output_Contains_Records_Checked
+  ReportHookTests
+    ✓ Prints_No_Issues_When_Clean
+    ✓ Prints_Warning_When_Errors_Exist
+    ✓ Hook_Can_Be_Overridden
+  CsvTests
+    ✓ Extract_Loads_Three_Records
+    ✓ Transform_Trims_Whitespace
+    ✓ Transform_Nulls_Empty_String
+  JsonTests
+    ✓ Extract_Loads_Three_Records
+    ✓ Transform_Flattens_Nested
+    ✓ Transform_Coerces_Numeric_String
+  XmlTests
+    ✓ Extract_Loads_Three_Records
+    ✓ Transform_Coerces_Int
+    ✓ Transform_Coerces_Float
+    ✓ Transform_Coerces_Bool_True
+    ✓ Transform_Coerces_Bool_False
+  RunOrderTests
+    ✓ Calls_Steps_In_Correct_Order
+
+  Test Run Successful.
+  Total tests: 20
+  Passed:      20
+  Total time:  0.9 Seconds

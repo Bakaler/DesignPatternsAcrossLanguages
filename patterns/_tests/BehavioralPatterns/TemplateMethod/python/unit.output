@@ -1,0 +1,30 @@
+collected 33 items
+
+tests/TestAbstractPipeline::test_cannot_instantiate_directly PASSED
+tests/TestValidate::test_passes_records_with_id_and_name PASSED
+tests/TestValidate::test_catches_missing_name PASSED
+tests/TestValidate::test_catches_missing_id PASSED
+tests/TestValidate::test_counts_error_rows_not_error_fields PASSED
+tests/TestValidate::test_multiple_valid_records_all_pass PASSED
+tests/TestReportHook::test_default_prints_no_issues_when_clean PASSED
+tests/TestReportHook::test_default_prints_warnings_when_errors_exist PASSED
+tests/TestReportHook::test_hook_can_be_overridden PASSED
+tests/TestCsvPipeline::test_extract_loads_three_records PASSED
+tests/TestCsvPipeline::test_extract_output_mentions_csv PASSED
+tests/TestCsvPipeline::test_transform_trims_whitespace PASSED
+tests/TestCsvPipeline::test_transform_converts_empty_string_to_none PASSED
+tests/TestCsvPipeline::test_transform_preserves_valid_values PASSED
+tests/TestJsonPipeline::test_extract_loads_three_records PASSED
+tests/TestJsonPipeline::test_transform_flattens_nested_dict PASSED
+tests/TestJsonPipeline::test_transform_coerces_numeric_string_to_int PASSED
+tests/TestJsonPipeline::test_transform_preserves_non_numeric_strings PASSED
+tests/TestXmlPipeline::test_extract_loads_three_records PASSED
+tests/TestXmlPipeline::test_transform_coerces_int PASSED
+tests/TestXmlPipeline::test_transform_coerces_float PASSED
+tests/TestXmlPipeline::test_transform_coerces_bool_true PASSED
+tests/TestXmlPipeline::test_transform_coerces_bool_false PASSED
+tests/TestXmlPipeline::test_transform_strips_type_metadata PASSED
+tests/TestRunOrder::test_run_calls_steps_in_correct_order PASSED
+tests/TestRunOrder::test_transform_always_runs_after_extract PASSED
+
+26 passed in 0.11s

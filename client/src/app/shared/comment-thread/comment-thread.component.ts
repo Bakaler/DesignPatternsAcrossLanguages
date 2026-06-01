@@ -33,6 +33,9 @@ export class CommentThreadComponent implements OnChanges {
   private sanitizer = inject(DomSanitizer);
 
   safeHtml(html: string | null): SafeHtml {
+    // Content is sanitized server-side (sanitize-html) before storage,
+    // so bypassing Angular's client sanitizer here is safe and avoids
+    // stripping Quill's legitimate class attributes.
     return this.sanitizer.bypassSecurityTrustHtml(html ?? '');
   }
 

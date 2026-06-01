@@ -122,9 +122,9 @@ export class GofComponent implements OnInit, OnDestroy {
         { name: 'Observer',        slug: 'Observer',              category: 'BehavioralPatterns', done: false },
         { name: 'State',           slug: 'State',                 category: 'BehavioralPatterns', done: false },
         { name: 'Strategy',        slug: 'Strategy',              category: 'BehavioralPatterns', done: false },
-        { name: 'Template Method', slug: 'TemplateMethod',        category: 'BehavioralPatterns', done: false },
+        { name: 'Template Method', slug: 'TemplateMethod',        category: 'BehavioralPatterns', done: true  },
         { name: 'Visitor',         slug: 'Visitor',               category: 'BehavioralPatterns', done: false },
-        { name: 'Interpreter',     slug: 'Interpreter',           category: 'BehavioralPatterns', done: false },
+        { name: 'Interpreter',     slug: 'Interpreter',           category: 'BehavioralPatterns', done: true  },
       ]
     }
   ];
@@ -250,11 +250,17 @@ export class GofComponent implements OnInit, OnDestroy {
 
   private loadTest(): void {
     if (!this.selected || this.viewMode === 'code') return;
-    this.testLoading  = true;
     this.testNotFound = false;
-    this.testCode     = null;
-    this.highlightedTestCode = null;
-    this.testOutput   = null;
+
+    // Only blank the content if the request takes longer than 180ms —
+    // fast local responses swap without any visible flash
+    if (this.loadingTimer) { clearTimeout(this.loadingTimer); this.loadingTimer = null; }
+    this.loadingTimer = setTimeout(() => {
+      this.testLoading         = true;
+      this.testCode            = null;
+      this.highlightedTestCode = null;
+      this.testOutput          = null;
+    }, 180);
 
     this.http
       .get<PatternFile>(
@@ -262,6 +268,7 @@ export class GofComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (res) => {
+          if (this.loadingTimer) { clearTimeout(this.loadingTimer); this.loadingTimer = null; }
           this.testLoading  = false;
           this.testCode     = res.exists ? res.content : null;
           this.testOutput   = res.output ?? null;

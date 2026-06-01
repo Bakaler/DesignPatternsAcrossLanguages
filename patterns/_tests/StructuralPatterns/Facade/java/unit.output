@@ -1,0 +1,23 @@
+├─ PaymentFacadeTests ✔
+│  ├─ charge_returns_transaction_id_and_success() ✔
+│  ├─ refund_returns_refund_id_and_refunded() ✔
+│  ├─ getTransaction_returns_settled_details() ✔
+│  └─ charge_routes_to_payment_base_url() ✔
+├─ AuthFacadeTests ✔
+│  ├─ validateToken_returns_user_id_and_email() ✔
+│  ├─ getUser_returns_full_user_details() ✔
+│  └─ validateToken_routes_to_auth_base_url() ✔
+├─ MessagingFacadeTests ✔
+│  ├─ send_returns_message_id_and_queued() ✔
+│  ├─ getStatus_returns_delivered() ✔
+│  └─ send_routes_to_messaging_base_url() ✔
+└─ PurchaseServiceTests ✔
+   ├─ produces_all_three_section_labels() ✔
+   ├─ auth_called_before_payment() ✔
+   ├─ payment_called_before_messaging() ✔
+   └─ no_raw_credentials_in_output() ✔
+
+Test run finished after 312 ms
+[ 16 tests found     ]
+[ 16 tests successful]
+[  0 tests failed    ]

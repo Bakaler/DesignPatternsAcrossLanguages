@@ -1,0 +1,19 @@
+collected 16 items
+
+tests/TestPaymentFacade::test_charge_returns_transaction_id PASSED
+tests/TestPaymentFacade::test_refund_returns_refund_id PASSED
+tests/TestPaymentFacade::test_get_transaction_returns_settled PASSED
+tests/TestPaymentFacade::test_charge_routes_to_payment_base_url PASSED
+tests/TestPaymentFacade::test_refund_routes_to_refund_endpoint PASSED
+tests/TestAuthFacade::test_validate_token_returns_user_id_and_email PASSED
+tests/TestAuthFacade::test_get_user_returns_full_user PASSED
+tests/TestAuthFacade::test_validate_token_routes_to_auth_base_url PASSED
+tests/TestMessagingFacade::test_send_returns_message_id_and_queued PASSED
+tests/TestMessagingFacade::test_get_status_returns_delivered PASSED
+tests/TestMessagingFacade::test_send_routes_to_messaging_base_url PASSED
+tests/TestPurchaseService::test_produces_all_three_section_labels PASSED
+tests/TestPurchaseService::test_auth_before_payment PASSED
+tests/TestPurchaseService::test_payment_before_messaging PASSED
+tests/TestPurchaseService::test_no_raw_credentials_in_output PASSED
+
+15 passed in 0.08s

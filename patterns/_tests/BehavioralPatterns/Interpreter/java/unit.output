@@ -1,0 +1,45 @@
+├─ InterpreterUnitTests ✔
+│  ├─ context_storesAndRetrieves() ✔
+│  ├─ context_throwsOnMissing() ✔
+│  ├─ context_overwrites() ✔
+│  ├─ context_setReturnsSelf() ✔
+│  ├─ number_returnsValue() ✔
+│  ├─ number_ignoresContext() ✔
+│  ├─ number_displayRendersInteger() ✔
+│  ├─ variable_resolvesFromContext() ✔
+│  ├─ variable_throwsWhenMissing() ✔
+│  ├─ variable_displayReturnsName() ✔
+│  ├─ add_addsTwoNumbers() ✔
+│  ├─ subtract_subtractsRightFromLeft() ✔
+│  ├─ subtract_resultCanBeNegative() ✔
+│  ├─ multiply_multipliesTwoNumbers() ✔
+│  ├─ divide_dividesLeftByRight() ✔
+│  ├─ divide_throwsOnZero() ✔
+│  ├─ divide_fractionalResult() ✔
+│  ├─ floorDivide_floors() ✔
+│  ├─ floorDivide_throwsOnZero() ✔
+│  ├─ modulo_remainder() ✔
+│  ├─ modulo_throwsOnZero() ✔
+│  ├─ power_raisesBaseToExponent() ✔
+│  ├─ negate_negatesPositive() ✔
+│  ├─ negate_negatesNegative() ✔
+│  ├─ abs_absoluteValueOfNegative() ✔
+│  ├─ sqrt_correctRoot() ✔
+│  ├─ sqrt_throwsOnNegative() ✔
+│  ├─ inverse_returnsInverse() ✔
+│  ├─ inverse_throwsOnZero() ✔
+│  ├─ factorial_zero() ✔
+│  ├─ factorial_five() ✔
+│  ├─ factorial_six() ✔
+│  ├─ factorial_throwsOnNegative() ✔
+│  ├─ powerOfTen_tenSquared() ✔
+│  ├─ log_log100() ✔
+│  ├─ log_throwsOnZero() ✔
+│  ├─ composite_diffOfSquares() ✔
+│  ├─ composite_sqrtAbsComposition() ✔
+│  └─ composite_sameTreeDifferentContexts() ✔
+
+Test run finished after 312 ms
+[ 39 tests found     ]
+[ 39 tests successful]
+[  0 tests failed    ]

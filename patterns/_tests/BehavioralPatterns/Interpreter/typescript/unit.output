@@ -1,0 +1,86 @@
+  Context
+    ✓ stores and retrieves a variable
+    ✓ throws on undefined variable
+    ✓ overwrites an existing variable
+    ✓ set() returns context for chaining
+
+  NumberExpression
+    ✓ returns its literal value
+    ✓ ignores the context
+    ✓ toString renders the number
+
+  VariableExpression
+    ✓ resolves from context
+    ✓ throws when missing
+    ✓ toString returns variable name
+
+  AddExpression
+    ✓ adds two numbers
+    ✓ display wraps in parens
+
+  SubtractExpression
+    ✓ subtracts right from left
+    ✓ result can be negative
+
+  MultiplyExpression
+    ✓ multiplies two numbers
+
+  DivideExpression
+    ✓ divides left by right
+    ✓ throws on division by zero
+    ✓ produces fractional result
+
+  FloorDivideExpression
+    ✓ floors the quotient
+    ✓ throws on division by zero
+    ✓ display contains //
+
+  ModuloExpression
+    ✓ returns the remainder
+    ✓ throws on division by zero
+    ✓ display contains %
+
+  PowerExpression
+    ✓ raises base to exponent
+    ✓ handles fractional power
+    ✓ display contains **
+
+  NegateExpression
+    ✓ negates positive
+    ✓ negates negative
+
+  AbsExpression
+    ✓ returns absolute value of negative
+    ✓ leaves positive unchanged
+
+  SqrtExpression
+    ✓ returns correct square root
+    ✓ throws on negative input
+
+  InverseExpression
+    ✓ returns 1/x
+    ✓ throws on zero
+
+  FactorialExpression
+    ✓ computes 0! = 1
+    ✓ computes 5! = 120
+    ✓ computes 6! = 720
+    ✓ throws on negative
+
+  PowerOfTenExpression
+    ✓ 10^2 = 100
+    ✓ 10^0 = 1
+
+  LogExpression
+    ✓ log(100) = 2
+    ✓ log(1) = 0
+    ✓ throws on zero
+    ✓ throws on negative
+
+  Composite expression trees
+    ✓ (a + b) * (a - b) equals a² - b²
+    ✓ sqrt(abs(a - b)) composes correctly
+    ✓ same tree, different contexts
+    ✓ 10^abs(b) composes PowerOfTen with Abs
+
+  49 passing (18ms)

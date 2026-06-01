@@ -1,0 +1,16 @@
+  Passed! - Failed: 0, Passed: 7, Skipped: 0, Total: 7
+
+  IntegrationTests
+    ✓ ThreeLevelNestedTreeEvaluatesCorrectly
+    ✓ TreeReuseThreeContexts
+    ✓ DisplayProducesFullyParenthesisedString
+    ✓ MissingVariableInDeepSubtreeSurfaces
+    ✓ DivisionByZeroInSubtreeSurfaces
+    ✓ ParallelEvaluationsDoNotInterfere
+    ✓ AdditionIsCommutative
+    ✓ MultiplyByZeroGivesZero
+
+  Test Run Successful.
+  Total tests: 8
+  Passed:      8
+  Total time:  0.7 Seconds

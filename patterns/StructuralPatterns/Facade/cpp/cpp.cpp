@@ -206,6 +206,7 @@ public:
 //  CLIENT
 // ═════════════════════════════════════════════════════════════
 
+#ifndef TESTING
 int main() {
     const std::string sep(64, '=');
 
@@ -239,3 +240,4 @@ int main() {
 
     return 0;
 }
+#endif // TESTING

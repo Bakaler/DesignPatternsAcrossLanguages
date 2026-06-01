@@ -1,0 +1,14 @@
+collected 10 items
+
+tests/TestEndToEnd::test_three_level_nested_tree PASSED
+tests/TestEndToEnd::test_tree_reuse_three_contexts PASSED
+tests/TestEndToEnd::test_str_produces_fully_parenthesised_string PASSED
+tests/TestErrorPropagation::test_missing_variable_in_deep_subtree PASSED
+tests/TestErrorPropagation::test_division_by_zero_in_subtree PASSED
+tests/TestContextIndependence::test_parallel_evaluations_do_not_interfere PASSED
+tests/TestArithmeticCorrectness::test_addition_is_commutative PASSED
+tests/TestArithmeticCorrectness::test_subtraction_is_not_commutative PASSED
+tests/TestArithmeticCorrectness::test_multiply_by_zero_gives_zero PASSED
+tests/TestArithmeticCorrectness::test_divide_by_one_gives_same_value PASSED
+
+10 passed in 0.07s

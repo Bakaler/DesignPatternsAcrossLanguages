@@ -126,60 +126,14 @@
   <section class="rm-section">
     <h2 class="rm-h2">Structure</h2>
 
-    <pre class="rm-diagram"><span class="uml-arrow">┌─────────────────────────────────────────────────────────────────────────────────┐</span>
-<span class="uml-arrow">│</span>                        <span class="uml-title">ABSTRACT FACTORY PATTERN</span>                                 <span class="uml-arrow">│</span>
-<span class="uml-arrow">└─────────────────────────────────────────────────────────────────────────────────┘</span>
-
-       <span class="uml-stereotype">«interface»</span>                                              <span class="uml-client">┌────────────┐</span>
-     <span class="uml-iface">┌──────────────────┐</span>  <span class="uml-arrow">◄──────── </span><span class="uml-rel">«use»</span><span class="uml-arrow"> ────────────────────────</span>  <span class="uml-client">│   Client   │</span>
-     <span class="uml-iface">│  AbstractFactory │</span>                                        <span class="uml-client">└────────────┘</span>
-     <span class="uml-iface">├──────────────────┤</span>                                              <span class="uml-arrow">│</span>
-     <span class="uml-iface">│</span> <span class="uml-method">+ CreateProductA</span>  <span class="uml-iface">│</span>                                              <span class="uml-arrow">│ </span><span class="uml-rel">«use»</span>
-     <span class="uml-iface">│</span> <span class="uml-method">+ CreateProductB</span>  <span class="uml-iface">│</span>                                              <span class="uml-arrow">│</span>
-     <span class="uml-iface">└────────┬─────────┘</span>                                             <span class="uml-arrow">▼</span>
-              <span class="uml-arrow">△</span>                                               <span class="uml-stereotype">«interface»</span>
-      <span class="uml-arrow">┌───────┴────────┐</span>                                  <span class="uml-iface">┌──────────────────┐</span>
-      <span class="uml-arrow">│                │</span>                                  <span class="uml-iface">│  AbstractProductA │</span>
-      <span class="uml-arrow">│                │</span>                                  <span class="uml-iface">└────────┬─────────┘</span>
-<span class="uml-concrete">┌───────────────┐</span> <span class="uml-concrete">┌───────────────┐</span>                                  <span class="uml-arrow">△</span>
-<span class="uml-concrete">│ConcreteFactory2│</span> <span class="uml-concrete">│ConcreteFactory1│</span>                        <span class="uml-arrow">┌────────┴────────┐</span>
-<span class="uml-concrete">├───────────────┤</span> <span class="uml-concrete">├───────────────┤</span>                          <span class="uml-arrow">│                 │</span>
-<span class="uml-concrete">│</span><span class="uml-method">+CreateProductA</span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">+CreateProductA</span><span class="uml-concrete">│</span><span class="uml-arrow"> ──── </span><span class="uml-rel">«instantiate»</span><span class="uml-arrow"> ──►</span> <span class="uml-concrete">┌──────────┐</span> <span class="uml-concrete">┌──────────┐</span>
-<span class="uml-concrete">│</span><span class="uml-method">+CreateProductB</span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">+CreateProductB</span><span class="uml-concrete">│</span>                         <span class="uml-concrete">│ ProductA1│</span> <span class="uml-concrete">│ ProductA2│</span>
-<span class="uml-concrete">└───────────────┘</span> <span class="uml-concrete">└───────────────┘</span>                         <span class="uml-concrete">└──────────┘</span> <span class="uml-concrete">└──────────┘</span>
-      <span class="uml-arrow">│                 │</span>
-      <span class="uml-arrow">│                 │ </span><span class="uml-rel">«instantiate»</span>                         <span class="uml-rel">«use»</span>
-      <span class="uml-arrow">│                 │</span>                                              <span class="uml-arrow">│</span>
-      <span class="uml-arrow">│                 ▼</span>                                             <span class="uml-arrow">▼</span>
-      <span class="uml-arrow">│</span>         <span class="uml-stereotype">«interface»</span>                                   <span class="uml-stereotype">«interface»</span>
-      <span class="uml-arrow">│</span>       <span class="uml-iface">┌──────────────────┐</span>  <span class="uml-arrow">◄────────────────────</span>  <span class="uml-iface">┌──────────────────┐</span>
-      <span class="uml-arrow">│</span>       <span class="uml-iface">│  AbstractProductB │</span>                         <span class="uml-iface">│  AbstractProductB│</span>
-      <span class="uml-arrow">│</span>       <span class="uml-iface">└────────┬─────────┘</span>                         <span class="uml-iface">└──────────────────┘</span>
-      <span class="uml-arrow">│                △</span>
-      <span class="uml-arrow">│       ┌────────┴────────┐</span>
-      <span class="uml-arrow">│       │                 │</span>
-      <span class="uml-arrow">│</span>       <span class="uml-concrete">┌──────────┐</span> <span class="uml-concrete">┌──────────┐</span>
-      <span class="uml-arrow">│</span>       <span class="uml-concrete">│ ProductB1│</span> <span class="uml-concrete">│ ProductB2│</span>
-      <span class="uml-arrow">│</span>       <span class="uml-concrete">└──────────┘</span> <span class="uml-concrete">└──────────┘</span>
-      <span class="uml-arrow">│                          ▲</span>
-      <span class="uml-arrow">└────── </span><span class="uml-rel">«instantiate»</span><span class="uml-arrow"> ─────┘</span></pre>
+    <img class="rm-diagram-img"
+         src="assets/patterns/CreationalPatterns/AbstractFactory/AbstractFactory.png"
+         alt="Abstract Factory UML diagram" />
 
     <h3 class="rm-h3">Mapped to this implementation</h3>
-    <pre class="rm-diagram"><span class="uml-stereotype">«interface»</span>  <span class="uml-iface">BiomeKit</span>                   <span class="uml-client">WorldGenerator</span>  (Client)
-             <span class="uml-method">createTerrain()  → Terrain</span>
-             <span class="uml-method">createEnemies()  → List&lt;Enemy&gt;</span>
-             <span class="uml-method">createWeather()  → WeatherSystem</span>
-             <span class="uml-method">createLoot()     → LootTable</span>
-             <span class="uml-method">registerEnemy()  → void</span>
-                    <span class="uml-arrow">△</span>
-        <span class="uml-arrow">┌──────┴──────┬────────────┐</span>
-        <span class="uml-arrow">│             │            │</span>
-<span class="uml-concrete">DesertBiomeKit</span>  <span class="uml-concrete">ArcticBiomeKit</span>  <span class="uml-concrete">ForestBiomeKit</span>    (Singletons)
-<span class="uml-method">  registry: [Scorpion…]  [PolarBear…]  [Wolf…]</span>
-                    <span class="uml-arrow">│ </span><span class="uml-rel">«instantiate»</span>
-        <span class="uml-arrow">┌───────────────────────────────────────┐</span>
-        <span class="uml-arrow">▼                   ▼                  ▼</span>
-<span class="uml-iface">Terrain</span>           <span class="uml-iface">Enemy</span> <span class="uml-stereotype">(+Prototype)</span>      <span class="uml-iface">WeatherSystem</span>    <span class="uml-iface">LootTable</span></pre>
+    <img class="rm-diagram-img"
+         src="assets/patterns/CreationalPatterns/AbstractFactory/AbstractFactory-mapped.png"
+         alt="Abstract Factory mapped to BiomeKit implementation" />
   </section>
 
   <!-- ── Participants ── -->

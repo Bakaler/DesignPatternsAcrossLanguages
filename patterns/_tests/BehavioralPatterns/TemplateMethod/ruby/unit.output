@@ -1,0 +1,33 @@
+DataPipeline#validate
+  passes records with id and name
+  catches missing name
+  catches missing id
+  output line contains "records checked"
+
+DataPipeline#report hook
+  prints "No issues." when no errors
+  prints warning when errors exist
+  can be overridden in a subclass
+
+CsvPipeline
+  extract loads 3 records
+  transform trims whitespace
+  transform converts empty string to nil
+
+JsonPipeline
+  extract loads 3 records
+  transform flattens nested hash
+  transform coerces numeric string to integer
+
+XmlPipeline
+  extract loads 3 records
+  transform coerces int
+  transform coerces float
+  transform coerces bool true
+  transform coerces bool false
+
+run() step ordering
+  calls steps in the correct order
+
+Finished in 0.00941 seconds (files took 0.23 seconds to load)
+21 examples, 0 failures

@@ -1,0 +1,338 @@
+<div class="rm-wrap">
+
+  <!-- Hero -->
+  <div class="rm-hero">
+    <span class="rm-badge behavioral">Behavioral</span>
+    <h1 class="rm-hero-title">Interpreter</h1>
+    <div class="rm-hero-meta">
+      <span>GoF pg. 243</span>
+    </div>
+  </div>
+
+  <!-- Power Words -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Power Words</h2>
+    <div class="rm-powerword-block">
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word amber">Power Word: Grammar</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word teal">Power Word: Tree</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word pink">Power Word: Context</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Attributions -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Attributions</h2>
+
+    <div class="rm-attribution-book">
+      <div class="rm-attribution-book-title">Design Patterns: Elements of Reusable Object-Oriented Software</div>
+      <div class="rm-attribution-book-authors">Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides</div>
+      <div class="rm-attribution-book-forward">Forward by Grady Booch</div>
+    </div>
+
+    <ul class="rm-list plain" style="margin-top: 1rem;">
+      <li>
+        <a class="rm-link" href="https://refactoring.guru/design-patterns/interpreter" target="_blank">
+          refactoring.guru &rarr; Interpreter
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://www.cs.unc.edu/~stotts/GOF/hires/pat5ifso.htm" target="_blank">
+          cs.unc.edu &rarr; GoF Pattern Reference (Interpreter)
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Intent -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Intent</h2>
+    <div class="rm-callout">
+      Given a language, define a <strong>representation for its grammar</strong> along with an
+      interpreter that uses the representation to interpret sentences in the language.
+    </div>
+    <p class="rm-p">
+      Each grammar rule becomes a class. Sentences in the language are represented as
+      <em>abstract syntax trees</em> (ASTs) composed of those classes. To evaluate a sentence,
+      you call <span class="rm-code">interpret()</span> on the root, which recurses through the
+      tree with each node handling its own rule.
+    </p>
+  </section>
+
+  <!-- The Problem It Solves -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Problem It Solves</h2>
+    <p class="rm-p">
+      Some problems recur often enough to benefit from a small, specialised language (a DSL).
+      The alternatives are either:
+    </p>
+    <ul class="rm-list plain">
+      <li>A monolithic if/else/switch that handles every case in one place, making it hard to extend</li>
+      <li>An ad-hoc string-processing approach that is fragile and untestable</li>
+    </ul>
+    <p class="rm-p">
+      The Interpreter pattern formalises the grammar as a class hierarchy. Each class
+      is self-contained, testable in isolation, and adding a new grammar rule means adding
+      a new class. No existing class changes.
+    </p>
+  </section>
+
+  <!-- From the EBNF_parser -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Where This Came From: the EBNF_parser</h2>
+    <p class="rm-p">
+      This implementation grew out of a real calculator's
+      <span class="rm-code">EBNF_parser</span>, a recursive-descent parser with one method
+      per grammar rule (<span class="rm-code">_exp</span>, <span class="rm-code">_term</span>,
+      <span class="rm-code">_factor</span>, <span class="rm-code">_digit</span>).
+      That is the Interpreter pattern expressed as methods rather than classes.
+    </p>
+    <p class="rm-p">
+      The GoF version externalises each rule into its own class so trees become
+      first-class objects you can store, pass, reuse, and evaluate against multiple
+      contexts. The single-class method approach does not support this.
+    </p>
+    <table class="rm-table">
+      <thead>
+        <tr><th>EBNF_parser (method-per-rule)</th><th>GoF Interpreter (class-per-rule)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="rm-code">_exp()</span></td>
+          <td><span class="rm-code">AddExpression</span>, <span class="rm-code">SubtractExpression</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">_term()</span></td>
+          <td><span class="rm-code">MultiplyExpression</span>, <span class="rm-code">DivideExpression</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">_digit()</span></td>
+          <td><span class="rm-code">NumberExpression</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">equationLine</span> / <span class="rm-code">commandLine</span></td>
+          <td><span class="rm-code">Context</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">parse()</span></td>
+          <td><span class="rm-code">interpret(ctx)</span> on root node</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Structure -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Structure</h2>
+
+    <pre class="rm-diagram"><span class="uml-arrow">┌──────────────────────────────────────────────────────────────────┐</span>
+<span class="uml-arrow">│</span>                    <span class="uml-title">INTERPRETER PATTERN</span>                             <span class="uml-arrow">│</span>
+<span class="uml-arrow">└──────────────────────────────────────────────────────────────────┘</span>
+
+  <span class="uml-stereotype">«interface»</span>
+  <span class="uml-iface">┌──────────────────┐</span>         <span class="uml-concrete">┌───────────────────┐</span>
+  <span class="uml-iface">│   Expression      │</span>         <span class="uml-concrete">│     Context       │</span>
+  <span class="uml-iface">├──────────────────┤</span>         <span class="uml-concrete">├───────────────────┤</span>
+  <span class="uml-iface">│</span> <span class="uml-method">+ interpret(ctx)  </span><span class="uml-iface">│</span>  uses  <span class="uml-concrete">│</span> <span class="uml-method">+ set(name, val)  </span><span class="uml-concrete">│</span>
+  <span class="uml-iface">└────────┬─────────┘</span>◄───────<span class="uml-concrete">│</span> <span class="uml-method">+ get(name)       </span><span class="uml-concrete">│</span>
+           <span class="uml-arrow">△</span>                   <span class="uml-concrete">└───────────────────┘</span>
+   <span class="uml-arrow">┌───────┴──────────────────────────────────┐</span>
+   <span class="uml-arrow">│</span>                               <span class="uml-arrow">│           │</span>
+<span class="uml-concrete">┌──────────────────┐</span>  <span class="uml-concrete">┌──────────────────┐</span> <span class="uml-concrete">┌──────────────────────┐</span>
+<span class="uml-concrete">│ NumberExpression │</span>  <span class="uml-concrete">│VariableExpression│</span> <span class="uml-concrete">│  AddExpression       │</span>
+<span class="uml-concrete">├──────────────────┤</span>  <span class="uml-concrete">├──────────────────┤</span> <span class="uml-concrete">├──────────────────────┤</span>
+<span class="uml-concrete">│</span><span class="uml-method">- value: number   </span><span class="uml-concrete">│</span>  <span class="uml-concrete">│</span><span class="uml-method">- name: string    </span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">- left: Expression    </span><span class="uml-concrete">│</span>
+<span class="uml-concrete">│</span><span class="uml-method">+ interpret()     </span><span class="uml-concrete">│</span>  <span class="uml-concrete">│</span><span class="uml-method">+ interpret()     </span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">- right: Expression   </span><span class="uml-concrete">│</span>
+<span class="uml-concrete">│</span><span class="uml-method">  returns value   </span><span class="uml-concrete">│</span>  <span class="uml-concrete">│</span><span class="uml-method">  ctx.get(name)   </span><span class="uml-concrete">│</span> <span class="uml-concrete">│</span><span class="uml-method">+ interpret()         </span><span class="uml-concrete">│</span>
+<span class="uml-concrete">└──────────────────┘</span>  <span class="uml-concrete">└──────────────────┘</span> <span class="uml-concrete">│</span><span class="uml-method">  left(ctx)+right(ctx)</span><span class="uml-concrete">│</span>
+  TerminalExpression    TerminalExpression  <span class="uml-concrete">└──────────────────────┘</span>
+                                            NonterminalExpression
+                                           (also: Sub, Mul, Div)</pre>
+
+    <h3 class="rm-h3">Mapped to this implementation</h3>
+    <pre class="rm-diagram"><span class="uml-stereotype">«interface»</span> <span class="uml-iface">Expression</span>
+  <span class="uml-method">interpret(ctx)  «abstract»</span>
+
+<span class="uml-concrete">NumberExpression</span>      <span class="uml-method">interpret(ctx)</span>  → returns stored number
+<span class="uml-concrete">VariableExpression</span>    <span class="uml-method">interpret(ctx)</span>  → ctx.get(name)
+<span class="uml-concrete">AddExpression</span>         <span class="uml-method">interpret(ctx)</span>  → left.interpret(ctx) + right.interpret(ctx)
+<span class="uml-concrete">SubtractExpression</span>    <span class="uml-method">interpret(ctx)</span>  → left.interpret(ctx) - right.interpret(ctx)
+<span class="uml-concrete">MultiplyExpression</span>    <span class="uml-method">interpret(ctx)</span>  → left.interpret(ctx) * right.interpret(ctx)
+<span class="uml-concrete">DivideExpression</span>      <span class="uml-method">interpret(ctx)</span>  → left.interpret(ctx) / right.interpret(ctx)
+
+<span class="uml-concrete">Context</span>               variable name → number bindings</pre>
+  </section>
+
+  <!-- Participants -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Participants</h2>
+    <table class="rm-table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>In This Implementation</th>
+          <th>Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AbstractExpression</td>
+          <td><span class="rm-code">Expression</span> (interface)</td>
+          <td>Declares <span class="rm-code">interpret(ctx)</span>. Every node in the tree must implement it.</td>
+        </tr>
+        <tr>
+          <td>TerminalExpression</td>
+          <td><span class="rm-code">NumberExpression</span></td>
+          <td>Leaf node. Returns a literal number. Does not recurse.</td>
+        </tr>
+        <tr>
+          <td>TerminalExpression</td>
+          <td><span class="rm-code">VariableExpression</span></td>
+          <td>Leaf node. Looks up its name in the Context. Does not recurse.</td>
+        </tr>
+        <tr>
+          <td>NonterminalExpression</td>
+          <td><span class="rm-code">AddExpression</span>, <span class="rm-code">SubtractExpression</span>, <span class="rm-code">MultiplyExpression</span>, <span class="rm-code">DivideExpression</span></td>
+          <td>Composite nodes. Each holds two child Expressions and combines their results.</td>
+        </tr>
+        <tr>
+          <td>Context</td>
+          <td><span class="rm-code">Context</span></td>
+          <td>Holds variable-to-value bindings. Passed to every <span class="rm-code">interpret()</span> call.</td>
+        </tr>
+        <tr>
+          <td>Client</td>
+          <td>Entry point</td>
+          <td>Builds expression trees from the participant classes and calls <span class="rm-code">interpret()</span>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- The Key Insight -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Key Insight: Tree Reuse</h2>
+    <p class="rm-p">
+      A tree built once can be evaluated against <em>any number of contexts</em>. This is what
+      separates the GoF Interpreter from a simple recursive evaluator: the expression is an
+      object, not a string or a one-shot computation.
+    </p>
+    <pre class="rm-diagram">  // Build once
+  tree = (a + b) * (a - b)
+
+  // Evaluate many times with different contexts
+  tree.interpret({a: 10, b: 5})  → 75   (= 10² - 5²)
+  tree.interpret({a:  6, b: 2})  → 32   (=  6² - 2²)
+  tree.interpret({a:  3, b: 1})  →  8   (=  3² - 1²)</pre>
+    <p class="rm-p">
+      This is analogous to compiling a function and calling it with different arguments.
+      The structure (compiled code / AST) is immutable; the inputs vary.
+    </p>
+  </section>
+
+  <!-- Consequences -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Consequences</h2>
+
+    <h3 class="rm-h3">✓ Grammar as Classes</h3>
+    <p class="rm-p">
+      Each grammar rule is a self-contained class. This makes the grammar explicit and
+      navigable: find the rule, find the class. The hierarchy mirrors the grammar.
+    </p>
+
+    <h3 class="rm-h3">✓ Easy to Extend</h3>
+    <p class="rm-p">
+      Adding a new operation (say, <span class="rm-code">ModuloExpression</span>) requires
+      one new class implementing <span class="rm-code">interpret()</span>. No existing class changes.
+      This is open/closed in the most literal sense.
+    </p>
+
+    <h3 class="rm-h3">✓ Context Reuse</h3>
+    <p class="rm-p">
+      The same expression tree can be evaluated repeatedly with different Contexts.
+      The tree is immutable; only the variable bindings change. A query language, a rules engine,
+      or a formula evaluator all benefit from this separation.
+    </p>
+
+    <h3 class="rm-h3">✗ Class Explosion</h3>
+    <p class="rm-p">
+      For complex grammars, the class count grows rapidly: one class per rule, per operator,
+      per keyword. A language with 30 operators becomes 30 classes. For large grammars,
+      parser generators (ANTLR, yacc) are more practical.
+    </p>
+
+    <h3 class="rm-h3">✗ Tightly Coupled to Grammar</h3>
+    <p class="rm-p">
+      Changing the grammar (removing a rule, merging two rules) requires restructuring the
+      class hierarchy. If the grammar is in flux, the cost of keeping the class structure
+      in sync may outweigh the pattern's benefits.
+    </p>
+  </section>
+
+  <!-- When to Reach For It -->
+  <section class="rm-section">
+    <h2 class="rm-h2">When to Reach For It</h2>
+    <ul class="rm-list plain">
+      <li>The grammar is simple and stable: a handful of rules, unlikely to change radically</li>
+      <li>You need to evaluate the same expression many times with different inputs</li>
+      <li>Tree traversal performance is acceptable (it is slower than a native eval)</li>
+      <li>You want the grammar to be readable in the code, not hidden in a parser table</li>
+    </ul>
+    <p class="rm-p">
+      Classic examples: regular expression engines, SQL WHERE clause evaluators, configuration
+      DSLs, rules engines, and template languages.
+    </p>
+  </section>
+
+  <!-- Trade-offs -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Trade-offs</h2>
+    <div class="rm-grid-2">
+      <div class="rm-card">
+        <div class="rm-card-title good">Strengths</div>
+        <ul class="rm-list good">
+          <li>Grammar is explicit in the class hierarchy</li>
+          <li>New operations require only a new class</li>
+          <li>Trees are objects: storable, passable, reusable</li>
+          <li>Each node is independently testable</li>
+        </ul>
+      </div>
+      <div class="rm-card">
+        <div class="rm-card-title bad">Weaknesses</div>
+        <ul class="rm-list bad">
+          <li>One class per grammar rule; explodes for large grammars</li>
+          <li>Grammar changes restructure the class hierarchy</li>
+          <li>Tree traversal is slower than compiled evaluation</li>
+          <li>No built-in parsing; you still need to build the tree</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Patterns -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Related Patterns</h2>
+    <span class="rm-tag">Composite</span>
+    <span class="rm-tag">Visitor</span>
+    <span class="rm-tag">Iterator</span>
+    <p class="rm-p" style="margin-top: 0.8rem;">
+      <strong>Composite.</strong> The expression tree <em>is</em> a Composite. NonterminalExpressions
+      are composite nodes (they hold children); TerminalExpressions are leaves. Interpreter applies
+      Composite to the specific problem of grammar evaluation.<br>
+      <strong>Visitor.</strong> If you need multiple independent operations over the same tree
+      (evaluate, pretty-print, optimise), Visitor separates those operations from the node classes.
+      Interpreter keeps the operation inside each node; Visitor externalises it.<br>
+      <strong>Iterator.</strong> Can be used to traverse the nodes of the AST without exposing its structure.
+    </p>
+  </section>
+
+</div>

@@ -1,0 +1,17 @@
+├─ FullPurchaseFlow ✔
+│  ├─ all_three_confirmations_present() ✔
+│  ├─ auth_email_in_output() ✔
+│  ├─ transaction_id_in_output() ✔
+│  └─ message_id_in_output() ✔
+├─ LooseCoupling ✔
+│  ├─ each_facade_routes_to_its_own_base_url() ✔
+│  ├─ no_cross_contamination_between_urls() ✔
+│  └─ headers_masked_raw_credentials_never_appear() ✔
+└─ SinglePointOfChange ✔
+   ├─ swapping_payment_facade_does_not_affect_auth() ✔
+   └─ swapping_messaging_does_not_affect_payment() ✔
+
+Test run finished after 287 ms
+[ 10 tests found     ]
+[ 10 tests successful]
+[  0 tests failed    ]

@@ -1,0 +1,25 @@
+  Passed! - Failed: 0, Passed: 16, Skipped: 0, Total: 16
+
+  PaymentFacadeTests
+    ✓ Charge_Returns_TransactionId_And_Success
+    ✓ Refund_Returns_RefundId_And_Refunded
+    ✓ GetTransaction_Returns_Settled_Details
+    ✓ Charge_Routes_To_Payment_BaseUrl
+  AuthFacadeTests
+    ✓ ValidateToken_Returns_UserId_And_Email
+    ✓ GetUser_Returns_Full_User_Details
+    ✓ ValidateToken_Routes_To_Auth_BaseUrl
+  MessagingFacadeTests
+    ✓ Send_Returns_MessageId_And_Queued
+    ✓ GetStatus_Returns_Delivered
+    ✓ Send_Routes_To_Messaging_BaseUrl
+  PurchaseServiceTests
+    ✓ Produces_All_Three_Section_Labels
+    ✓ Auth_Called_Before_Payment
+    ✓ Payment_Called_Before_Messaging
+    ✓ No_Raw_Credentials_In_Output
+
+  Test Run Successful.
+  Total tests: 14
+  Passed:      14
+  Total time:  0.8 Seconds

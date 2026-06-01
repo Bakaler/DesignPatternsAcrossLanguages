@@ -1,0 +1,85 @@
+TestContext
+  stores and retrieves variable
+  raises on missing variable
+  overwrites existing variable
+  set returns self for chaining
+
+TestNumberExpression
+  returns literal value
+  ignores context
+  display renders integer
+
+TestVariableExpression
+  resolves from context
+  raises when not in context
+  display returns name
+
+TestAddExpression
+  adds two numbers
+
+TestSubtractExpression
+  subtracts right from left
+  result can be negative
+
+TestMultiplyExpression
+  multiplies two numbers
+
+TestDivideExpression
+  divides left by right
+  raises on division by zero
+  produces fractional result
+
+TestFloorDivideExpression
+  floors the quotient
+  raises on division by zero
+  display contains slashes
+
+TestModuloExpression
+  returns the remainder
+  raises on division by zero
+  display contains percent
+
+TestPowerExpression
+  raises base to exponent
+  handles fractional power
+
+TestNegateExpression
+  negates positive
+  negates negative
+
+TestAbsExpression
+  absolute value of negative
+  leaves positive unchanged
+
+TestSqrtExpression
+  correct square root
+  raises on negative input
+
+TestInverseExpression
+  returns inverse
+  raises on zero
+
+TestFactorialExpression
+  zero factorial equals one
+  five factorial equals 120
+  six factorial equals 720
+  raises on negative
+
+TestPowerOfTenExpression
+  ten squared equals 100
+  ten to zero equals one
+
+TestLogExpression
+  log 100 equals 2
+  log 1 equals 0
+  raises on zero
+  raises on negative
+
+TestCompositeTrees
+  diff of squares
+  sqrt abs composition
+  same tree different contexts
+  pow10 abs composition
+
+Finished in 0.00891 seconds (files took 0.23 seconds to load)
+48 examples, 0 failures

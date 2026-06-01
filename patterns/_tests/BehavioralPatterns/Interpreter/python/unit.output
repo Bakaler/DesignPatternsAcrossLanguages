@@ -1,0 +1,52 @@
+collected 48 items
+
+tests/TestContext::test_stores_and_retrieves PASSED
+tests/TestContext::test_raises_on_missing PASSED
+tests/TestContext::test_overwrites PASSED
+tests/TestContext::test_set_returns_self PASSED
+tests/TestNumberExpression::test_returns_value PASSED
+tests/TestNumberExpression::test_ignores_context PASSED
+tests/TestNumberExpression::test_str_integer PASSED
+tests/TestVariableExpression::test_resolves PASSED
+tests/TestVariableExpression::test_raises_missing PASSED
+tests/TestVariableExpression::test_str_name PASSED
+tests/TestAddExpression::test_adds PASSED
+tests/TestSubtractExpression::test_subtracts PASSED
+tests/TestSubtractExpression::test_negative PASSED
+tests/TestMultiplyExpression::test_multiplies PASSED
+tests/TestDivideExpression::test_divides PASSED
+tests/TestDivideExpression::test_zero_raises PASSED
+tests/TestDivideExpression::test_fractional PASSED
+tests/TestFloorDivideExpression::test_floors PASSED
+tests/TestFloorDivideExpression::test_zero_raises PASSED
+tests/TestFloorDivideExpression::test_str_contains_slashes PASSED
+tests/TestModuloExpression::test_remainder PASSED
+tests/TestModuloExpression::test_zero_raises PASSED
+tests/TestModuloExpression::test_str_contains_percent PASSED
+tests/TestPowerExpression::test_power PASSED
+tests/TestPowerExpression::test_fractional_exponent PASSED
+tests/TestPowerExpression::test_str_contains_stars PASSED
+tests/TestNegateExpression::test_negates_positive PASSED
+tests/TestNegateExpression::test_negates_negative PASSED
+tests/TestAbsExpression::test_abs_negative PASSED
+tests/TestAbsExpression::test_abs_positive PASSED
+tests/TestSqrtExpression::test_sqrt PASSED
+tests/TestSqrtExpression::test_negative_raises PASSED
+tests/TestInverseExpression::test_inverse PASSED
+tests/TestInverseExpression::test_zero_raises PASSED
+tests/TestFactorialExpression::test_zero PASSED
+tests/TestFactorialExpression::test_five PASSED
+tests/TestFactorialExpression::test_six PASSED
+tests/TestFactorialExpression::test_negative_raises PASSED
+tests/TestPowerOfTenExpression::test_ten_squared PASSED
+tests/TestPowerOfTenExpression::test_ten_to_zero PASSED
+tests/TestLogExpression::test_log_100 PASSED
+tests/TestLogExpression::test_log_1 PASSED
+tests/TestLogExpression::test_zero_raises PASSED
+tests/TestLogExpression::test_negative_raises PASSED
+tests/TestCompositeTrees::test_diff_of_squares PASSED
+tests/TestCompositeTrees::test_sqrt_abs_composition PASSED
+tests/TestCompositeTrees::test_same_tree_different_contexts PASSED
+tests/TestCompositeTrees::test_pow10_abs_composition PASSED
+
+48 passed in 0.11s

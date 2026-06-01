@@ -1,0 +1,43 @@
+[==========] Running 17 tests from 4 test suites.
+[----------] 5 tests from CsvFullRunTest
+[ RUN      ] CsvFullRunTest.All_Five_Labels_Present
+[       OK ] CsvFullRunTest.All_Five_Labels_Present (0 ms)
+[ RUN      ] CsvFullRunTest.Validate_Catches_Missing_Name
+[       OK ] CsvFullRunTest.Validate_Catches_Missing_Name (0 ms)
+[ RUN      ] CsvFullRunTest.Report_Shows_Warning
+[       OK ] CsvFullRunTest.Report_Shows_Warning (0 ms)
+[ RUN      ] CsvFullRunTest.Alice_In_Output
+[       OK ] CsvFullRunTest.Alice_In_Output (0 ms)
+[ RUN      ] CsvFullRunTest.Bob_Trimmed_In_Output
+[       OK ] CsvFullRunTest.Bob_Trimmed_In_Output (0 ms)
+[----------] 4 tests from JsonFullRunTest
+[ RUN      ] JsonFullRunTest.All_Five_Labels_Present
+[       OK ] JsonFullRunTest.All_Five_Labels_Present (0 ms)
+[ RUN      ] JsonFullRunTest.No_Errors
+[       OK ] JsonFullRunTest.No_Errors (0 ms)
+[ RUN      ] JsonFullRunTest.Meta_Role_In_Output
+[       OK ] JsonFullRunTest.Meta_Role_In_Output (0 ms)
+[ RUN      ] JsonFullRunTest.All_Names_In_Output
+[       OK ] JsonFullRunTest.All_Names_In_Output (0 ms)
+[----------] 6 tests from XmlFullRunTest
+[ RUN      ] XmlFullRunTest.All_Five_Labels_Present
+[       OK ] XmlFullRunTest.All_Five_Labels_Present (0 ms)
+[ RUN      ] XmlFullRunTest.No_Errors
+[       OK ] XmlFullRunTest.No_Errors (0 ms)
+[ RUN      ] XmlFullRunTest.Bool_True_In_Output
+[       OK ] XmlFullRunTest.Bool_True_In_Output (0 ms)
+[ RUN      ] XmlFullRunTest.Bool_False_In_Output
+[       OK ] XmlFullRunTest.Bool_False_In_Output (0 ms)
+[ RUN      ] XmlFullRunTest.Float_Score_In_Output
+[       OK ] XmlFullRunTest.Float_Score_In_Output (0 ms)
+[ RUN      ] XmlFullRunTest.All_Names_In_Output
+[       OK ] XmlFullRunTest.All_Names_In_Output (0 ms)
+[----------] 3 tests from SharedSkeletonTest
+[ RUN      ] SharedSkeletonTest.Extract_Before_Transform_All_Pipelines
+[       OK ] SharedSkeletonTest.Extract_Before_Transform_All_Pipelines (0 ms)
+[ RUN      ] SharedSkeletonTest.Validate_After_Transform_All_Pipelines
+[       OK ] SharedSkeletonTest.Validate_After_Transform_All_Pipelines (0 ms)
+[ RUN      ] SharedSkeletonTest.Report_Last_All_Pipelines
+[       OK ] SharedSkeletonTest.Report_Last_All_Pipelines (0 ms)
+[==========] 17 tests from 4 test suites ran. (1 ms total)
+[  PASSED  ] 17 tests.

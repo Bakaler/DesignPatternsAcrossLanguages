@@ -1,0 +1,29 @@
+collected 24 items
+
+tests/TestCsvFullRun::test_all_five_step_labels_present PASSED
+tests/TestCsvFullRun::test_extract_reports_correct_count PASSED
+tests/TestCsvFullRun::test_validate_catches_missing_name PASSED
+tests/TestCsvFullRun::test_report_shows_warning_for_missing_name PASSED
+tests/TestCsvFullRun::test_alice_and_bob_appear_in_load PASSED
+tests/TestCsvFullRun::test_whitespace_trimmed_in_output PASSED
+tests/TestJsonFullRun::test_all_five_step_labels_present PASSED
+tests/TestJsonFullRun::test_no_validation_errors PASSED
+tests/TestJsonFullRun::test_report_shows_no_issues PASSED
+tests/TestJsonFullRun::test_nested_key_flattened_in_output PASSED
+tests/TestJsonFullRun::test_coerced_age_in_output PASSED
+tests/TestJsonFullRun::test_all_three_names_in_output PASSED
+tests/TestXmlFullRun::test_all_five_step_labels_present PASSED
+tests/TestXmlFullRun::test_no_validation_errors PASSED
+tests/TestXmlFullRun::test_report_shows_no_issues PASSED
+tests/TestXmlFullRun::test_coerced_bool_in_output PASSED
+tests/TestXmlFullRun::test_coerced_float_in_output PASSED
+tests/TestXmlFullRun::test_all_three_names_in_output PASSED
+tests/TestSharedSkeleton::test_csv_and_json_share_same_step_labels PASSED
+tests/TestSharedSkeleton::test_validate_output_format_identical_across_pipelines PASSED
+tests/TestSharedSkeleton::test_extract_runs_before_transform_in_all_pipelines PASSED
+tests/TestSharedSkeleton::test_validate_runs_after_transform_in_all_pipelines PASSED
+tests/TestSharedSkeleton::test_load_runs_after_validate_in_all_pipelines PASSED
+tests/TestSharedSkeleton::test_report_runs_last_in_all_pipelines PASSED
+tests/TestHookOverride::test_overriding_report_changes_only_last_step PASSED
+
+25 passed in 0.09s

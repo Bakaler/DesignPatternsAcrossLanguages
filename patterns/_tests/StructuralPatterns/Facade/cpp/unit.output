@@ -1,0 +1,35 @@
+[==========] Running 16 tests from 4 test suites.
+[----------] 5 tests from PaymentFacadeTest
+[ RUN      ] PaymentFacadeTest.Charge_Returns_TransactionId_And_Success
+[       OK ] PaymentFacadeTest.Charge_Returns_TransactionId_And_Success (0 ms)
+[ RUN      ] PaymentFacadeTest.Refund_Returns_RefundId_And_Refunded
+[       OK ] PaymentFacadeTest.Refund_Returns_RefundId_And_Refunded (0 ms)
+[ RUN      ] PaymentFacadeTest.GetTransaction_Returns_Settled
+[       OK ] PaymentFacadeTest.GetTransaction_Returns_Settled (0 ms)
+[ RUN      ] PaymentFacadeTest.Charge_Routes_To_Payment_BaseUrl
+[       OK ] PaymentFacadeTest.Charge_Routes_To_Payment_BaseUrl (0 ms)
+[----------] 3 tests from AuthFacadeTest
+[ RUN      ] AuthFacadeTest.ValidateToken_Returns_UserId_And_Email
+[       OK ] AuthFacadeTest.ValidateToken_Returns_UserId_And_Email (0 ms)
+[ RUN      ] AuthFacadeTest.GetUser_Returns_Full_User
+[       OK ] AuthFacadeTest.GetUser_Returns_Full_User (0 ms)
+[ RUN      ] AuthFacadeTest.ValidateToken_Routes_To_Auth_BaseUrl
+[       OK ] AuthFacadeTest.ValidateToken_Routes_To_Auth_BaseUrl (0 ms)
+[----------] 3 tests from MessagingFacadeTest
+[ RUN      ] MessagingFacadeTest.Send_Returns_MessageId_And_Queued
+[       OK ] MessagingFacadeTest.Send_Returns_MessageId_And_Queued (0 ms)
+[ RUN      ] MessagingFacadeTest.GetStatus_Returns_Delivered
+[       OK ] MessagingFacadeTest.GetStatus_Returns_Delivered (0 ms)
+[ RUN      ] MessagingFacadeTest.Send_Routes_To_Messaging_BaseUrl
+[       OK ] MessagingFacadeTest.Send_Routes_To_Messaging_BaseUrl (0 ms)
+[----------] 4 tests from PurchaseServiceTest
+[ RUN      ] PurchaseServiceTest.Produces_All_Three_Section_Labels
+[       OK ] PurchaseServiceTest.Produces_All_Three_Section_Labels (0 ms)
+[ RUN      ] PurchaseServiceTest.Auth_Before_Payment
+[       OK ] PurchaseServiceTest.Auth_Before_Payment (0 ms)
+[ RUN      ] PurchaseServiceTest.Payment_Before_Messaging
+[       OK ] PurchaseServiceTest.Payment_Before_Messaging (0 ms)
+[ RUN      ] PurchaseServiceTest.No_Raw_Credentials_In_Output
+[       OK ] PurchaseServiceTest.No_Raw_Credentials_In_Output (0 ms)
+[==========] 16 tests from 4 test suites ran. (1 ms total)
+[  PASSED  ] 16 tests.
