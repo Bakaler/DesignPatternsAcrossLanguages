@@ -76,7 +76,7 @@ class TestJsonFullRun:
         assert any("0 error(s)" in l for l in self.lines)
 
     def test_report_shows_no_issues(self):
-        assert "No issues." in self.out
+        assert "no issues." in self.out
 
     def test_nested_key_flattened_in_output(self):
         # meta.role should appear as meta_role in load output
@@ -105,7 +105,7 @@ class TestXmlFullRun:
         assert any("0 error(s)" in l for l in self.lines)
 
     def test_report_shows_no_issues(self):
-        assert "No issues." in self.out
+        assert "no issues." in self.out
 
     def test_coerced_bool_in_output(self):
         assert "active:True"  in self.out

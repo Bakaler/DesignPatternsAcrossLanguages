@@ -1,0 +1,57 @@
+
+  CoR Handlers
+    SolveHandler
+      ✓ claims equals
+      ✓ passes plus (returns null when isolated)
+      ✓ passes digit (returns null when isolated)
+      ✓ toString returns class name
+    ExpHandler
+      ✓ claims plus after digit
+      ✓ claims minus after digit
+      ✓ rejects plus at start
+      ✓ rejects plus after open paren
+      ✓ rejects plus after operator
+      ✓ passes multiply (returns null when isolated)
+      ✓ passes digit (returns null when isolated)
+    TermHandler
+      ✓ claims multiply
+      ✓ claims divide
+      ✓ claims floor divide
+      ✓ claims modulo
+      ✓ does not claim power (**)
+      ✓ rejects multiply at start
+      ✓ rejects multiply after open paren
+      ✓ passes plus (returns null when isolated)
+    PowerHandler
+      ✓ claims power
+      ✓ rejects power at start
+      ✓ rejects power after open paren
+      ✓ passes single star (returns null when isolated)
+      ✓ passes digit (returns null when isolated)
+    FactorHandler
+      ✓ claims open paren always (empty ctx)
+      ✓ claims open paren always (after digit)
+      ✓ claims open paren always (after open paren)
+      ✓ claims close paren when depth > 0
+      ✓ claims close paren at nested depth
+      ✓ rejects close paren when no paren open
+      ✓ passes digit (returns null when isolated)
+      ✓ passes operator (returns null when isolated)
+    FunctionHandler
+      ✓ claims each default function
+      ✓ passes unknown token (returns null when isolated)
+      ✓ passes digit (returns null when isolated)
+      ✓ custom function set claims cbrt but not abs
+    DigitHandler
+      ✓ claims each digit 0-9
+      ✓ rejects digit after close paren
+      ✓ claims decimal with no prior decimal
+      ✓ rejects second decimal
+      ✓ rejects operator
+      ✓ rejects unknown string
+    Chain wiring
+      ✓ setNext returns the handler
+      ✓ token reaches next handler
+      ✓ token rejected when chain exhausted
+
+  45 passing

@@ -1,0 +1,47 @@
+collected 43 items
+
+tests/TestSolveHandler::test_claims_equals PASSED
+tests/TestSolveHandler::test_passes_plus PASSED
+tests/TestSolveHandler::test_passes_digit PASSED
+tests/TestSolveHandler::test_str PASSED
+tests/TestExpHandler::test_claims_plus_after_digit PASSED
+tests/TestExpHandler::test_claims_minus_after_digit PASSED
+tests/TestExpHandler::test_rejects_plus_at_start PASSED
+tests/TestExpHandler::test_rejects_plus_after_open_paren PASSED
+tests/TestExpHandler::test_rejects_plus_after_operator PASSED
+tests/TestExpHandler::test_passes_multiply PASSED
+tests/TestExpHandler::test_passes_digit PASSED
+tests/TestTermHandler::test_claims_multiply PASSED
+tests/TestTermHandler::test_claims_divide PASSED
+tests/TestTermHandler::test_claims_floor_divide PASSED
+tests/TestTermHandler::test_claims_modulo PASSED
+tests/TestTermHandler::test_does_not_claim_power PASSED
+tests/TestTermHandler::test_rejects_multiply_at_start PASSED
+tests/TestTermHandler::test_rejects_multiply_after_open_paren PASSED
+tests/TestTermHandler::test_passes_plus PASSED
+tests/TestPowerHandler::test_claims_power PASSED
+tests/TestPowerHandler::test_rejects_power_at_start PASSED
+tests/TestPowerHandler::test_rejects_power_after_open_paren PASSED
+tests/TestPowerHandler::test_passes_multiply PASSED
+tests/TestPowerHandler::test_passes_digit PASSED
+tests/TestFactorHandler::test_claims_open_paren_always PASSED
+tests/TestFactorHandler::test_claims_close_paren_when_open PASSED
+tests/TestFactorHandler::test_claims_close_paren_nested PASSED
+tests/TestFactorHandler::test_rejects_close_paren_when_none_open PASSED
+tests/TestFactorHandler::test_passes_digit PASSED
+tests/TestFactorHandler::test_passes_operator PASSED
+tests/TestFunctionHandler::test_claims_each_default_function PASSED
+tests/TestFunctionHandler::test_passes_unknown_token PASSED
+tests/TestFunctionHandler::test_passes_digit PASSED
+tests/TestFunctionHandler::test_custom_function_set PASSED
+tests/TestDigitHandler::test_claims_each_digit PASSED
+tests/TestDigitHandler::test_rejects_digit_after_close_paren PASSED
+tests/TestDigitHandler::test_claims_decimal_no_prior_decimal PASSED
+tests/TestDigitHandler::test_rejects_second_decimal PASSED
+tests/TestDigitHandler::test_rejects_operator PASSED
+tests/TestDigitHandler::test_rejects_unknown_string PASSED
+tests/TestChainWiring::test_set_next_returns_handler PASSED
+tests/TestChainWiring::test_token_reaches_next_handler PASSED
+tests/TestChainWiring::test_token_rejected_when_chain_exhausted PASSED
+
+43 passed in 0.03s

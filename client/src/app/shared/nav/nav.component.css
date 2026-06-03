@@ -77,7 +77,6 @@
 .lang-drop-item.typescript .ld-dot { background: #4a9eff; box-shadow: 0 0 4px #4a9eff88; }
 .lang-drop-item.python     .ld-dot { background: #ffd43b; box-shadow: 0 0 4px #ffd43b88; }
 .lang-drop-item.ruby       .ld-dot { background: #cc342d; box-shadow: 0 0 4px #cc342d88; }
-.lang-drop-item.cpp        .ld-dot { background: #00599c; box-shadow: 0 0 4px #00599c88; }
 
 /* ── Settings button ───────────────────────────────────────────────────────── */
 .nav-settings {

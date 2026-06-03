@@ -6,7 +6,15 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "ts-node src/server.ts"
+    "dev": "ts-node src/server.ts",
+    "test": "node run-tests.js",
+    "test:ts": "node run-tests.js --lang ts",
+    "test:python": "node run-tests.js --lang python",
+    "test:ruby": "node run-tests.js --lang ruby",
+    "test:java": "node run-tests.js --lang java",
+    "test:csharp": "node run-tests.js --lang csharp",
+    "test:unit": "node run-tests.js --type unit",
+    "test:integration": "node run-tests.js --type integration"
   },
   "dependencies": {
     "@types/sanitize-html": "^2.16.1",
@@ -23,9 +31,11 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.14.0",
     "@types/pg": "^8.20.0",
     "@types/quill": "^2.0.14",
+    "mocha": "^11.7.6",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.0"

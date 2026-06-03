@@ -132,7 +132,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       name: 'Behavioral', cls: 'behavioral', count: '11 patterns',
       desc: 'Control how objects communicate and share responsibility.',
       patterns: [
-        { id: 'chain',    name: 'Chain of Resp.',  done: false },
+        { id: 'chain',    name: 'Chain of Resp.',  done: false, inWorks: true },
         { id: 'command',  name: 'Command',         done: false },
         { id: 'iterator', name: 'Iterator',        done: false },
         { id: 'mediator', name: 'Mediator',        done: false },
@@ -140,9 +140,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         { id: 'observer', name: 'Observer',        done: false },
         { id: 'state',    name: 'State',           done: false },
         { id: 'strategy', name: 'Strategy',        done: false },
-        { id: 'template', name: 'Template Method', done: false, inWorks: true },
+        { id: 'template', name: 'Template Method', done: true },
         { id: 'visitor',  name: 'Visitor',         done: false },
-        { id: 'interpreter', name: 'Interpreter',  done: false },
+        { id: 'interpreter', name: 'Interpreter',  done: false, inWorks: true },
       ]
     }
   ];

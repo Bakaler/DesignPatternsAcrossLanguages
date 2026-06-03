@@ -9,6 +9,40 @@
     </div>
   </div>
 
+  <!-- Sisters -->
+  <section class="rm-section">
+    <h2 class="rm-h2 gleam">Sister Implementation</h2>
+    <div class="rm-callout">
+      To iterate, revisit old ideas, and sculpt them into a series that timelapses progress is an art of refinement and practice
+    </div>
+    <ul class="rm-list plain">
+      <li>
+        This Sister Implementation links with <a class="rm-link sister" data-pattern="Chain of Resp." href="#">Chain of Responsibility</a>, revisiting a project iterated over twice.
+        Sophomore year I created a basic calculator; then, taking Language Foundations, something about the EBNF parser struck me,
+        so I recreated my calculator as a full EBNF parser, ensuring live and accurate input.
+        <br>
+        <br>  
+        The <a class="rm-link sister" data-pattern="Chain of Resp." href="#">Chain of Responsibility</a> models the EBNF parser's token validation chain.
+        Each grammar rule is a handler; tokens are passed down the chain until one claims them
+        or they fall off as <span class="rm-code">None</span> (rejected). The CoR pattern sits
+        <em>before</em> the Interpreter in the pipeline.
+      </li>
+    </ul>
+    <p class="rm-p">
+      Both patterns share their grammar and operator set with a real scientific calculator:
+    </p>
+    <ul class="rm-list plain">
+      <li>
+        <a class="rm-link" href="https://github.com/Bakaler/Scientific_Calculator/tree/main" target="_blank">
+          github.com/Bakaler/Scientific_Calculator &rarr;
+        </a>
+        The original project whose <span class="rm-code">EBNF_parser</span> and
+        <span class="rm-code">g001_Functions</span> supplied the grammar, operator set,
+        and function names reproduced here.
+      </li>
+    </ul>
+  </section>
+
   <!-- Power Words -->
   <section class="rm-section">
     <h2 class="rm-h2">Power Words</h2>
@@ -19,11 +53,11 @@
       </div>
 
       <div class="rm-powerword-item">
-        <span class="rm-powerword-word teal">Power Word: Tree</span>
+        <span class="rm-powerword-word teal">Power Word: Branching</span>
       </div>
 
       <div class="rm-powerword-item">
-        <span class="rm-powerword-word pink">Power Word: Context</span>
+        <span class="rm-powerword-word pink">Power Word: Compose</span>
       </div>
 
     </div>

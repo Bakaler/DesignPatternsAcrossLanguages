@@ -100,32 +100,14 @@
   <!-- Structure -->
   <section class="rm-section">
     <h2 class="rm-h2">Structure</h2>
+      <img class="rm-diagram-img"
+        src="assets/patterns/StructuralPatterns/Facade/Facade.png"
+        alt="Facade UML diagram" />
 
-  <img class="rm-diagram-img"
-    src="assets/patterns/StructuralPatterns/Facade/Facade.png"
-    alt="Facade UML diagram" />
-
-    <h3 class="rm-h3">Mapped to this implementation</h3>
-    <pre class="rm-diagram"><span class="uml-client">PurchaseService</span>  (Consumer)
-      <span class="uml-arrow">│</span> <span class="uml-rel">«use»</span>
-      <span class="uml-arrow">▼</span>
-<span class="uml-concrete">┌──────────────────────────────────────┐</span>
-<span class="uml-concrete">│          ThirdPartyClient            │</span>  <span class="uml-arrow">◄── Abstract Facade Base</span>
-<span class="uml-concrete">├──────────────────────────────────────┤</span>
-<span class="uml-concrete">│</span> <span class="uml-method"># request(method, url, body)</span>         <span class="uml-concrete">│</span>  <span class="uml-arrow">HTTP plumbing lives here once</span>
-<span class="uml-concrete">│</span> <span class="uml-method"># get(url)  # post(url, body)</span>        <span class="uml-concrete">│</span>
-<span class="uml-concrete">└──────────────────────┬───────────────┘</span>
-                       <span class="uml-arrow">△</span>
-      <span class="uml-arrow">┌──────────────────┼──────────────────┐</span>
-      <span class="uml-arrow">│</span>                  <span class="uml-arrow">│</span>                  <span class="uml-arrow">│</span>
-<span class="uml-iface">┌────────────────┐</span>  <span class="uml-iface">┌────────────────┐</span>  <span class="uml-iface">┌─────────────────┐</span>
-<span class="uml-iface">│ PaymentFacade  │</span>  <span class="uml-iface">│   AuthFacade   │</span>  <span class="uml-iface">│ MessagingFacade │</span>
-<span class="uml-iface">├────────────────┤</span>  <span class="uml-iface">├────────────────┤</span>  <span class="uml-iface">├─────────────────┤</span>
-<span class="uml-iface">│</span> <span class="uml-method">charge()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">validateToken()</span><span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">send()</span>          <span class="uml-iface">│</span>
-<span class="uml-iface">│</span> <span class="uml-method">refund()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">getUser()</span>       <span class="uml-iface">│</span>  <span class="uml-iface">│</span> <span class="uml-method">getStatus()</span>     <span class="uml-iface">│</span>
-<span class="uml-iface">│</span> <span class="uml-method">getTransaction()</span><span class="uml-iface">│</span>  <span class="uml-iface">└────────────────┘</span>  <span class="uml-iface">└─────────────────┘</span>
-<span class="uml-iface">└────────────────┘</span>
-<span class="uml-method">  baseUrl, headers, authprivate to each facade. Never seen by callers.</span></pre>
+  <h3 class="rm-h3">Mapped to this implementation</h3>
+    <img class="rm-diagram-img"
+         src="assets/patterns/StructuralPatterns/Facade/Facade-mapped.png"
+         alt="Facade mapped to Purchase implementation" />
   </section>
 
   <!-- Participants -->

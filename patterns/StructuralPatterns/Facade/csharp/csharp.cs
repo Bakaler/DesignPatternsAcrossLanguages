@@ -93,7 +93,7 @@ public class PaymentFacade : ThirdPartyClient {
         ["X-Merchant-Id"] =          Env("BILLING_MERCHANT_ID", "merch_xyz"),
     };
 
-    public Dictionary<string, object> Charge(string userId, double amount) =>
+    public virtual Dictionary<string, object> Charge(string userId, double amount) =>
         Post("/v1/charge", B("user_id", userId, "amount", amount));
 
     public Dictionary<string, object> Refund(string transactionId) =>
@@ -148,7 +148,7 @@ public class MessagingFacade : ThirdPartyClient {
         ["X-Auth-Token"]  = Env("MSG_AUTH_TOKEN",  "tok_xyz"),
     };
 
-    public Dictionary<string, object> Send(string to, string message) =>
+    public virtual Dictionary<string, object> Send(string to, string message) =>
         Post("/v1/dispatch", B("to", to, "body", message));
 
     public Dictionary<string, object> GetStatus(string messageId) =>
@@ -191,6 +191,7 @@ public class PurchaseService {
 // ═════════════════════════════════════════════════════════════
 //  CLIENT
 // ═════════════════════════════════════════════════════════════
+#if !TESTING
 
 var SEP = new string('═', 64);
 
@@ -222,3 +223,4 @@ Console.WriteLine("    messaging.Send(phone, message)");
 Console.WriteLine("\n╔══════════════════════════════════════════════════════════════╗");
 Console.WriteLine("║  Done                                                        ║");
 Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+#endif // !TESTING

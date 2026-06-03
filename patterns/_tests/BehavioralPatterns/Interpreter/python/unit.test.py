@@ -1,7 +1,7 @@
 # ============================================================
 #  Unit Tests - Interpreter: Arithmetic Expression Evaluator
 #
-#  Run: pytest unit.test.py -v
+#  Run: pytest unit.test.py -v --import-mode=importlib
 # ============================================================
 
 import sys, os, math

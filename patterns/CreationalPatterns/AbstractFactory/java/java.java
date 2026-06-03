@@ -77,13 +77,16 @@ interface WeatherEvent {
 }
 
 class WeatherSystem {
-    final Weather                  a;      // base conditions
-    final Map<String, WeatherEvent> b;     // triggerable events
+    private final Weather                  a;      // base conditions
+    private final Map<String, WeatherEvent> b;     // triggerable events
 
     WeatherSystem(Weather a, Map<String, WeatherEvent> b) {
         this.a = a;
         this.b = Collections.unmodifiableMap(b);
     }
+
+    Weather a() { return a; }
+    Map<String, WeatherEvent> b() { return b; }
 
     void describe() {
         System.out.println("    Base      : " + a.name() + " — " + a.effect());

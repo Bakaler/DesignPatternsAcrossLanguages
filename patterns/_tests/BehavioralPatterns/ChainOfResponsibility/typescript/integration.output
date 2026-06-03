@@ -1,0 +1,54 @@
+
+  CoR Integration
+    Valid sequences
+      ✓ simple addition
+      ✓ order of operations
+      ✓ parenthesised expression
+      ✓ power expression
+      ✓ function wrapping digit
+      ✓ nested functions
+      ✓ decimal number
+      ✓ floor divide
+      ✓ modulo
+      ✓ complex equation 234 + (12 / 3)
+      ✓ solve only
+    Invalid sequences
+      ✓ leading plus rejected
+      ✓ double operator rejected
+      ✓ operator after open paren rejected
+      ✓ unmatched close paren rejected
+      ✓ second decimal rejected
+      ✓ digit after close paren rejected
+      ✓ unknown token rejected
+      ✓ leading multiply rejected
+    Processed token values
+      ✓ exp adds spaces around +
+      ✓ term adds spaces around *
+      ✓ power adds spaces around **
+      ✓ factor open paren has no spaces
+      ✓ solo decimal prefixes zero
+      ✓ digit returned as-is
+    Chain extension
+      ✓ new function accepted in extended chain
+      ✓ new function rejected in default chain
+      ✓ existing functions still work after extension
+    Pipeline
+      ✓ simple addition
+      ✓ simple subtraction
+      ✓ simple multiplication
+      ✓ simple division
+      ✓ operator precedence mul over add
+      ✓ parentheses override precedence
+      ✓ power
+      ✓ floor divide
+      ✓ modulo
+      ✓ unary sqrt
+      ✓ abs of neg
+      ✓ nested unary functions
+      ✓ function over group (Pythagorean)
+      ✓ multidigit number
+      ✓ decimal number
+      ✓ invalid token raises Error
+      ✓ tree str reflects structure
+
+  47 passing

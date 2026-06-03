@@ -12,6 +12,7 @@
 # ============================================================
 
 # SECTION:: Imports
+require 'rspec'
 require_relative '../../../../CreationalPatterns/AbstractFactory/ruby/ruby'
 
 # SECTION:: Terrain Products

@@ -112,7 +112,7 @@ class DataPipeline(ABC):
             for err in self._errors:
                 print(f"  [Report]  ⚠  {err}")
         else:
-            print("  [Report]    Pipeline complete. No issues.")
+            print("  [Report]    Pipeline complete. no issues.")
 
 
 # SECTION:: CSV Pipeline

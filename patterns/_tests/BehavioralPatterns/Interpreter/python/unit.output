@@ -49,4 +49,4 @@ tests/TestCompositeTrees::test_sqrt_abs_composition PASSED
 tests/TestCompositeTrees::test_same_tree_different_contexts PASSED
 tests/TestCompositeTrees::test_pow10_abs_composition PASSED
 
-48 passed in 0.11s
+48 passed in 0.03s

@@ -45,7 +45,6 @@ const LANG_EXT: Record<string, string> = {
   csharp:     'cs',
   python:     'py',
   ruby:       'rb',
-  cpp:        'cpp',
 };
 
 app.get('/api/patterns/:category/:name', (req: Request, res: Response) => {

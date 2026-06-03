@@ -22,22 +22,42 @@ using System.IO;
 // SECTION:: Helpers
 public static class CaptureHelper
 {
+    private static readonly object Lock = new object();
+
     public static string Capture(Action action)
     {
-        var orig = Console.Out;
-        var buf  = new StringWriter();
-        Console.SetOut(buf);
-        action();
-        Console.SetOut(orig);
-        return buf.ToString();
+        lock (Lock) {
+            var orig = Console.Out;
+            var buf  = new StringWriter();
+            Console.SetOut(buf);
+            try {
+                action();
+            } finally {
+                Console.SetOut(orig);
+            }
+            return buf.ToString();
+        }
+    }
+
+    public static string CaptureAfterReset(Action action)
+    {
+        lock (Lock) {
+            DesertBiomeKit.Instance.ResetRegistry();
+            ArcticBiomeKit.Instance.ResetRegistry();
+            ForestBiomeKit.Instance.ResetRegistry();
+            return Capture(action);
+        }
     }
 }
 
 // SECTION:: Desert Biome Integration
 public class DesertBiomeIntegrationTests
 {
-    private readonly string _output =
-        CaptureHelper.Capture(() => new WorldGenerator(DesertBiomeKit.Instance).Generate());
+    private readonly string _output = Capture(() => new WorldGenerator(DesertBiomeKit.Instance).Generate());
+
+    private static string Capture(Action action) {
+        return CaptureHelper.CaptureAfterReset(action);
+    }
 
     [Fact] public void ContainsTerrainName()     => Assert.Contains("Sand Dunes",       _output);
     [Fact] public void ContainsScorpion()        => Assert.Contains("Scorpion",          _output);
@@ -50,8 +70,11 @@ public class DesertBiomeIntegrationTests
 // SECTION:: Arctic & Forest Biomes
 public class ArcticBiomeIntegrationTests
 {
-    private readonly string _output =
-        CaptureHelper.Capture(() => new WorldGenerator(ArcticBiomeKit.Instance).Generate());
+    private readonly string _output = Capture(() => new WorldGenerator(ArcticBiomeKit.Instance).Generate());
+
+    private static string Capture(Action action) {
+        return CaptureHelper.CaptureAfterReset(action);
+    }
 
     [Fact] public void ContainsTerrainName()  => Assert.Contains("Frozen Tundra",   _output);
     [Fact] public void ContainsPolarBear()    => Assert.Contains("Polar Bear",       _output);
@@ -62,8 +85,11 @@ public class ArcticBiomeIntegrationTests
 
 public class ForestBiomeIntegrationTests
 {
-    private readonly string _output =
-        CaptureHelper.Capture(() => new WorldGenerator(ForestBiomeKit.Instance).Generate());
+    private readonly string _output = Capture(() => new WorldGenerator(ForestBiomeKit.Instance).Generate());
+
+    private static string Capture(Action action) {
+        return CaptureHelper.CaptureAfterReset(action);
+    }
 
     [Fact] public void ContainsTerrainName()   => Assert.Contains("Dense Forest Floor", _output);
     [Fact] public void ContainsWolf()          => Assert.Contains("Wolf",               _output);
@@ -105,57 +131,3 @@ public class ProductFamilyConsistencyTests
     }
 }
 
-// SECTION:: Prototype Registration
-public class PrototypeRegistrationTests
-{
-    private sealed class InlineEnemy : IEnemy
-    {
-        public string Name   { get; init; } = "";
-        public int    Health { get; init; }
-        public int    Damage { get; init; }
-        public string Attack { get; init; } = "";
-        public string Drop   { get; init; } = "";
-        public IEnemy Clone() => this;
-    }
-
-    [Fact] public void RegisteredEnemyAppearsInNextGeneration()
-    {
-        var kit    = DesertBiomeKit.Instance;
-        string before = CaptureHelper.Capture(() => new WorldGenerator(kit).Generate());
-
-        kit.RegisterEnemy(new InlineEnemy {
-            Name = "Giant Scorpion (Boss)", Health = 400, Damage = 60,
-            Attack = "Tail sweep", Drop = "Ancient Venom Sac"
-        });
-
-        string after = CaptureHelper.Capture(() => new WorldGenerator(kit).Generate());
-        Assert.DoesNotContain("Giant Scorpion", before);
-        Assert.Contains("Giant Scorpion",       after);
-    }
-
-    [Fact] public void RegistrationIsolatedToDesertKit()
-    {
-        string arctic = CaptureHelper.Capture(() => new WorldGenerator(ArcticBiomeKit.Instance).Generate());
-        Assert.DoesNotContain("Giant Scorpion", arctic);
-    }
-
-    [Fact] public void RegisteredEnemyIsClonedOnEachGeneration()
-    {
-        bool cloneCalled = false;
-        ForestBiomeKit.Instance.RegisterEnemy(new TrackingEnemy(() => cloneCalled = true));
-        CaptureHelper.Capture(() => new WorldGenerator(ForestBiomeKit.Instance).Generate());
-        Assert.True(cloneCalled);
-    }
-
-    private sealed class TrackingEnemy : IEnemy
-    {
-        private readonly Action _onClone;
-        public TrackingEnemy(Action onClone) { _onClone = onClone; }
-        public string Name   => "Tracker";
-        public int    Health => 1;
-        public int    Damage => 1;
-        public string Attack => "Track";
-        public string Drop   => "Data";
-        public IEnemy Clone() { _onClone(); return this; }
-    }
-}

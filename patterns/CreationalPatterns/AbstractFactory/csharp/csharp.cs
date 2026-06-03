@@ -339,14 +339,30 @@ sealed class DesertBiomeKit : IBiomeKit {
     private readonly List<IEnemy> _registry = new() {
         new Scorpion(50, 15), new SandWorm(200, 30), new DesertBandit(80, 20)
     };
+    private readonly object _registryLock = new();
 
     public void RegisterEnemy(IEnemy prototype) {
-        _registry.Add(prototype);
+        lock (_registryLock) {
+            _registry.Add(prototype);
+        }
         Console.WriteLine($"  [DesertBiomeKit] Registered new prototype: {prototype.Name}");
     }
 
+    internal void ResetRegistry() {
+        lock (_registryLock) {
+            _registry.Clear();
+            _registry.AddRange(new IEnemy[] {
+                new Scorpion(50, 15), new SandWorm(200, 30), new DesertBandit(80, 20)
+            });
+        }
+    }
+
     public ITerrain      CreateTerrain() => new SandTerrain();
-    public List<IEnemy>  CreateEnemies() => _registry.Select(e => e.Clone()).ToList();
+    public List<IEnemy>  CreateEnemies() {
+        lock (_registryLock) {
+            return _registry.Select(e => e.Clone()).ToList();
+        }
+    }
     public WeatherSystem CreateWeather() => new(new Sandstorm(), new Dictionary<string, IWeatherEvent> {
         ["heat_wave"]  = new HeatWaveEvent(),
         ["dust_devil"] = new DustDevilEvent(),
@@ -364,14 +380,30 @@ sealed class ArcticBiomeKit : IBiomeKit {
     private readonly List<IEnemy> _registry = new() {
         new PolarBear(180, 35), new IceWolf(70, 22), new FrostTroll(300, 45)
     };
+    private readonly object _registryLock = new();
 
     public void RegisterEnemy(IEnemy prototype) {
-        _registry.Add(prototype);
+        lock (_registryLock) {
+            _registry.Add(prototype);
+        }
         Console.WriteLine($"  [ArcticBiomeKit] Registered new prototype: {prototype.Name}");
     }
 
+    internal void ResetRegistry() {
+        lock (_registryLock) {
+            _registry.Clear();
+            _registry.AddRange(new IEnemy[] {
+                new PolarBear(180, 35), new IceWolf(70, 22), new FrostTroll(300, 45)
+            });
+        }
+    }
+
     public ITerrain      CreateTerrain() => new IceTerrain();
-    public List<IEnemy>  CreateEnemies() => _registry.Select(e => e.Clone()).ToList();
+    public List<IEnemy>  CreateEnemies() {
+        lock (_registryLock) {
+            return _registry.Select(e => e.Clone()).ToList();
+        }
+    }
     public WeatherSystem CreateWeather() => new(new Blizzard(), new Dictionary<string, IWeatherEvent> {
         ["whiteout"]  = new WhiteoutEvent(),
         ["ice_storm"] = new IceStormEvent(),
@@ -389,14 +421,30 @@ sealed class ForestBiomeKit : IBiomeKit {
     private readonly List<IEnemy> _registry = new() {
         new Wolf(90, 18), new WildBoar(120, 25), new ForestBandit(75, 20)
     };
+    private readonly object _registryLock = new();
 
     public void RegisterEnemy(IEnemy prototype) {
-        _registry.Add(prototype);
+        lock (_registryLock) {
+            _registry.Add(prototype);
+        }
         Console.WriteLine($"  [ForestBiomeKit] Registered new prototype: {prototype.Name}");
     }
 
+    internal void ResetRegistry() {
+        lock (_registryLock) {
+            _registry.Clear();
+            _registry.AddRange(new IEnemy[] {
+                new Wolf(90, 18), new WildBoar(120, 25), new ForestBandit(75, 20)
+            });
+        }
+    }
+
     public ITerrain      CreateTerrain() => new MudTerrain();
-    public List<IEnemy>  CreateEnemies() => _registry.Select(e => e.Clone()).ToList();
+    public List<IEnemy>  CreateEnemies() {
+        lock (_registryLock) {
+            return _registry.Select(e => e.Clone()).ToList();
+        }
+    }
     public WeatherSystem CreateWeather() => new(new Rain(), new Dictionary<string, IWeatherEvent> {
         ["thunderstorm"] = new ThunderstormEvent(),
         ["dense_fog"]    = new DenseFogEvent(),
@@ -449,7 +497,7 @@ sealed class WorldGenerator {
 // ═════════════════════════════════════════════════════════════
 //  ENTRY POINT
 // ═════════════════════════════════════════════════════════════
-
+#if !TESTING
 static class Program {
     public static void Main() {
         var sep = new string('═', 64);
@@ -484,3 +532,4 @@ static class Program {
         Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
     }
 }
+#endif // !TESTING

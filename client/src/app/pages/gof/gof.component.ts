@@ -64,7 +64,7 @@ export class GofComponent implements OnInit, OnDestroy {
     }
   }
 
-  readonly langs = ['typescript', 'java', 'csharp', 'python', 'ruby', 'cpp'] as const;
+  readonly langs = ['typescript', 'java', 'csharp', 'python', 'ruby'] as const;
 
   readonly langLabels: Record<string, string> = {
     typescript: 'TypeScript',
@@ -72,7 +72,6 @@ export class GofComponent implements OnInit, OnDestroy {
     csharp:     'C#',
     python:     'Python',
     ruby:       'Ruby',
-    cpp:        'C++',
   };
 
   readonly langExts: Record<string, string> = {
@@ -81,7 +80,6 @@ export class GofComponent implements OnInit, OnDestroy {
     csharp:     'cs',
     python:     'py',
     ruby:       'rb',
-    cpp:        'cpp',
   };
 
   langExt(tab: string): string {
@@ -114,7 +112,7 @@ export class GofComponent implements OnInit, OnDestroy {
     {
       label: 'Behavioral', cls: 'behavioral', category: 'BehavioralPatterns',
       patterns: [
-        { name: 'Chain of Resp.',  slug: 'ChainOfResponsibility', category: 'BehavioralPatterns', done: false },
+        { name: 'Chain of Resp.',  slug: 'ChainOfResponsibility', category: 'BehavioralPatterns', done: true  },
         { name: 'Command',         slug: 'Command',               category: 'BehavioralPatterns', done: false },
         { name: 'Iterator',        slug: 'Iterator',              category: 'BehavioralPatterns', done: false },
         { name: 'Mediator',        slug: 'Mediator',              category: 'BehavioralPatterns', done: false },
@@ -539,6 +537,15 @@ export class GofComponent implements OnInit, OnDestroy {
 
   isSelected(pattern: PatternDef): boolean {
     return this.selected?.slug === pattern.slug;
+  }
+
+  onReadmeClick(event: MouseEvent): void {
+    const anchor = (event.target as HTMLElement).closest('a[data-pattern]') as HTMLAnchorElement | null;
+    if (!anchor) return;
+    event.preventDefault();
+    const name = anchor.getAttribute('data-pattern')!;
+    const pattern = this.groups.flatMap(g => g.patterns).find(p => p.name === name);
+    if (pattern) this.selectPattern(pattern);
   }
 
   // Expose 'readme' + lang tabs to template

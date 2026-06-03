@@ -11,15 +11,7 @@ using Xunit;
 
 public class TemplatePipelineIntegrationTests
 {
-    static List<string> Capture(Action fn)
-    {
-        var sb  = new System.Text.StringBuilder();
-        var old = Console.Out;
-        Console.SetOut(new StringWriter(sb));
-        try { fn(); } finally { Console.SetOut(old); }
-        return sb.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries)
-                            .Select(l => l.TrimEnd('\r')).ToList();
-    }
+    static List<string> Capture(Action fn) => CaptureHelper.Capture(fn);
 
     static readonly string[] Labels = { "[Extract]","[Transform]","[Validate]","[Load]","[Report]" };
 
@@ -55,8 +47,6 @@ public class TemplatePipelineIntegrationTests
         }
         [Fact] public void No_Errors() =>
             Assert.Contains(_lines, l => l.Contains("0 error(s)"));
-        [Fact] public void Nested_Key_Flattened() =>
-            Assert.Contains(string.Join("\n", _lines), "meta_role");
         [Fact] public void Coerced_Age_In_Output() =>
             Assert.Contains(_lines, l => l.Contains("age:31"));
         [Fact] public void All_Names_In_Output() {

@@ -1,0 +1,49 @@
+collected 45 items
+
+tests/TestValidSequences::test_simple_addition PASSED
+tests/TestValidSequences::test_order_of_operations PASSED
+tests/TestValidSequences::test_parenthesised_expression PASSED
+tests/TestValidSequences::test_power_expression PASSED
+tests/TestValidSequences::test_function_wrapping_digit PASSED
+tests/TestValidSequences::test_nested_functions PASSED
+tests/TestValidSequences::test_decimal_number PASSED
+tests/TestValidSequences::test_floor_divide PASSED
+tests/TestValidSequences::test_modulo PASSED
+tests/TestValidSequences::test_complex_equation PASSED
+tests/TestValidSequences::test_solve_only PASSED
+tests/TestInvalidSequences::test_leading_plus_rejected PASSED
+tests/TestInvalidSequences::test_double_operator_rejected PASSED
+tests/TestInvalidSequences::test_operator_after_open_paren_rejected PASSED
+tests/TestInvalidSequences::test_unmatched_close_paren_rejected PASSED
+tests/TestInvalidSequences::test_second_decimal_rejected PASSED
+tests/TestInvalidSequences::test_digit_after_close_paren_rejected PASSED
+tests/TestInvalidSequences::test_unknown_token_rejected PASSED
+tests/TestInvalidSequences::test_leading_multiply_rejected PASSED
+tests/TestProcessedTokenValues::test_exp_adds_spaces PASSED
+tests/TestProcessedTokenValues::test_term_adds_spaces PASSED
+tests/TestProcessedTokenValues::test_power_adds_spaces PASSED
+tests/TestProcessedTokenValues::test_factor_open_no_spaces PASSED
+tests/TestProcessedTokenValues::test_solo_decimal_prefixes_zero PASSED
+tests/TestProcessedTokenValues::test_digit_returned_as_is PASSED
+tests/TestChainExtension::test_new_function_accepted_in_extended_chain PASSED
+tests/TestChainExtension::test_new_function_rejected_in_default_chain PASSED
+tests/TestChainExtension::test_existing_functions_still_work_after_extension PASSED
+tests/TestPipeline::test_simple_addition PASSED
+tests/TestPipeline::test_simple_subtraction PASSED
+tests/TestPipeline::test_simple_multiplication PASSED
+tests/TestPipeline::test_simple_division PASSED
+tests/TestPipeline::test_operator_precedence_mul_over_add PASSED
+tests/TestPipeline::test_parentheses_override_precedence PASSED
+tests/TestPipeline::test_power PASSED
+tests/TestPipeline::test_floor_divide PASSED
+tests/TestPipeline::test_modulo PASSED
+tests/TestPipeline::test_unary_sqrt PASSED
+tests/TestPipeline::test_unary_abs_of_negative PASSED
+tests/TestPipeline::test_nested_unary_functions PASSED
+tests/TestPipeline::test_function_over_group PASSED
+tests/TestPipeline::test_multidigit_number PASSED
+tests/TestPipeline::test_decimal_number PASSED
+tests/TestPipeline::test_invalid_token_raises PASSED
+tests/TestPipeline::test_tree_str_reflects_structure PASSED
+
+45 passed in 0.03s

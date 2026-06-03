@@ -14,6 +14,7 @@
 # ============================================================
 
 # SECTION:: Imports
+require 'rspec'
 require 'stringio'
 require_relative '../../../../CreationalPatterns/AbstractFactory/ruby/ruby'
 

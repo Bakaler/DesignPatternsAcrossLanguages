@@ -62,7 +62,7 @@ abstract class DataPipeline {
     }
 
     // Concrete steps — shared logic; never overridden.
-    protected final void validate() {
+    protected void validate() {
         errors.clear();
         Set<Integer> errorRows = new HashSet<>();
         for (int i = 0; i < records.size(); i++) {
@@ -83,7 +83,7 @@ abstract class DataPipeline {
                          + passed + " passed, " + errorRows.size() + " error(s)");
     }
 
-    protected final void load() {
+    protected void load() {
         System.out.println("  [Load]      writing " + records.size() + " record(s)");
         for (Map<String, Object> rec : records) {
             StringJoiner sj = new StringJoiner("  ");

@@ -215,6 +215,29 @@ body::before {
 .rm-section:last-child { border-bottom: none; }
 
 /* ── Headings ────────────────────────────────────────────────────────────────*/
+@keyframes rm-gleam {
+  0%   { background-position: 100% 0%; }
+  35%  { background-position: 0% 100%; }
+  100% { background-position: 0% 100%; }
+}
+.rm-h2.gleam {
+  background: linear-gradient(
+    120deg,
+    #5a5a6e 35%,
+    #a07830 48%,
+    #f0c060 52%,
+    #fde89a 55%,
+    #d4a040 59%,
+    #5a5a6e 70%
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: rm-gleam 13s ease-in-out infinite;
+}
+
 .rm-h2 {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.89rem;
@@ -492,16 +515,19 @@ body::before {
 .rm-link {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
-  color: #5a5a6e;
+  color: #f0a500;
   text-decoration: none;
-  border-bottom: 1px solid #2e2e3a;
+  border-bottom: 1px solid #f0a50055;
   padding-bottom: 1px;
   transition: color 0.15s, border-color 0.15s;
 }
 
-.rm-link:hover {
-  color: #f0a500;
-  border-bottom-color: #f0a500;
+.rm-link:hover  { color: #f5cc70; border-bottom-color: #f5cc70; }
+.rm-link:active { color: #e8ddb8; border-bottom-color: #e8ddb8; }
+
+.rm-link.sister {
+  font-family: inherit;
+  font-size: inherit;
 }
 
 /* ── README zoom levels (must be global — [innerHTML] is outside component scope) ── */

@@ -38,7 +38,7 @@
 #  ✗ Class explosion     complex grammars produce many small classes
 # ============================================================
 
-require 'math' rescue nil  # not needed in Ruby; Math is built in
+begin; require 'math'; rescue LoadError; end  # Math is built in; ignore if not loadable as a file
 
 
 # SECTION:: Context
@@ -72,6 +72,7 @@ end
 module Expression
   def interpret(ctx) = raise NotImplementedError, "#{self.class}#interpret"
   def display        = raise NotImplementedError, "#{self.class}#display"
+  def to_s           = display
 end
 
 

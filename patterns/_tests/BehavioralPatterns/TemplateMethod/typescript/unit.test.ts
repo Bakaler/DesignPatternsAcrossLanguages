@@ -19,7 +19,7 @@ function makePipeline(records: Row[], name = 'TestPipe'): DataPipeline & { errs:
     protected transform() { /* no-op */ }
     get errs() { return this.errors; }
     // expose protected methods for direct testing
-    runValidate() { (this as any).validate(); }
+    runValidate() { (this as any).extract(); (this as any).validate(); }
     runLoad()     { (this as any).load(); }
     runReport()   { (this as any).report(); }
   }

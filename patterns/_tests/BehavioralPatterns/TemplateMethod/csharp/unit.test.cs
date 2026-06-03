@@ -9,17 +9,26 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
+public static class CaptureHelper
+{
+    private static readonly object Lock = new object();
+
+    public static List<string> Capture(Action fn)
+    {
+        lock (Lock) {
+            var sb  = new System.Text.StringBuilder();
+            var old = Console.Out;
+            Console.SetOut(new StringWriter(sb));
+            try { fn(); } finally { Console.SetOut(old); }
+            return sb.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                                .Select(l => l.TrimEnd('\r')).ToList();
+        }
+    }
+}
+
 public class TemplatePipelineUnitTests
 {
-    static List<string> Capture(Action fn)
-    {
-        var sb  = new System.Text.StringBuilder();
-        var old = Console.Out;
-        Console.SetOut(new StringWriter(sb));
-        try { fn(); } finally { Console.SetOut(old); }
-        return sb.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries)
-                            .Select(l => l.TrimEnd('\r')).ToList();
-    }
+    static List<string> Capture(Action fn) => CaptureHelper.Capture(fn);
 
     // Minimal concrete subclass for testing base behaviour
     sealed class SpyPipeline : DataPipeline
@@ -28,8 +37,8 @@ public class TemplatePipelineUnitTests
         public SpyPipeline(List<Dictionary<string, object?>>? recs = null) =>
             _recs = recs ?? new();
         public override string Name => "TestPipe";
-        protected override void Extract()   { Records = new(_recs); }
-        protected override void Transform() { }
+        public override void Extract()   { Records = new(_recs); }
+        public override void Transform() { }
         public void RunValidate() { Validate(); }
         public void RunLoad()     { Load(); }
         public void RunReport()   { Report(); }
@@ -199,8 +208,8 @@ public class TemplatePipelineUnitTests
         sealed class OrderSpy : DataPipeline {
             public List<string> Order = new();
             public override string Name => "Spy";
-            protected override void Extract()           { Order.Add("extract"); Records = new() { new() {["id"]="1",["name"]="X"} }; }
-            protected override void Transform()         { Order.Add("transform"); }
+            public override void Extract()           { Order.Add("extract"); Records = new() { new() {["id"]="1",["name"]="X"} }; }
+            public override void Transform()         { Order.Add("transform"); }
             protected override void Validate()          { Order.Add("validate"); Errors.Clear(); }
             protected override void Load()              { Order.Add("load"); }
             protected override void Report()            { Order.Add("report"); }
@@ -217,10 +226,10 @@ public class TemplatePipelineUnitTests
 
 // Public accessor extensions so tests can call protected pipeline methods
 public static class PipelineTestExtensions {
-    public static void Extract_Public(this CsvPipeline  p) => p.GetType().GetMethod("Extract",   System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
-    public static void Transform_Public(this CsvPipeline p) => p.GetType().GetMethod("Transform", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
-    public static void Extract_Public(this JsonPipeline  p) => p.GetType().GetMethod("Extract",   System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
-    public static void Transform_Public(this JsonPipeline p) => p.GetType().GetMethod("Transform", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
-    public static void Extract_Public(this XmlPipeline  p)  => p.GetType().GetMethod("Extract",   System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
-    public static void Transform_Public(this XmlPipeline p) => p.GetType().GetMethod("Transform", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
+    public static void Extract_Public(this CsvPipeline  p) => p.GetType().GetMethod("Extract",   System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
+    public static void Transform_Public(this CsvPipeline p) => p.GetType().GetMethod("Transform", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
+    public static void Extract_Public(this JsonPipeline  p) => p.GetType().GetMethod("Extract",   System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
+    public static void Transform_Public(this JsonPipeline p) => p.GetType().GetMethod("Transform", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
+    public static void Extract_Public(this XmlPipeline  p)  => p.GetType().GetMethod("Extract",   System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
+    public static void Transform_Public(this XmlPipeline p) => p.GetType().GetMethod("Transform", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!.Invoke(p, null);
 }

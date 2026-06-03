@@ -16,13 +16,13 @@
 // SECTION:: Imports
 import { describe, it, before } from 'mocha';
 import assert from 'assert';
-import { captureOutput, findMissing } from '../../../_helpers/typescript/helpers';
+import { captureOutput, findMissing } from '../../../_helpers/typescript/helpers.ts';
 import {
   DesertBiomeKit,
   ArcticBiomeKit,
   ForestBiomeKit,
   WorldGenerator,
-} from '../../../../CreationalPatterns/AbstractFactory/typescript/typescript';
+} from '../../../../CreationalPatterns/AbstractFactory/typescript/typescript.ts';
 
 // SECTION:: WorldGenerator — Desert Integration
 describe('WorldGenerator — Desert Biome', () => {

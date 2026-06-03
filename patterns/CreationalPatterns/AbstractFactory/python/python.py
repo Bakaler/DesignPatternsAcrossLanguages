@@ -29,7 +29,7 @@
 # ============================================================
 
 from __future__ import annotations
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
 from copy import copy
 from random import sample
 from typing import override
@@ -40,7 +40,7 @@ from typing import override
 #  SINGLETON METACLASS
 # ═════════════════════════════════════════════════════════════
 
-class SingletonMeta(type):
+class SingletonMeta(ABCMeta):
     _instances: dict = {}
 
     def __call__(cls, *args, **kwargs):

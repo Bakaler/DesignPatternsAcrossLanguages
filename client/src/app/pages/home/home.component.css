@@ -15,7 +15,6 @@
   --ts:      #4a9eff;
   --python:  #ffd43b;
   --ruby:    #cc342d;
-  --cpp:     #00adef;
   --gold:    #f0a500;
 
   --mono:    'JetBrains Mono', monospace;
@@ -462,7 +461,6 @@
 .lang-card.ts::before     { background: var(--ts); }
 .lang-card.python::before { background: var(--python); }
 .lang-card.ruby::before   { background: var(--ruby); }
-.lang-card.cpp::before    { background: var(--cpp); }
 
 /* rolling / won outlines */
 .lang-card.lit-card { outline-color: var(--lang-glow); }
@@ -482,7 +480,6 @@
 .lang-card.ts     .lang-card-name { color: var(--ts); }
 .lang-card.python .lang-card-name { color: var(--python); }
 .lang-card.ruby   .lang-card-name { color: var(--ruby); }
-.lang-card.cpp    .lang-card-name { color: var(--cpp); }
 
 .lang-card.lit-card .lang-card-name { text-shadow: 0 0 12px var(--lang-glow); }
 .lang-card.won-card .lang-card-name { text-shadow: 0 0 20px var(--lang-glow), 0 0 40px var(--lang-glow); }
@@ -519,7 +516,6 @@
 .lang-card-snippet .hi-ts     { color: var(--ts); }
 .lang-card-snippet .hi-py     { color: var(--python); }
 .lang-card-snippet .hi-ruby   { color: var(--ruby); }
-.lang-card-snippet .hi-cpp    { color: var(--cpp); }
 .lang-card-snippet .hi-fn     { color: #4ec9b0; }
 .lang-card-snippet .hi-str    { color: #6bcb77; }
 

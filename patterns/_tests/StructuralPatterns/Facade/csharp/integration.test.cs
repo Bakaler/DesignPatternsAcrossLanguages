@@ -38,10 +38,10 @@ public class FacadeIntegrationTests
         [Fact]
         public void All_Three_Confirmations_Present()
         {
-            string out = string.Join("\n", _lines);
-            Assert.Contains("✓ User:",         out);
-            Assert.Contains("✓ Charged",       out);
-            Assert.Contains("✓ Message queued", out);
+            string output = string.Join("\n",_lines);
+            Assert.Contains("✓ User:",         output);
+            Assert.Contains("✓ Charged",       output);
+            Assert.Contains("✓ Message queued", output);
         }
 
         [Fact]
@@ -86,12 +86,12 @@ public class FacadeIntegrationTests
         [Fact]
         public void Headers_Masked_Raw_Credentials_Never_Appear()
         {
-            string out = string.Join("\n", Capture(() =>
+            string output = string.Join("\n",Capture(() =>
                 new PurchaseService().MakePurchase("tok", 10, "+1")));
-            Assert.DoesNotContain("sk_live_demo",     out);
-            Assert.DoesNotContain("auth_secret_demo", out);
-            Assert.DoesNotContain("SID_xyz",          out);
-            Assert.Contains("•••", out);
+            Assert.DoesNotContain("sk_live_demo",     output);
+            Assert.DoesNotContain("auth_secret_demo", output);
+            Assert.DoesNotContain("SID_xyz",          output);
+            Assert.Contains("•••", output);
         }
     }
 

@@ -136,7 +136,7 @@
         <!-- README -->
         @if (!loading && (activeLang === 'readme' || keepReadme) && readme) {
           <div class="viewer-readme-wrap">
-            <div class="viewer-readme" [innerHTML]="renderedReadme"></div>
+            <div class="viewer-readme" [innerHTML]="renderedReadme" (click)="onReadmeClick($event)"></div>
             @if (tocSections.length) {
               <nav class="viewer-toc">
                 @for (s of tocSections; track s.index) {

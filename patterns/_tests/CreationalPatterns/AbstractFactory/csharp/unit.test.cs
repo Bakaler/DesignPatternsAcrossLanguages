@@ -88,6 +88,12 @@ public class EnemyCloningTests
 // SECTION:: Factory Method Isolation
 public class DesertBiomeKitTests
 {
+    public DesertBiomeKitTests() {
+        DesertBiomeKit.Instance.ResetRegistry();
+        ArcticBiomeKit.Instance.ResetRegistry();
+        ForestBiomeKit.Instance.ResetRegistry();
+    }
+
     private readonly DesertBiomeKit _kit = DesertBiomeKit.Instance;
 
     [Fact] public void CreateTerrain_ReturnsSandDunes()
@@ -115,11 +121,18 @@ public class DesertBiomeKitTests
         int before = _kit.CreateEnemies().Count;
         _kit.RegisterEnemy(new Wolf(90, 18));
         Assert.Equal(before + 1, _kit.CreateEnemies().Count);
+        _kit.ResetRegistry();
     }
 }
 
 public class ArcticBiomeKitTests
 {
+    public ArcticBiomeKitTests() {
+        DesertBiomeKit.Instance.ResetRegistry();
+        ArcticBiomeKit.Instance.ResetRegistry();
+        ForestBiomeKit.Instance.ResetRegistry();
+    }
+
     [Fact] public void CreateTerrain_ReturnsFrozenTundra()
         => Assert.Equal("Frozen Tundra", ArcticBiomeKit.Instance.CreateTerrain().Name);
 
@@ -130,6 +143,12 @@ public class ArcticBiomeKitTests
 // SECTION:: WorldGenerator Decoupling
 public class WorldGeneratorTests
 {
+    public WorldGeneratorTests() {
+        DesertBiomeKit.Instance.ResetRegistry();
+        ArcticBiomeKit.Instance.ResetRegistry();
+        ForestBiomeKit.Instance.ResetRegistry();
+    }
+
     private sealed class SpyKit : IBiomeKit
     {
         public int TerrainCalls, EnemiesCalls, WeatherCalls, LootCalls;
@@ -163,8 +182,8 @@ public class WorldGeneratorTests
 
     [Fact] public void SwappingFactoryChangesTerrain()
     {
-        string desert = Capture(() => new WorldGenerator(DesertBiomeKit.Instance).Generate());
-        string arctic  = Capture(() => new WorldGenerator(ArcticBiomeKit.Instance).Generate());
+        string desert = CaptureWithReset(() => new WorldGenerator(DesertBiomeKit.Instance).Generate());
+        string arctic  = CaptureWithReset(() => new WorldGenerator(ArcticBiomeKit.Instance).Generate());
 
         Assert.Contains("Sand Dunes",    desert);
         Assert.Contains("Frozen Tundra", arctic);
@@ -174,11 +193,11 @@ public class WorldGeneratorTests
 
     private static string Capture(Action action)
     {
-        var orig = Console.Out;
-        var buf  = new StringWriter();
-        Console.SetOut(buf);
-        action();
-        Console.SetOut(orig);
-        return buf.ToString();
+        return CaptureHelper.Capture(action);
+    }
+
+    private static string CaptureWithReset(Action action)
+    {
+        return CaptureHelper.CaptureAfterReset(action);
     }
 }

@@ -477,6 +477,12 @@ export class AboutComponent implements AfterViewInit, OnDestroy {
     { word: 'Simplicity',    color: 'amber', pattern: 'Facade' },
     { word: 'Decoupling',    color: 'teal',  pattern: 'Facade' },
     { word: 'Orchestration', color: 'pink',  pattern: 'Facade' },
+    { word: 'Grammar',       color: 'amber', pattern: 'Interpreter' },
+    { word: 'Branching',     color: 'teal',  pattern: 'Interpreter' },
+    { word: 'Compose',       color: 'pink',  pattern: 'Interpreter' },
+    { word: 'Claim',         color: 'amber', pattern: 'Chain of Resp.' },
+    { word: 'Cascade',       color: 'teal',  pattern: 'Chain of Resp.' },
+    { word: 'Reject',        color: 'pink',  pattern: 'Chain of Resp.' },
   ];
 
   // Core patterns-and-languages features

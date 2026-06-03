@@ -69,10 +69,13 @@ export interface WeatherEvent {
 }
 
 export class WeatherSystem {
-  constructor(
-    public readonly a: Weather,                           // base conditions
-    public readonly b: Map<string, WeatherEvent>          // triggerable events
-  ) {}
+  readonly a: Weather;
+  readonly b: Map<string, WeatherEvent>;
+
+  constructor(a: Weather, b: Map<string, WeatherEvent>) {
+    this.a = a;
+    this.b = b;
+  }
 
   describe(): void {
     console.log(`    Base      : ${this.a.name} — ${this.a.effect}`);
@@ -118,7 +121,14 @@ export class SandTerrain implements Terrain {
 }
 
 export class Scorpion implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new Scorpion(this.health, this.damage); }
   readonly name   = 'Scorpion';
   readonly attack = 'Venomous sting — poisons for 3 turns';
@@ -126,7 +136,14 @@ export class Scorpion implements Enemy {
 }
 
 export class SandWorm implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new SandWorm(this.health, this.damage); }
   readonly name   = 'Sand Worm';
   readonly attack = 'Burrow strike — ignores armour';
@@ -134,7 +151,14 @@ export class SandWorm implements Enemy {
 }
 
 export class DesertBandit implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new DesertBandit(this.health, this.damage); }
   readonly name   = 'Desert Bandit';
   readonly attack = 'Ambush — double damage on first hit';
@@ -188,7 +212,14 @@ export class IceTerrain implements Terrain {
 }
 
 export class PolarBear implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new PolarBear(this.health, this.damage); }
   readonly name   = 'Polar Bear';
   readonly attack = 'Bear maul — knocks player back 3 tiles';
@@ -196,7 +227,14 @@ export class PolarBear implements Enemy {
 }
 
 export class IceWolf implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new IceWolf(this.health, this.damage); }
   readonly name   = 'Ice Wolf';
   readonly attack = 'Pack howl — summons 1-2 additional wolves';
@@ -204,7 +242,14 @@ export class IceWolf implements Enemy {
 }
 
 export class FrostTroll implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new FrostTroll(this.health, this.damage); }
   readonly name   = 'Frost Troll';
   readonly attack = 'Ice slam — freezes player in place for 2 turns';
@@ -258,7 +303,14 @@ export class MudTerrain implements Terrain {
 }
 
 export class Wolf implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new Wolf(this.health, this.damage); }
   readonly name   = 'Wolf';
   readonly attack = 'Lunge — high speed, targets lowest HP player';
@@ -266,7 +318,14 @@ export class Wolf implements Enemy {
 }
 
 export class WildBoar implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new WildBoar(this.health, this.damage); }
   readonly name   = 'Wild Boar';
   readonly attack = 'Charge — stuns on hit, destroys cover';
@@ -274,7 +333,14 @@ export class WildBoar implements Enemy {
 }
 
 export class ForestBandit implements Enemy {
-  constructor(readonly health: number, readonly damage: number) {}
+  readonly health: number;
+  readonly damage: number;
+
+  constructor(health: number, damage: number) {
+    this.health = health;
+    this.damage = damage;
+  }
+
   clone()         { return new ForestBandit(this.health, this.damage); }
   readonly name   = 'Forest Bandit';
   readonly attack = 'Arrow volley — ranged, ignores melee armour';
@@ -455,7 +521,7 @@ export class WorldGenerator {
 //  ENTRY POINT
 // ═════════════════════════════════════════════════════════════
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
 const SEP = '═'.repeat(64);
 
 console.log('╔══════════════════════════════════════════════════════════════╗');

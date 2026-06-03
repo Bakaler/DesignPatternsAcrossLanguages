@@ -1,0 +1,384 @@
+<div class="rm-wrap">
+
+  <!-- Hero -->
+  <div class="rm-hero">
+    <span class="rm-badge behavioral">Behavioral</span>
+    <h1 class="rm-hero-title">Chain of Responsibility</h1>
+    <div class="rm-hero-meta">
+      <span>GoF pg. 223</span>
+    </div>
+  </div>
+
+  <!-- Sisters -->
+  <section class="rm-section">
+    <h2 class="rm-h2 gleam">Sister Implementation</h2>
+    <div class="rm-callout">
+      To iterate, revisit old ideas, and sculpt them into a series that timelapses progress is an art of refinement and practice
+    </div>
+    <ul class="rm-list plain">
+      <li>
+        This Sister Implementation links with <a class="rm-link sister" data-pattern="Interpreter" href="#">Interpreter</a>, revisiting a project iterated over twice.
+        Sophomore year I created a basic calculator; then, taking Language Foundations, something about the EBNF parser struck me,
+        so I recreated my calculator as a full EBNF parser, ensuring live and accurate input.
+        <br>
+        <br>
+        The <a class="rm-link sister" data-pattern="Interpreter" href="#">Interpreter</a> models the evaluation side of the same grammar.
+        Each operator and function is an <span class="rm-code">Expression</span> class whose
+        <span class="rm-code">interpret(ctx)</span> walks the tree. The Interpreter pattern sits
+        <em>after</em> the Chain of Responsibility in the pipeline.
+      </li>
+    </ul>
+    <p class="rm-p">
+      Both patterns share their grammar and operator set with a real scientific calculator:
+    </p>
+    <ul class="rm-list plain">
+      <li>
+        <a class="rm-link" href="https://github.com/Bakaler/Scientific_Calculator/tree/main" target="_blank">
+          github.com/Bakaler/Scientific_Calculator &rarr;
+        </a>
+        The original project whose <span class="rm-code">EBNF_parser</span> and
+        <span class="rm-code">g001_Functions</span> supplied the grammar, operator set,
+        and function names reproduced here.
+      </li>
+    </ul>
+  </section>
+
+  <!-- Power Words -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Power Words</h2>
+    <div class="rm-powerword-block">
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word amber">Power Word: Claim</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word teal">Power Word: Cascade</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word pink">Power Word: Reject</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Attributions -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Attributions</h2>
+
+    <div class="rm-attribution-book">
+      <div class="rm-attribution-book-title">Design Patterns: Elements of Reusable Object-Oriented Software</div>
+      <div class="rm-attribution-book-authors">Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides</div>
+      <div class="rm-attribution-book-forward">Forward by Grady Booch</div>
+    </div>
+
+    <ul class="rm-list plain" style="margin-top: 1rem;">
+      <li>
+        <a class="rm-link" href="https://refactoring.guru/design-patterns/chain-of-responsibility" target="_blank">
+          refactoring.guru &rarr; Chain of Responsibility
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://www.cs.unc.edu/~stotts/GOF/hires/pat5dso.htm" target="_blank">
+          cs.unc.edu &rarr; GoF Pattern Reference (Chain of Responsibility)
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Intent -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Intent</h2>
+    <div class="rm-callout">
+      Avoid coupling the sender of a request to its receiver by giving more than one object a
+      chance to handle the request. <strong>Chain the receiving objects</strong> and pass the
+      request along the chain until an object handles it.
+    </div>
+    <p class="rm-p">
+      Each handler in the chain decides: <em>do I handle this, or do I pass it on?</em>
+      A request that reaches the end of the chain without being claimed is rejected.
+      The sender knows nothing about which handler will respond.
+    </p>
+  </section>
+
+  <!-- The Problem It Solves -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Problem It Solves</h2>
+    <p class="rm-p">
+      When you have a token, event, or request that could be handled by one of several objects,
+      but the sender should not know which one, you need a way to route it without a
+      monolithic if/else chain.
+    </p>
+    <ul class="rm-list plain">
+      <li>A giant switch statement that handles every token type in one place is fragile and hard to extend</li>
+      <li>Direct coupling between sender and receiver prevents reordering, inserting, or swapping handlers</li>
+    </ul>
+    <p class="rm-p">
+      CoR puts each handler in its own class. The chain is assembled at runtime.
+      Adding a new handler means adding a new class and inserting it into the chain. No existing
+      code changes.
+    </p>
+  </section>
+
+  <!-- Where This Came From -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Where This Came From: the EBNF_parser</h2>
+    <p class="rm-p">
+      The <span class="rm-code">EBNF_parser</span> in the Scientific Calculator validates button
+      presses against a grammar one token at a time. Its methods form a natural chain:
+    </p>
+    <pre class="rm-diagram">  _exp()      handles  + -
+    ↓ pass
+  _term()     handles  * / // %
+    ↓ pass
+  _factor()   handles  ( )
+    ↓ pass
+  _power()    handles  **
+    ↓ pass
+  _function() handles  abs  sqrt  neg  …
+    ↓ pass
+  _digit()    handles  0-9  .
+    ↓ None    ← rejected, no handler claimed the token</pre>
+    <p class="rm-p">
+      Each method either returns a result (claims the token) or calls the next method (passes it on).
+      This is Chain of Responsibility expressed as method calls rather than handler objects.
+      The GoF version externalises each link into its own class so the chain becomes explicit,
+      configurable, and testable in isolation.
+    </p>
+    <table class="rm-table">
+      <thead>
+        <tr><th>EBNF_parser (method chain)</th><th>GoF CoR (handler chain)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="rm-code">_exp()</span></td>
+          <td><span class="rm-code">ExpHandler</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">_term()</span></td>
+          <td><span class="rm-code">TermHandler</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">_factor()</span></td>
+          <td><span class="rm-code">FactorHandler</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">_power()</span></td>
+          <td><span class="rm-code">PowerHandler</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">_function()</span></td>
+          <td><span class="rm-code">FunctionHandler</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">_digit()</span></td>
+          <td><span class="rm-code">DigitHandler</span></td>
+        </tr>
+        <tr>
+          <td><span class="rm-code">return (False, None)</span></td>
+          <td><span class="rm-code">return None</span> (end of chain, rejected)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Structure -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Structure</h2>
+
+    <pre class="rm-diagram"><span class="uml-arrow">┌──────────────────────────────────────────────────────────────────┐</span>
+<span class="uml-arrow">│</span>              <span class="uml-title">CHAIN OF RESPONSIBILITY PATTERN</span>                      <span class="uml-arrow">│</span>
+<span class="uml-arrow">└──────────────────────────────────────────────────────────────────┘</span>
+
+  <span class="uml-stereotype">«abstract»</span>
+  <span class="uml-iface">┌──────────────────────┐</span>
+  <span class="uml-iface">│       Handler        │</span>
+  <span class="uml-iface">├──────────────────────┤</span>
+  <span class="uml-iface">│</span><span class="uml-method">- _next: Handler      </span><span class="uml-iface">│</span>◄──────────────────────────┐
+  <span class="uml-iface">│</span><span class="uml-method">+ set_next(h)         </span><span class="uml-iface">│</span>                           │  successor
+  <span class="uml-iface">│</span><span class="uml-method">+ handle(token, ctx)  </span><span class="uml-iface">│</span>                           │
+  <span class="uml-iface">└──────────┬───────────┘</span>                           │
+             <span class="uml-arrow">△</span>                                          │
+   <span class="uml-arrow">┌──────────┴──────────────────────────────────┐</span>    │
+   <span class="uml-arrow">│</span>          <span class="uml-arrow">│</span>          <span class="uml-arrow">│</span>          <span class="uml-arrow">│</span>           <span class="uml-arrow">│</span>    │
+<span class="uml-concrete">ExpHandler</span> <span class="uml-concrete">TermHandler</span> <span class="uml-concrete">PowerHandler</span> <span class="uml-concrete">FactorHandler</span> <span class="uml-concrete">…</span> ───┘
+ <span class="uml-method">handle()</span>   <span class="uml-method">handle()</span>   <span class="uml-method">handle()</span>    <span class="uml-method">handle()</span>
+ claims     claims      claims      claims
+ + -        * / // %    **          ( )</pre>
+
+    <h3 class="rm-h3">Chain order = grammar precedence</h3>
+    <pre class="rm-diagram">  SolveHandler   =        ← head of chain
+    → ExpHandler     + -
+    → TermHandler    * / // %
+    → PowerHandler   **
+    → FactorHandler  ( )
+    → FunctionHandler  abs  sqrt  neg  …
+    → DigitHandler   0-9  .    ← end of chain, None if unclaimed</pre>
+  </section>
+
+  <!-- Participants -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Participants</h2>
+    <table class="rm-table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>In This Implementation</th>
+          <th>Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Handler</td>
+          <td><span class="rm-code">Handler</span> (abstract)</td>
+          <td>Defines <span class="rm-code">handle(token, ctx)</span> and <span class="rm-code">set_next()</span>. Provides <span class="rm-code">_pass()</span> to forward to the next link.</td>
+        </tr>
+        <tr>
+          <td>ConcreteHandler</td>
+          <td><span class="rm-code">SolveHandler</span>, <span class="rm-code">ExpHandler</span>, <span class="rm-code">TermHandler</span>, <span class="rm-code">PowerHandler</span>, <span class="rm-code">FactorHandler</span>, <span class="rm-code">FunctionHandler</span>, <span class="rm-code">DigitHandler</span></td>
+          <td>Each claims exactly its own tokens and calls <span class="rm-code">_pass()</span> for everything else.</td>
+        </tr>
+        <tr>
+          <td>Context</td>
+          <td><span class="rm-code">ParseContext</span></td>
+          <td>Carries <span class="rm-code">trailing</span>, <span class="rm-code">paren_depth</span>, and <span class="rm-code">has_decimal</span>: the state handlers need to validate positional rules.</td>
+        </tr>
+        <tr>
+          <td>Client</td>
+          <td><span class="rm-code">build_chain()</span></td>
+          <td>Assembles the chain and returns its head. The caller only ever holds the head.</td>
+        </tr>
+        <tr>
+          <td>Pipeline</td>
+          <td><span class="rm-code">TreeBuilder</span>, <span class="rm-code">parse_and_build()</span></td>
+          <td>Consumes CoR results to build an Interpreter expression tree (shunting-yard). The only code that knows about both patterns.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- The Pipeline -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Full Pipeline</h2>
+    <p class="rm-p">
+      CoR and Interpreter connect through <span class="rm-code">TreeBuilder</span>.
+      Neither pattern knows about the other. Only <span class="rm-code">TreeBuilder</span> imports from both.
+    </p>
+    <pre class="rm-diagram">  tokens
+    │
+    ▼  build_chain()
+  CoR handlers          validate &amp; classify each token
+  (Solve/Exp/Term/…)    returns (type, processed) or None
+    │
+    ▼  TreeBuilder
+  shunting-yard         consumes results, builds the tree
+                        respects precedence and grouping
+    │
+    ▼  .interpret(ctx)
+  Expression tree       each node evaluates itself recursively
+    │
+    ▼
+  result</pre>
+    <pre class="rm-diagram">  tree = parse_and_build(["2", "+", "3", "*", "4", "="])
+  tree.interpret(Context())   →  14     ← 2 + (3*4), precedence respected
+
+  tree = parse_and_build(["(", "2", "+", "3", ")", "*", "4", "="])
+  tree.interpret(Context())   →  20     ← (2+3)*4, parens override
+
+  parse_and_build(["+", "5"])
+  → ValueError: Invalid token '+' after None  ← CoR rejected it first</pre>
+  </section>
+
+  <!-- Consequences -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Consequences</h2>
+
+    <h3 class="rm-h3">✓ Decoupled Validation</h3>
+    <p class="rm-p">
+      Each handler knows only its own tokens. <span class="rm-code">ExpHandler</span> has no idea
+      that <span class="rm-code">DigitHandler</span> exists. You can reorder, remove, or replace
+      handlers without touching any other class.
+    </p>
+
+    <h3 class="rm-h3">✓ Ordered Chain = Grammar Precedence</h3>
+    <p class="rm-p">
+      The chain position of each handler encodes its precedence in the grammar. Reading
+      <span class="rm-code">build_chain()</span> top-to-bottom tells you the entire grammar hierarchy
+      at a glance.
+    </p>
+
+    <h3 class="rm-h3">✓ Easy to Extend</h3>
+    <p class="rm-p">
+      Adding a new operator or function means adding one class and inserting it at the right
+      position in the chain. No existing handler changes. The test in
+      <span class="rm-code">TestChainExtension</span> demonstrates this with <span class="rm-code">cbrt</span>.
+    </p>
+
+    <h3 class="rm-h3">✓ Explicit Rejection</h3>
+    <p class="rm-p">
+      <span class="rm-code">None</span> is a first-class result. Invalid input is detectable and
+      testable at every link. You can pin exactly which handler rejected a given token and why.
+    </p>
+
+    <h3 class="rm-h3">✗ No Guarantee of Handling</h3>
+    <p class="rm-p">
+      If no handler claims a token, it silently returns <span class="rm-code">None</span>.
+      The caller must check for this explicitly or wrap in <span class="rm-code">parse_and_build()</span>
+      which raises a <span class="rm-code">ValueError</span>.
+    </p>
+  </section>
+
+  <!-- When to Reach For It -->
+  <section class="rm-section">
+    <h2 class="rm-h2">When to Reach For It</h2>
+    <ul class="rm-list plain">
+      <li>More than one object may handle a request, and the handler isn't known at compile time</li>
+      <li>You want to issue a request to one of several objects without specifying the receiver explicitly</li>
+      <li>The set of handlers should be configurable or extensible at runtime</li>
+      <li>You are modelling a grammar, middleware stack, event pipeline, or approval workflow</li>
+    </ul>
+  </section>
+
+  <!-- Trade-offs -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Trade-offs</h2>
+    <div class="rm-grid-2">
+      <div class="rm-card">
+        <div class="rm-card-title good">Strengths</div>
+        <ul class="rm-list good">
+          <li>Sender and receiver are fully decoupled</li>
+          <li>Chain order is explicit and readable</li>
+          <li>Handlers are independently testable</li>
+          <li>New handlers slot in without modifying existing ones</li>
+        </ul>
+      </div>
+      <div class="rm-card">
+        <div class="rm-card-title bad">Weaknesses</div>
+        <ul class="rm-list bad">
+          <li>No guaranteed handler; requests can fall through silently</li>
+          <li>Debugging requires tracing the full chain</li>
+          <li>Long chains can obscure which handler is responsible</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Patterns -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Related Patterns</h2>
+    <span class="rm-tag">Interpreter</span>
+    <span class="rm-tag">Composite</span>
+    <span class="rm-tag">Command</span>
+    <p class="rm-p" style="margin-top: 0.8rem;">
+      <strong>Interpreter.</strong> CoR handles the parsing and validation half of the grammar
+      pipeline; Interpreter handles the evaluation half. <span class="rm-code">TreeBuilder</span>
+      bridges them.<br>
+      <strong>Composite.</strong> Handler chains are often built from Composite structures when
+      handlers can themselves contain sub-chains.<br>
+      <strong>Command.</strong> Commands are often passed along a CoR chain. The chain decides
+      which handler executes the command.
+    </p>
+  </section>
+
+</div>

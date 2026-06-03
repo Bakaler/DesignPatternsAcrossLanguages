@@ -300,6 +300,7 @@ public class LogExpression : IExpression {
 // ═════════════════════════════════════════════════════════════
 //  CLIENT
 // ═════════════════════════════════════════════════════════════
+#if !TESTING
 
 var SEP = new string('═', 64);
 
@@ -375,3 +376,5 @@ Console.WriteLine(SEP);
 Console.WriteLine("\n╔══════════════════════════════════════════════════════════════╗");
 Console.WriteLine("║  Done                                                        ║");
 Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+
+#endif // !TESTING

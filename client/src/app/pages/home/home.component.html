@@ -7,7 +7,7 @@
     <p class="hero-tagline">{{ tagline }}@if (taglineTyping) {<span class="tagline-cursor">|</span>}</p>
     <p class="hero-sub">
       A personal deep-dive into all <strong>23 Gang of Four design patterns</strong><br>
-      Implemented in Java, C#, TypeScript, Python, Ruby, and C++.
+      Implemented in Java, C#, TypeScript, Python, and Ruby.
     </p>
     <div class="hero-stats">
       <div class="stat stat-live">
@@ -208,20 +208,6 @@
         <div class="lang-card-snippet"><span class="hi-ruby">if</span> __FILE__ == $PROGRAM_NAME</div>
       </a>
 
-      <a class="lang-card cpp"
-           style="--lang-glow:#00adef"
-           routerLink="/cpp"
-           (click)="settings.playUiClick()"
-           [class.lit-card]="langCardState['cpp'] === 'lit'"
-           [class.won-card]="langCardState['cpp'] === 'won'">
-        <div class="lang-card-bar"
-             style="--bar-color:#005f8a; --bar-color-bright:#00adef"
-             [class.lit]="langBarState['cpp'] === 'lit'"
-             [class.selected]="langBarState['cpp'] === 'selected'"></div>
-        <div class="lang-card-name">C++</div>
-        <div class="lang-card-sub">C++17/20</div>
-        <div class="lang-card-snippet"><span class="hi-cpp">int</span> <span class="hi-fn">main</span>() &#123; <span class="kw">return</span> <span class="num">0</span>; &#125;</div>
-      </a>
 
     </div>
   </section>

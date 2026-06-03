@@ -43,16 +43,15 @@ using System.Xml.Linq;
 
 public abstract class DataPipeline {
 
-    protected List<Dictionary<string, object?>> Records = new();
-    protected List<string>                      Errors  = new();
+    public List<Dictionary<string, object?>> Records = new();
+    public List<string>                      Errors  = new();
 
     public abstract string Name { get; }
-    protected abstract void Extract();
-    protected abstract void Transform();
+    public abstract void Extract();
+    public abstract void Transform();
 
-    // Template method — sealed. Do not override in subclasses.
-    // Defines the invariant sequence: Extract → Transform → Validate → Load → Report
-    public sealed void Run() {
+    // Template method. Defines the invariant sequence: Extract → Transform → Validate → Load → Report
+    public void Run() {
         Console.WriteLine($"\n  Pipeline : {Name}");
         Console.WriteLine("  " + new string('─', 52));
         Extract();
@@ -63,7 +62,7 @@ public abstract class DataPipeline {
     }
 
     // Concrete steps — shared logic; never overridden.
-    protected void Validate() {
+    protected virtual void Validate() {
         Errors.Clear();
         var errorRows = new HashSet<int>();
         for (int i = 0; i < Records.Count; i++) {
@@ -77,7 +76,7 @@ public abstract class DataPipeline {
         Console.WriteLine($"  [Validate]  {Records.Count} records checked: {passed} passed, {errorRows.Count} error(s)");
     }
 
-    protected void Load() {
+    protected virtual void Load() {
         Console.WriteLine($"  [Load]      writing {Records.Count} record(s)");
         foreach (var rec in Records) {
             var pairs = string.Join("  ", rec.Select(kv => $"{kv.Key}:{kv.Value}"));
@@ -113,7 +112,7 @@ public class CsvPipeline : DataPipeline {
 
     public override string Name => "CSV Data Pipeline";
 
-    protected override void Extract() {
+    public override void Extract() {
         var lines   = CsvSource.Split('\n');
         var headers = lines[0].Split(',');
         Records.Clear();
@@ -127,7 +126,7 @@ public class CsvPipeline : DataPipeline {
         Console.WriteLine($"  [Extract]   {Records.Count} raw rows parsed from CSV source");
     }
 
-    protected override void Transform() {
+    public override void Transform() {
         foreach (var rec in Records)
             foreach (var key in rec.Keys.ToList()) {
                 var stripped = rec[key]?.ToString()?.Trim() ?? "";
@@ -155,7 +154,7 @@ public class JsonPipeline : DataPipeline {
 
     public override string Name => "JSON Data Pipeline";
 
-    protected override void Extract() {
+    public override void Extract() {
         Records.Clear();
         var objPat = new Regex(@"\{([^{}]+(?:\{[^{}]*\}[^{}]*)*)\}");
         var kvPat  = new Regex(@"""(\w+)""\s*:\s*(\{[^}]+\}|""[^""]*""|\d+)");
@@ -173,7 +172,7 @@ public class JsonPipeline : DataPipeline {
         Console.WriteLine($"  [Extract]   {Records.Count} objects parsed from JSON array");
     }
 
-    protected override void Transform() {
+    public override void Transform() {
         var kvPat = new Regex(@"""(\w+)""\s*:\s*(""[^""]*""|\d+)");
         var flat  = new List<Dictionary<string, object?>>();
         foreach (var rec in Records) {
@@ -231,7 +230,7 @@ public class XmlPipeline : DataPipeline {
 
     public override string Name => "XML Data Pipeline";
 
-    protected override void Extract() {
+    public override void Extract() {
         Records.Clear();
         var doc = XDocument.Parse(XmlSource);
         foreach (var elem in doc.Root!.Elements("record")) {
@@ -247,7 +246,7 @@ public class XmlPipeline : DataPipeline {
         Console.WriteLine($"  [Extract]   {Records.Count} <record> elements parsed from XML");
     }
 
-    protected override void Transform() {
+    public override void Transform() {
         foreach (var rec in Records)
             foreach (var key in rec.Keys.ToList()) {
                 var meta = (Dictionary<string, string>)rec[key]!;
@@ -269,6 +268,7 @@ public class XmlPipeline : DataPipeline {
 // ═════════════════════════════════════════════════════════════
 //  CLIENT
 // ═════════════════════════════════════════════════════════════
+#if !TESTING
 
 var SEP = new string('═', 64);
 
@@ -293,3 +293,4 @@ Console.WriteLine(SEP);
 Console.WriteLine("\n╔══════════════════════════════════════════════════════════════╗");
 Console.WriteLine("║  Done                                                        ║");
 Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+#endif // !TESTING

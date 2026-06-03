@@ -16,6 +16,9 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
+// Serialize all Facade tests — Capture() redirects Console.Out, which is not thread-safe.
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+
 public class FacadeUnitTests
 {
     // ── Output capture helper ─────────────────────────────────
@@ -162,10 +165,10 @@ public class FacadeUnitTests
         [Fact]
         public void No_Raw_Credentials_In_Output()
         {
-            string out = string.Join("\n", Run());
-            Assert.DoesNotContain("sk_live_demo",    out);
-            Assert.DoesNotContain("auth_secret_demo", out);
-            Assert.DoesNotContain("SID_xyz",          out);
+            string output = string.Join("\n", Run());
+            Assert.DoesNotContain("sk_live_demo",    output);
+            Assert.DoesNotContain("auth_secret_demo", output);
+            Assert.DoesNotContain("SID_xyz",          output);
         }
     }
 }

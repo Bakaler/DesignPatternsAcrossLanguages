@@ -27,7 +27,7 @@ import {
   DesertBiomeKit, ArcticBiomeKit,
   // Client
   WorldGenerator,
-} from '../../../../CreationalPatterns/AbstractFactory/typescript/typescript';
+} from '../../../../CreationalPatterns/AbstractFactory/typescript/typescript.ts';
 
 // SECTION:: Terrain Products
 describe('Terrain Products', () => {

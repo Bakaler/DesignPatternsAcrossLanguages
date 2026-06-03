@@ -131,7 +131,7 @@ class UnitTest {
             int[] calls = {0, 0, 0, 0}; // terrain, enemies, weather, loot
 
             BiomeKit spyKit = new BiomeKit() {
-                public String   kitName()           { return "SpyKit"; }
+                public String   name()              { return "SpyKit"; }
                 public Terrain  createTerrain()     { calls[0]++; return new SandTerrain(); }
                 public List<Enemy> createEnemies()  { calls[1]++; return List.of(); }
                 public WeatherSystem createWeather(){ calls[2]++;
