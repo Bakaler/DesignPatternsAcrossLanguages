@@ -3,7 +3,17 @@
     <h1>C<span>#</span> Cheat Sheet</h1>
     <p>// backend systems edition</p>
   </header>
-  <div class="grid">
+
+  <!-- Tabs -->
+  <div class="cheatsheet-tabs">
+    <button [class.active]="currentTab === 'sheet'" (click)="switchTab('sheet')">Sheet</button>
+    <button [class.active]="currentTab === 'imports'" (click)="switchTab('imports')">Imports</button>
+    <button [class.active]="currentTab === 'testing'" (click)="switchTab('testing')">Testing</button>
+  </div>
+
+  <!-- SHEET TAB -->
+  @if (currentTab === 'sheet') {
+    <div class="grid">
 
     <div class="card">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">compile &amp; run</span></div>
@@ -304,9 +314,71 @@ dotnet test
       </div>
     </div>
 
-  </div>
+    </div>
+  } <!-- end sheet tab -->
 
-  <div class="testing-section">
+  <!-- IMPORTS TAB -->
+  @if (currentTab === 'imports') {
+    <div class="grid imports-grid">
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">.NET Core / HttpClient</span></div>
+      <div class="code-block"><pre><span class="cmt">// Built-in HTTP client</span>
+<span class="kw">using</span> System.<span class="tp">Net</span>.<span class="tp">Http</span>;
+<span class="kw">var</span> client = <span class="kw">new</span> <span class="tp">HttpClient</span>();
+<span class="kw">var</span> response = <span class="kw">await</span> client.<span class="fn">GetAsync</span>(
+    <span class="str">"https://api.example.com/users"</span>);
+<span class="kw">var</span> json = <span class="kw">await</span> response.Content.<span class="fn">ReadAsStringAsync</span>();
+
+<span class="cmt">// Strongly-typed requests</span>
+<span class="kw">var</span> request = <span class="kw">new</span> <span class="tp">HttpRequestMessage</span>(<span class="tp">HttpMethod</span>.Post, url);
+request.Content = <span class="kw">new</span> <span class="tp">StringContent</span>(json);</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">Entity Framework Core</span></div>
+      <div class="code-block"><pre><span class="cmt">// ORM for database access</span>
+<span class="kw">using</span> Microsoft.EntityFrameworkCore;
+<span class="kw">public class</span> <span class="tp">AppDbContext</span> : <span class="tp">DbContext</span> &#123;
+    <span class="kw">public</span> <span class="tp">DbSet</span>&lt;<span class="tp">User</span>&gt; Users =&gt; <span class="fn">Set</span>&lt;<span class="tp">User</span>&gt;();
+&#125;
+
+<span class="cmt">// Query &amp; update</span>
+<span class="kw">var</span> user = <span class="kw">await</span> _db.Users.<span class="fn">FirstOrDefaultAsync</span>(u =&gt; u.Id == id);
+user.Email = <span class="str">"new&#64;example.com"</span>;
+<span class="kw">await</span> _db.<span class="fn">SaveChangesAsync</span>();</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">Newtonsoft.Json (Json.NET)</span></div>
+      <div class="code-block"><pre><span class="cmt">// JSON serialization library</span>
+<span class="kw">using</span> Newtonsoft.Json;
+<span class="kw">var</span> user = <span class="tp">JsonConvert</span>.<span class="fn">DeserializeObject</span>&lt;<span class="tp">User</span>&gt;(json);
+
+<span class="cmt">// Custom serialization</span>
+<span class="kw">var</span> settings = <span class="kw">new</span> <span class="tp">JsonSerializerSettings</span>
+    &#123; NullValueHandling = <span class="tp">NullValueHandling</span>.Ignore &#125;;
+<span class="kw">var</span> serialized = <span class="tp">JsonConvert</span>.<span class="fn">SerializeObject</span>(obj, settings);</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">xunit / testing</span></div>
+      <div class="code-block"><pre><span class="cmt">// Test framework</span>
+<span class="kw">public class</span> <span class="tp">CalculatorTests</span> &#123;
+    [<span class="tp">Fact</span>]
+    <span class="kw">public void</span> <span class="fn">Add_ReturnsSum</span>() &#123;
+        <span class="kw">var</span> calc = <span class="kw">new</span> <span class="tp">Calculator</span>();
+        <span class="tp">Assert</span>.<span class="fn">Equal</span>(<span class="num">5</span>, calc.<span class="fn">Add</span>(<span class="num">2</span>, <span class="num">3</span>));
+    &#125;
+&#125;</pre></div>
+    </div>
+
+    </div>
+  } <!-- end imports tab -->
+
+  <!-- TESTING TAB -->
+  @if (currentTab === 'testing') {
+    <div class="testing-section">
     <div class="testing-header">
       <div class="testing-header-title">// <span>testing</span></div>
       <div class="testing-header-stack"><a href="https://xunit.net" target="_blank" rel="noopener">xUnit</a> · <a href="https://github.com/devlooped/moq" target="_blank" rel="noopener">Moq</a> · <a href="https://github.com/coverlet-coverage/coverlet" target="_blank" rel="noopener">coverlet</a> · <a href="https://playwright.dev" target="_blank" rel="noopener">Playwright</a></div>
@@ -496,7 +568,9 @@ _mockRepo.<span class="fn">Setup</span>(r =&gt; r.<span class="fn">Save</span>(
       </div>
 
     </div>
-  </div>
+    </div>
+  } <!-- end testing tab -->
+
 </div>
 
   <app-footer />

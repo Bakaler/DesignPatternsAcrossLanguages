@@ -3,6 +3,17 @@
     <h1>Type<span>Script</span> Cheat Sheet</h1>
     <p>// backend systems edition</p>
   </header>
+
+  <!-- Tabs -->
+  <div class="cheatsheet-tabs">
+    <button [class.active]="currentTab === 'sheet'" (click)="switchTab('sheet')">Sheet</button>
+    <button [class.active]="currentTab === 'imports'" (click)="switchTab('imports')">Imports</button>
+    <button [class.active]="currentTab === 'testing'" (click)="switchTab('testing')">Testing</button>
+    <button [class.active]="currentTab === 'live'" (click)="switchTab('live')" class="tab-live">Live Example</button>
+  </div>
+
+  <!-- SHEET TAB -->
+  @if (currentTab === 'sheet') {
   <div class="grid">
 
     <div class="card">
@@ -208,7 +219,273 @@ tsc --watch</pre></div>
     </div>
 
   </div>
+  } <!-- end sheet tab -->
 
+  <!-- IMPORTS TAB -->
+  @if (currentTab === 'imports') {
+  <div class="grid imports-grid">
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">node built-in modules</span></div>
+      <div class="code-block"><pre><span class="cmt">// fs - file system</span>
+<span class="kw">import</span> fs <span class="kw">from</span> <span class="str">'node:fs'</span>;
+<span class="kw">import</span> &#123; promises <span class="kw">as</span> fsAsync &#125; <span class="kw">from</span> <span class="str">'node:fs'</span>;
+<span class="kw">await</span> fsAsync.<span class="fn">readFile</span>(<span class="str">'data.json'</span>, <span class="str">'utf-8'</span>);
+
+<span class="cmt">// http - web server</span>
+<span class="kw">import</span> http <span class="kw">from</span> <span class="str">'node:http'</span>;
+http.<span class="fn">createServer</span>((req, res) =&gt; &#123; res.<span class="fn">end</span>(<span class="str">'OK'</span>); &#125;).<span class="fn">listen</span>(<span class="num">3000</span>);
+
+<span class="cmt">// path - file paths</span>
+<span class="kw">import</span> path <span class="kw">from</span> <span class="str">'node:path'</span>;
+path.<span class="fn">join</span>(__dirname, <span class="str">'config'</span>, <span class="str">'app.json'</span>);
+
+<span class="cmt">// os - system info</span>
+<span class="kw">import</span> os <span class="kw">from</span> <span class="str">'node:os'</span>;
+os.<span class="fn">platform</span>(); <span class="cmt">// 'linux' | 'darwin' | 'win32'</span>
+os.<span class="fn">cpus</span>().length;</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - HTTP &amp; Express</span></div>
+      <app-code-tabs [tabs]="['Express Routing', 'Middleware', 'HTTP Client']">
+        <div class="code-block" ct1><pre><span class="cmt">// express - routing and middleware</span>
+<span class="kw">import</span> express <span class="kw">from</span> <span class="str">'express'</span>;
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+app.<span class="fn">get</span>(<span class="str">'/users/:id'</span>, (req, res) =&gt; &#123;
+  res.<span class="fn">json</span>(&#123; id: req.params.id &#125;);
+&#125;);
+app.<span class="fn">post</span>(<span class="str">'/users'</span>, (req, res) =&gt; &#123;
+  res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>(req.body);
+&#125;);
+app.<span class="fn">use</span>((err, req, res, next) =&gt; &#123;
+  res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>(&#123; error: err.message &#125;);
+&#125;);
+app.<span class="fn">listen</span>(<span class="num">3000</span>);</pre></div>
+        <div class="code-block" ct2><pre><span class="cmt">// middleware chain</span>
+<span class="kw">import</span> helmet <span class="kw">from</span> <span class="str">'helmet'</span>;
+<span class="kw">import</span> cors <span class="kw">from</span> <span class="str">'cors'</span>;
+
+app.<span class="fn">use</span>(<span class="fn">helmet</span>()); <span class="cmt">// security headers</span>
+app.<span class="fn">use</span>(<span class="fn">cors</span>(&#123; origin: process.env.<span class="tp">CLIENT_URL</span> &#125;));
+app.<span class="fn">use</span>(express.<span class="fn">json</span>()); <span class="cmt">// parse JSON</span>
+app.<span class="fn">use</span>((req, res, next) =&gt; &#123;
+  console.<span class="fn">log</span>(`&#36;&#123;req.method&#125; &#36;&#123;req.path&#125;`);
+  <span class="fn">next</span>();
+&#125;);</pre></div>
+        <div class="code-block" ct3><pre><span class="cmt">// axios - HTTP client</span>
+<span class="kw">import</span> axios <span class="kw">from</span> <span class="str">'axios'</span>;
+
+<span class="kw">const</span> client = axios.<span class="fn">create</span>(&#123;
+  baseURL: <span class="str">'https://api.example.com'</span>,
+  timeout: <span class="num">5000</span>,
+  headers: &#123; <span class="str">'X-API-Key'</span>: process.env.<span class="tp">API_KEY</span> &#125;
+&#125;);
+
+<span class="kw">const</span> res = <span class="kw">await</span> client.<span class="fn">get</span>(<span class="str">'/data'</span>);
+<span class="kw">const</span> posted = <span class="kw">await</span> client.<span class="fn">post</span>(<span class="str">'/users'</span>,
+  &#123; name: <span class="str">'alice'</span> &#125;);</pre></div>
+      </app-code-tabs>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - Database</span></div>
+      <app-code-tabs [tabs]="['PostgreSQL (pg)', 'MongoDB', 'Redis']">
+        <div class="code-block" ct1><pre><span class="cmt">// pg - PostgreSQL driver</span>
+<span class="kw">import</span> &#123; Pool &#125; <span class="kw">from</span> <span class="str">'pg'</span>;
+<span class="kw">const</span> pool = <span class="kw">new</span> <span class="tp">Pool</span>(&#123;
+  host: <span class="str">'localhost'</span>, database: <span class="str">'mydb'</span>, max: <span class="num">20</span>
+&#125;);
+
+<span class="kw">const</span> res = <span class="kw">await</span> pool.<span class="fn">query</span>(
+  <span class="str">'SELECT * FROM users WHERE id = &#36;1'</span>, [<span class="num">123</span>]);
+<span class="kw">const</span> users = res.rows;
+
+<span class="kw">await</span> pool.<span class="fn">query</span>(
+  <span class="str">'INSERT INTO users (name, email) VALUES (&#36;1, &#36;2)'</span>,
+  [<span class="str">'alice'</span>, <span class="str">'alice&#64;example.com'</span>]);
+
+<span class="kw">const</span> client = <span class="kw">await</span> pool.<span class="fn">connect</span>();
+<span class="kw">try</span> &#123;
+  <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'BEGIN'</span>);
+  <span class="cmt">// multiple queries in transaction</span>
+  <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'COMMIT'</span>);
+&#125; <span class="kw">finally</span> &#123; client.<span class="fn">release</span>(); &#125;</pre></div>
+        <div class="code-block" ct2><pre><span class="cmt">// mongoose - MongoDB ODM</span>
+<span class="kw">import</span> mongoose <span class="kw">from</span> <span class="str">'mongoose'</span>;
+<span class="kw">await</span> mongoose.<span class="fn">connect</span>(
+  process.env.<span class="tp">MONGODB_URL</span>);
+
+<span class="kw">const</span> userSchema = <span class="kw">new</span> mongoose.<span class="tp">Schema</span>(&#123;
+  email: &#123; type: <span class="tp">String</span>, unique: <span class="kw">true</span> &#125;,
+  role: &#123; type: <span class="tp">String</span>, enum: [<span class="str">'user'</span>, <span class="str">'admin'</span>] &#125;
+&#125;);
+<span class="kw">const</span> User = mongoose.<span class="fn">model</span>(<span class="str">'User'</span>, userSchema);
+
+<span class="kw">const</span> user = <span class="kw">await</span> User.<span class="fn">findById</span>(id);
+<span class="kw">const</span> users = <span class="kw">await</span> User.<span class="fn">find</span>(&#123; role: <span class="str">'admin'</span> &#125;);
+<span class="kw">await</span> User.<span class="fn">updateOne</span>(&#123; &#95;id: id &#125;,
+  &#123; &#36;set: &#123; name: <span class="str">'bob'</span> &#125; &#125;);</pre></div>
+        <div class="code-block" ct3><pre><span class="cmt">// redis - high-speed caching</span>
+<span class="kw">import</span> &#123; createClient &#125; <span class="kw">from</span> <span class="str">'redis'</span>;
+<span class="kw">const</span> client = <span class="fn">createClient</span>(&#123;
+  url: process.env.<span class="tp">REDIS_URL</span>
+&#125;);
+<span class="kw">await</span> client.<span class="fn">connect</span>();
+
+<span class="kw">await</span> client.<span class="fn">set</span>(<span class="str">'user:123'</span>, JSON.<span class="fn">stringify</span>(user),
+  &#123; EX: <span class="num">3600</span> &#125;); <span class="cmt">// expire in 1hr</span>
+<span class="kw">const</span> cached = <span class="kw">await</span> client.<span class="fn">get</span>(<span class="str">'user:123'</span>);
+<span class="kw">const</span> count = <span class="kw">await</span> client.<span class="fn">incr</span>(<span class="str">'page:visits'</span>);
+<span class="kw">await</span> client.<span class="fn">del</span>([<span class="str">'user:123'</span>, <span class="str">'user:124'</span>]);</pre></div>
+      </app-code-tabs>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - Utility</span></div>
+      <div class="code-block"><pre><span class="cmt">// dotenv - environment variables</span>
+<span class="kw">import</span> dotenv <span class="kw">from</span> <span class="str">'dotenv'</span>;
+dotenv.<span class="fn">config</span>();
+<span class="kw">const</span> secret = process.env.<span class="tp">DATABASE_URL</span>;
+
+<span class="cmt">// lodash - utility functions</span>
+<span class="kw">import</span> &#123; pick, omit, chunk, debounce &#125; <span class="kw">from</span> <span class="str">'lodash'</span>;
+<span class="kw">const</span> user = <span class="fn">omit</span>(dbRow, [<span class="str">'password'</span>]);
+<span class="kw">const</span> groups = <span class="fn">chunk</span>(items, <span class="num">10</span>);
+
+<span class="cmt">// uuid - unique IDs</span>
+<span class="kw">import</span> &#123; v4 <span class="kw">as</span> uuidv4, v1 &#125; <span class="kw">from</span> <span class="str">'uuid'</span>;
+<span class="kw">const</span> id = <span class="fn">uuidv4</span>();
+<span class="kw">const</span> timeId = <span class="fn">v1</span>();</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - Validation</span></div>
+      <div class="code-block"><pre><span class="cmt">// zod - schema validation (TypeScript first)</span>
+<span class="kw">import</span> &#123; z &#125; <span class="kw">from</span> <span class="str">'zod'</span>;
+<span class="kw">const</span> UserSchema = z.<span class="fn">object</span>(&#123;
+  id: z.<span class="fn">string</span>().<span class="fn">uuid</span>(),
+  email: z.<span class="fn">string</span>().<span class="fn">email</span>(),
+  age: z.<span class="fn">number</span>().<span class="fn">min</span>(<span class="num">0</span>).<span class="fn">max</span>(<span class="num">150</span>)
+&#125;);
+<span class="kw">const</span> user = UserSchema.<span class="fn">parse</span>(data); <span class="cmt">// throws</span>
+<span class="kw">const</span> &#123; success, data: user &#125; = UserSchema.<span class="fn">safeParse</span>(data);
+
+<span class="cmt">// joi - schema validation (flexible)</span>
+<span class="kw">import</span> Joi <span class="kw">from</span> <span class="str">'joi'</span>;
+<span class="kw">const</span> schema = Joi.<span class="fn">object</span>(&#123;
+  email: Joi.<span class="fn">string</span>().<span class="fn">email</span>().<span class="fn">required</span>(),
+  password: Joi.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">8</span>)
+&#125;);</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - Logging</span></div>
+      <div class="code-block"><pre><span class="cmt">// winston - structured logging</span>
+<span class="kw">import</span> winston <span class="kw">from</span> <span class="str">'winston'</span>;
+<span class="kw">const</span> logger = winston.<span class="fn">createLogger</span>(&#123;
+  level: <span class="str">'info'</span>,
+  format: winston.<span class="fn">format</span>.<span class="fn">json</span>(),
+  transports: [
+    <span class="kw">new</span> winston.<span class="tp">transports</span>.<span class="tp">File</span>(&#123; filename: <span class="str">'error.log'</span> &#125;),
+    <span class="kw">new</span> winston.<span class="tp">transports</span>.<span class="tp">Console</span>()
+  ]
+&#125;);
+logger.<span class="fn">info</span>(<span class="str">'User created'</span>, &#123; userId: <span class="num">123</span> &#125;);
+
+<span class="cmt">// pino - high-performance logging</span>
+<span class="kw">import</span> pino <span class="kw">from</span> <span class="str">'pino'</span>;
+<span class="kw">const</span> logger = <span class="fn">pino</span>();
+logger.<span class="fn">info</span>(&#123; req: request &#125;, <span class="str">'incoming request'</span>);</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - Auth &amp; Security</span></div>
+      <div class="code-block"><pre><span class="cmt">// jsonwebtoken - JWT tokens</span>
+<span class="kw">import</span> jwt <span class="kw">from</span> <span class="str">'jsonwebtoken'</span>;
+<span class="kw">const</span> token = jwt.<span class="fn">sign</span>(&#123; userId: <span class="num">123</span> &#125;,
+  process.env.<span class="tp">JWT_SECRET</span>, &#123; expiresIn: <span class="str">'7d'</span> &#125;);
+<span class="kw">const</span> decoded = jwt.<span class="fn">verify</span>(token, process.env.<span class="tp">JWT_SECRET</span>);
+
+<span class="cmt">// bcrypt - password hashing</span>
+<span class="kw">import</span> bcrypt <span class="kw">from</span> <span class="str">'bcrypt'</span>;
+<span class="kw">const</span> hash = <span class="kw">await</span> bcrypt.<span class="fn">hash</span>(password, <span class="num">10</span>);
+<span class="kw">const</span> match = <span class="kw">await</span> bcrypt.<span class="fn">compare</span>(password, hash);</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - Date &amp; Time</span></div>
+      <div class="code-block"><pre><span class="cmt">// date-fns - date manipulation</span>
+<span class="kw">import</span> &#123; format, addDays, startOfDay &#125; <span class="kw">from</span> <span class="str">'date-fns'</span>;
+<span class="kw">const</span> today = <span class="fn">startOfDay</span>(<span class="kw">new</span> <span class="tp">Date</span>());
+<span class="kw">const</span> nextWeek = <span class="fn">addDays</span>(today, <span class="num">7</span>);
+<span class="kw">const</span> str = <span class="fn">format</span>(today, <span class="str">'yyyy-MM-dd HH:mm:ss'</span>);
+
+<span class="cmt">// dayjs - lightweight date library</span>
+<span class="kw">import</span> dayjs <span class="kw">from</span> <span class="str">'dayjs'</span>;
+<span class="kw">const</span> now = <span class="fn">dayjs</span>();
+<span class="kw">const</span> formatted = now.<span class="fn">format</span>(<span class="str">'YYYY-MM-DD'</span>);</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - Rate Limit &amp; Cache</span></div>
+      <div class="code-block"><pre><span class="cmt">// express-rate-limit - API rate limiting</span>
+<span class="kw">import</span> rateLimit <span class="kw">from</span> <span class="str">'express-rate-limit'</span>;
+<span class="kw">const</span> limiter = <span class="fn">rateLimit</span>(&#123;
+  windowMs: <span class="num">15</span> * <span class="num">60</span> * <span class="num">1000</span>, <span class="cmt">// 15 min</span>
+  max: <span class="num">100</span> <span class="cmt">// 100 requests</span>
+&#125;);
+app.<span class="fn">use</span>(<span class="str">'/api/'</span>, limiter);
+
+<span class="cmt">// node-cache - in-memory cache</span>
+<span class="kw">import</span> <span class="tp">NodeCache</span> <span class="kw">from</span> <span class="str">'node-cache'</span>;
+<span class="kw">const</span> cache = <span class="kw">new</span> <span class="tp">NodeCache</span>(&#123; stdTTL: <span class="num">600</span> &#125;);
+cache.<span class="fn">set</span>(<span class="str">'user:123'</span>, user);
+<span class="kw">const</span> cached = cache.<span class="fn">get</span>(<span class="str">'user:123'</span>);</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">npm packages - Testing (Unit &amp; Integration)</span></div>
+      <app-code-tabs [tabs]="['Mocha + Assert', 'Jest', 'Vitest']">
+        <div class="code-block" ct1><pre><span class="cmt">// mocha - test framework</span>
+<span class="kw">import</span> &#123; describe, it, before &#125; <span class="kw">from</span> <span class="str">'mocha'</span>;
+<span class="kw">import</span> assert <span class="kw">from</span> <span class="str">'node:assert/strict'</span>;
+
+<span class="fn">describe</span>(<span class="str">'UserService'</span>, () =&gt; &#123;
+  <span class="fn">it</span>(<span class="str">'creates user'</span>, <span class="kw">async</span> () =&gt; &#123;
+    <span class="kw">const</span> user = <span class="kw">await</span> svc.<span class="fn">create</span>(...);
+    assert.<span class="fn">strictEqual</span>(user.id, <span class="num">1</span>);
+  &#125;);
+&#125;);</pre></div>
+        <div class="code-block" ct2><pre><span class="cmt">// jest - all-in-one test framework</span>
+<span class="kw">import</span> &#123; describe, it, expect &#125; <span class="kw">from</span> <span class="str">'&#64;jest/globals'</span>;
+
+<span class="fn">describe</span>(<span class="str">'UserService'</span>, () =&gt; &#123;
+  <span class="fn">it</span>(<span class="str">'creates user'</span>, <span class="kw">async</span> () =&gt; &#123;
+    <span class="kw">const</span> user = <span class="kw">await</span> svc.<span class="fn">create</span>(...);
+    <span class="fn">expect</span>(user.id).<span class="fn">toBe</span>(<span class="num">1</span>);
+    <span class="fn">expect</span>(user.email).<span class="fn">toMatch</span>(/&#64;example/);
+  &#125;);
+&#125;);</pre></div>
+        <div class="code-block" ct3><pre><span class="cmt">// vitest - Vite native testing</span>
+<span class="kw">import</span> &#123; describe, it, expect &#125; <span class="kw">from</span> <span class="str">'vitest'</span>;
+
+<span class="fn">describe</span>(<span class="str">'UserService'</span>, () =&gt; &#123;
+  <span class="fn">it</span>(<span class="str">'creates user'</span>, <span class="kw">async</span> () =&gt; &#123;
+    <span class="kw">const</span> user = <span class="kw">await</span> svc.<span class="fn">create</span>(...);
+    <span class="fn">expect</span>(user).<span class="fn">toMatchObject</span>(
+      &#123; id: <span class="num">1</span> &#125;);
+  &#125;);
+&#125;);</pre></div>
+      </app-code-tabs>
+    </div>
+
+  </div>
+  } <!-- end imports tab -->
+
+  <!-- TESTING TAB -->
+  @if (currentTab === 'testing') {
   <div class="testing-section">
     <div class="testing-header">
       <div class="testing-header-title">// <span>testing</span></div>
@@ -473,6 +750,15 @@ user-service.ts |   <span class="num">92</span>  |    <span class="num">85</span
 
     </div>
   </div>
+  } <!-- end testing tab -->
+
+  <!-- LIVE EXAMPLE TAB -->
+  @if (currentTab === 'live') {
+  <div class="live-example-section">
+    <app-observer-weather-demo></app-observer-weather-demo>
+  </div>
+  } <!-- end live example tab -->
+
 </div>
 
   <app-footer />

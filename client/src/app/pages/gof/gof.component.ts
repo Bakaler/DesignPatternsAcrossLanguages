@@ -9,6 +9,7 @@ import { catchError } from 'rxjs/operators';
 import { SettingsService } from '../../services/settings.service';
 import { FooterComponent } from '../../shared/footer/footer.component';
 import { CommentSectionComponent } from '../../shared/comment-section/comment-section.component';
+import { ObserverWeatherDemoComponent } from '../../examples/observer-weather-demo/observer-weather-demo.component';
 
 interface PatternDef {
   name:     string;
@@ -38,7 +39,7 @@ interface PatternAvailable {
 @Component({
   selector: 'app-gof',
   standalone: true,
-  imports: [CommonModule, FooterComponent, CommentSectionComponent],
+  imports: [CommonModule, FooterComponent, CommentSectionComponent, ObserverWeatherDemoComponent],
   templateUrl: './gof.component.html',
   styleUrl: './gof.component.css'
 })
@@ -117,7 +118,7 @@ export class GofComponent implements OnInit, OnDestroy {
         { name: 'Iterator',        slug: 'Iterator',              category: 'BehavioralPatterns', done: false },
         { name: 'Mediator',        slug: 'Mediator',              category: 'BehavioralPatterns', done: false },
         { name: 'Memento',         slug: 'Memento',               category: 'BehavioralPatterns', done: false },
-        { name: 'Observer',        slug: 'Observer',              category: 'BehavioralPatterns', done: false },
+        { name: 'Observer',        slug: 'Observer',              category: 'BehavioralPatterns', done: true },
         { name: 'State',           slug: 'State',                 category: 'BehavioralPatterns', done: false },
         { name: 'Strategy',        slug: 'Strategy',              category: 'BehavioralPatterns', done: false },
         { name: 'Template Method', slug: 'TemplateMethod',        category: 'BehavioralPatterns', done: true  },
@@ -150,7 +151,7 @@ export class GofComponent implements OnInit, OnDestroy {
   outputCopied:      boolean = false;
 
   // ── Test mode ────────────────────────────────────────────────────────────────
-  viewMode:           'code' | 'unit' | 'integration' = 'code';
+  viewMode:           'code' | 'unit' | 'integration' | 'demo' = 'code';
   testCode:           string | null   = null;
   highlightedTestCode: SafeHtml | null = null;
   testOutput:         string | null   = null;
@@ -228,10 +229,10 @@ export class GofComponent implements OnInit, OnDestroy {
   }
 
   // ── Test mode controls ───────────────────────────────────────────────────────
-  setViewMode(mode: 'code' | 'unit' | 'integration'): void {
+  setViewMode(mode: 'code' | 'unit' | 'integration' | 'demo'): void {
     this.settings.playUiClick();
     this.viewMode = mode;
-    if (mode !== 'code') {
+    if (mode !== 'code' && mode !== 'demo') {
       this.loadTest();
     }
   }
@@ -284,7 +285,9 @@ export class GofComponent implements OnInit, OnDestroy {
   }
 
   private resetTestState(): void {
-    this.viewMode            = 'code';
+    if (this.viewMode !== 'demo') {
+      this.viewMode = 'code';
+    }
     this.testCode            = null;
     this.highlightedTestCode = null;
     this.testOutput          = null;
@@ -373,6 +376,19 @@ export class GofComponent implements OnInit, OnDestroy {
       this.resetTestState();
       this.removeCodeScrollListener();
       setTimeout(() => this.buildToc(), 50);
+    } else if (tab === 'demo') {
+      this.keepReadme = false;
+      this.code = null;
+      this.highlightedCode = null;
+      this.output = null;
+      this.notFound = false;
+      this.codeSections = [];
+      this.activeCodeSection = 0;
+      this.resetTestState();
+      this.removeCodeScrollListener();
+      this.tocSections = [];
+      this.activeTocIndex = 0;
+      this.removeScrollListener();
     } else {
       this.resetTestState();
       this.tocSections    = [];
@@ -539,6 +555,10 @@ export class GofComponent implements OnInit, OnDestroy {
     return this.selected?.slug === pattern.slug;
   }
 
+  hasDemo(): boolean {
+    return this.selected?.slug === 'Observer';
+  }
+
   onReadmeClick(event: MouseEvent): void {
     const anchor = (event.target as HTMLElement).closest('a[data-pattern]') as HTMLAnchorElement | null;
     if (!anchor) return;
@@ -548,18 +568,24 @@ export class GofComponent implements OnInit, OnDestroy {
     if (pattern) this.selectPattern(pattern);
   }
 
-  // Expose 'readme' + lang tabs to template
+  // Expose 'readme' + lang tabs + demo (for Observer) to template
   get allTabs(): string[] {
-    return ['readme', ...this.langs];
+    const tabs = ['readme', ...this.langs];
+    if (this.hasDemo()) {
+      tabs.push('demo');
+    }
+    return tabs;
   }
 
   tabLabel(tab: string): string {
     if (tab === 'readme') return 'README';
+    if (tab === 'demo') return 'Live Demo';
     return this.langLabels[tab] ?? tab;
   }
 
   tabAvailable(tab: string): boolean {
     if (tab === 'readme') return this.hasReadme;
+    if (tab === 'demo') return this.hasDemo();
     return this.availableLangs.includes(tab);
   }
 }

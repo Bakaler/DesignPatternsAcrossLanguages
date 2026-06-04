@@ -3,7 +3,17 @@
     <h1><span>Ruby</span> Cheat Sheet</h1>
     <p>// backend systems edition</p>
   </header>
-  <div class="grid">
+
+  <!-- Tabs -->
+  <div class="cheatsheet-tabs">
+    <button [class.active]="currentTab === 'sheet'" (click)="switchTab('sheet')">Sheet</button>
+    <button [class.active]="currentTab === 'imports'" (click)="switchTab('imports')">Imports</button>
+    <button [class.active]="currentTab === 'testing'" (click)="switchTab('testing')">Testing</button>
+  </div>
+
+  <!-- SHEET TAB -->
+  @if (currentTab === 'sheet') {
+    <div class="grid">
 
     <div class="card">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">run</span></div>
@@ -246,9 +256,78 @@ SQL</pre></div>
       </div>
     </div>
 
-  </div>
+    </div>
+  } <!-- end sheet tab -->
 
-  <div class="testing-section">
+  <!-- IMPORTS TAB -->
+  @if (currentTab === 'imports') {
+    <div class="grid imports-grid">
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">rails</span></div>
+      <div class="code-block"><pre><span class="cmt"># web framework - MVC structure</span>
+rails new myapp
+rails server
+<span class="cmt"># Gemfile</span>
+gem <span class="str">'rails'</span>
+gem <span class="str">'pg'</span>      <span class="cmt"># PostgreSQL</span>
+
+<span class="cmt"># Models, Controllers, Views</span>
+rails generate model User email:string
+rails generate controller Users index show
+</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">sinatra / nokogiri</span></div>
+      <div class="code-block"><pre><span class="cmt"># Lightweight web server</span>
+<span class="kw">require</span> <span class="str">'sinatra'</span>
+get <span class="str">'/api/users/:id'</span> <span class="kw">do</span>
+  <span class="kw">|id|</span> repository.<span class="fn">find_by_id</span>(id).<span class="fn">to_json</span>
+<span class="kw">end</span>
+
+<span class="cmt"># HTML parsing</span>
+<span class="kw">require</span> <span class="str">'nokogiri'</span>
+html = <span class="tp">Nokogiri</span>::<span class="tp">HTML</span>.<span class="fn">parse</span>(response.body)
+links = html.<span class="fn">css</span>(<span class="str">'a'</span>).<span class="fn">map</span> &#123; |el| el[<span class="str">'href'</span>] &#125;</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">faraday / activerecord</span></div>
+      <div class="code-block"><pre><span class="cmt"># HTTP client with middleware</span>
+<span class="kw">require</span> <span class="str">'faraday'</span>
+conn = <span class="tp">Faraday</span>.<span class="fn">new</span>(<span class="str">'https://api.example.com'</span>)
+response = conn.<span class="fn">get</span>(<span class="str">'/users'</span>)
+
+<span class="cmt"># Database ORM in Rails</span>
+<span class="kw">require</span> <span class="str">'active_record'</span>
+<span class="kw">class</span> <span class="tp">User</span> &lt; <span class="tp">ActiveRecord</span>::<span class="tp">Base</span>
+  has_many :<span class="sym">orders</span>
+<span class="kw">end</span>
+<span class="tp">User</span>.<span class="fn">where</span>(active: <span class="kw">true</span>).<span class="fn">limit</span>(<span class="num">10</span>)</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">rspec / testing</span></div>
+      <div class="code-block"><pre><span class="cmt"># Test framework</span>
+gem <span class="str">'rspec'</span>, group: <span class="sym">:test</span>
+bundle exec rspec --init
+
+<span class="cmt"># Basic example</span>
+<span class="tp">RSpec</span>.<span class="fn">describe</span> <span class="tp">Calculator</span> <span class="kw">do</span>
+  <span class="fn">it</span> <span class="str">"adds numbers"</span> <span class="kw">do</span>
+    calc = <span class="tp">Calculator</span>.<span class="fn">new</span>
+    <span class="fn">expect</span>(calc.<span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>)).<span class="fn">to</span> <span class="fn">eq</span>(<span class="num">5</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span></pre></div>
+    </div>
+
+    </div>
+  } <!-- end imports tab -->
+
+  <!-- TESTING TAB -->
+  @if (currentTab === 'testing') {
+    <div class="testing-section">
     <div class="testing-header">
       <div class="testing-header-title">// <span>testing</span></div>
       <div class="testing-header-stack"><a href="https://rspec.info" target="_blank" rel="noopener">RSpec</a> · doubles · <a href="https://github.com/simplecov-ruby/simplecov" target="_blank" rel="noopener">SimpleCov</a> · <a href="https://teamcapybara.github.io/capybara" target="_blank" rel="noopener">Capybara</a></div>
@@ -471,7 +550,9 @@ open coverage/index.html
       </div>
 
     </div>
-  </div>
+    </div>
+  } <!-- end testing tab -->
+
 </div>
 
   <app-footer />

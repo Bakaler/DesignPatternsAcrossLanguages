@@ -1,0 +1,1015 @@
+:host {
+  --bg: #0e0e10;
+  --bg2: #16161a;
+  --bg3: #1e1e24;
+  --border: #2a2a35;
+  --text: #e8e6e3;
+  --muted: #6b6b80;
+  --accent: #cc342d;
+  --accent2: #e05c5c;
+  --accent3: #4ec9b0;
+  --accent4: #ff8c42;
+  --accent5: #74c0fc;
+  --green: #6bcb77;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+
+  display: block;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.demo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.demo-main {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 3rem;
+  align-items: start;
+  position: relative;
+}
+
+.controls-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.charts-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Gleam animation for individual chart cards - border only */
+.chart-card.gleaming {
+  animation: card-border-gleam 0.6s ease-out forwards;
+}
+
+@keyframes card-border-gleam {
+  0% {
+    box-shadow: inset 40px 0 40px -25px rgba(78, 201, 176, 0.7);
+  }
+  50% {
+    box-shadow: inset 0 0 40px -15px rgba(78, 201, 176, 1);
+  }
+  100% {
+    box-shadow: inset -40px 0 40px -25px rgba(78, 201, 176, 0.7);
+  }
+}
+
+.demo-main.buttons-locked .btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .demo-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.demo-header {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 0.75rem;
+}
+
+.demo-header h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem 0;
+  color: var(--text);
+}
+
+.demo-subtitle {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+/* ── Subject Box ─────────────────────────────────────────────────────────── */
+.subject-box {
+  background: #0d3d46;
+  border: 2px solid #4ec9b0;
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  position: relative;
+  box-shadow: 0 0 12px rgba(78, 201, 176, 0.2);
+  margin-top: 0.5rem;
+}
+
+.subject-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4ec9b0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.observer-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.observer-tag {
+  background: rgba(78, 201, 176, 0.1);
+  border: 1px solid #4ec9b0;
+  border-radius: 3px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.6rem;
+  color: #4ec9b0;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.observer-tag.glowing {
+  background: rgba(78, 201, 176, 0.3);
+  box-shadow: 0 0 8px #4ec9b0, inset 0 0 8px rgba(78, 201, 176, 0.2);
+  animation: tag-glow 1s ease-out;
+}
+
+@keyframes tag-glow {
+  0% {
+    background: linear-gradient(90deg,
+      transparent 0%,
+      transparent 10%,
+      rgba(78, 201, 176, 0.3) 20%,
+      transparent 30%);
+    background-position: -100% 0;
+    background-size: 200% 100%;
+    box-shadow: 0 0 4px #4ec9b0, inset 0 0 4px rgba(78, 201, 176, 0.1);
+  }
+  50% {
+    background: linear-gradient(90deg,
+      transparent 0%,
+      transparent 10%,
+      rgba(78, 201, 176, 0.6) 20%,
+      transparent 30%);
+    background-position: 0% 0;
+    background-size: 200% 100%;
+    box-shadow: 0 0 12px #4ec9b0, inset 0 0 12px rgba(78, 201, 176, 0.4);
+  }
+  100% {
+    background: linear-gradient(90deg,
+      transparent 0%,
+      transparent 10%,
+      rgba(78, 201, 176, 0.3) 20%,
+      transparent 30%);
+    background-position: 100% 0;
+    background-size: 200% 100%;
+    box-shadow: 0 0 4px #4ec9b0, inset 0 0 8px rgba(78, 201, 176, 0.1);
+  }
+}
+
+.tag-method {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* ── Circuit Wiring ────────────────────────────────────────────────────────── */
+.wire-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.circuit-wire {
+  position: absolute;
+}
+
+/* All wires: Same length from bottom of controls to top of station */
+/* Temperature wire - Cyan - Vertical */
+.wire-temp {
+  left: 20px;
+  top: 380px;
+  width: 4px;
+  height: 150px;
+  background: linear-gradient(180deg, #00d9ff 0%, #00d9ff 100%);
+  opacity: 0.4;
+  box-shadow: 0 0 4px #00d9ff;
+  background-size: 100% 100%;
+}
+
+/* Temperature wire - Cyan - Horizontal */
+.wire-temp::before {
+  content: '';
+  position: absolute;
+  left: 80px;
+  top: 160px;
+  width: 320px;
+  height: 4px;
+  background: linear-gradient(90deg, #00d9ff 0%, #00d9ff 100%);
+  opacity: 0.4;
+  box-shadow: 0 0 4px #00d9ff;
+  background-size: 100% 100%;
+}
+
+/* Temperature wire - Light indicator at end */
+.wire-temp::after {
+  content: '';
+  position: absolute;
+  left: 400px;
+  top: 156px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffd700;
+  box-shadow: 0 0 6px #ffd700;
+}
+
+/* Humidity wire - Green - Vertical */
+.wire-humidity {
+  left: 40px;
+  top: 380px;
+  width: 4px;
+  height: 150px;
+  background: linear-gradient(180deg, #4eff4e 0%, #4eff4e 100%);
+  opacity: 0.4;
+  box-shadow: 0 0 4px #4eff4e;
+  background-size: 100% 100%;
+}
+
+/* Humidity wire - Green - Horizontal */
+.wire-humidity::before {
+  content: '';
+  position: absolute;
+  left: 80px;
+  top: 180px;
+  width: 320px;
+  height: 4px;
+  background: linear-gradient(90deg, #4eff4e 0%, #4eff4e 100%);
+  opacity: 0.4;
+  box-shadow: 0 0 4px #4eff4e;
+  background-size: 100% 100%;
+}
+
+/* Humidity wire - Light indicator at end */
+.wire-humidity::after {
+  content: '';
+  position: absolute;
+  left: 400px;
+  top: 176px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffd700;
+  box-shadow: 0 0 6px #ffd700;
+}
+
+/* Pressure wire - Orange - Vertical */
+.wire-pressure {
+  left: 60px;
+  top: 380px;
+  width: 4px;
+  height: 150px;
+  background: linear-gradient(180deg, #ffb347 0%, #ffb347 100%);
+  opacity: 0.4;
+  box-shadow: 0 0 4px #ffb347;
+  background-size: 100% 100%;
+}
+
+/* Pressure wire - Orange - Horizontal */
+.wire-pressure::before {
+  content: '';
+  position: absolute;
+  left: 80px;
+  top: 200px;
+  width: 320px;
+  height: 4px;
+  background: linear-gradient(90deg, #ffb347 0%, #ffb347 100%);
+  opacity: 0.4;
+  box-shadow: 0 0 4px #ffb347;
+  background-size: 100% 100%;
+}
+
+/* Pressure wire - Light indicator at end */
+.wire-pressure::after {
+  content: '';
+  position: absolute;
+  left: 400px;
+  top: 196px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffd700;
+  box-shadow: 0 0 6px #ffd700;
+}
+
+/* Wind wire - Red - Vertical */
+.wire-wind {
+  left: 80px;
+  top: 380px;
+  width: 4px;
+  height: 150px;
+  background: linear-gradient(180deg, #ff6b6b 0%, #ff6b6b 100%);
+  opacity: 0.4;
+  box-shadow: 0 0 4px #ff6b6b;
+  background-size: 100% 100%;
+}
+
+/* Wind wire - Red - Horizontal (connects to pressure chart) */
+.wire-wind::before {
+  content: '';
+  position: absolute;
+  left: 80px;
+  top: 200px;
+  width: 320px;
+  height: 4px;
+  background: linear-gradient(90deg, #ff6b6b 0%, #ff6b6b 100%);
+  opacity: 0.4;
+  box-shadow: 0 0 4px #ff6b6b;
+  background-size: 100% 100%;
+}
+
+/* Wind wire - Light indicator at end (hidden - wind shares pressure observer) */
+.wire-wind::after {
+  content: '';
+  position: absolute;
+  left: 400px;
+  top: 196px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffd700;
+  box-shadow: 0 0 6px #ffd700;
+  display: none;
+}
+
+/* INPUT WIRES - Vertical part glows (control → station) */
+.circuit-wire.input-active {
+  animation: wire-pulse-down 0.8s ease-in-out forwards;
+}
+
+.circuit-wire.input-active::before {
+  /* Horizontal part stays dim during input phase */
+  animation: none;
+}
+
+/* OUTPUT WIRES - Horizontal part glows (station → charts) */
+.circuit-wire.output-active {
+  /* Vertical part stays dim during output phase */
+  animation: none;
+}
+
+.circuit-wire.output-active::before {
+  animation: wire-pulse-right 0.8s ease-in-out forwards;
+}
+
+/* Output light indicators glow green */
+.circuit-wire.output-active::after {
+  animation: light-glow 0.6s ease-out forwards;
+}
+
+/* Vertical wire - bright ball highlight traveling DOWN */
+@keyframes wire-pulse-down {
+  0% {
+    box-shadow:
+      0 0px 6px currentColor,
+      inset 0 2px 4px rgba(255,255,255,0.9);
+  }
+  50% {
+    box-shadow:
+      0 0px 16px currentColor,
+      inset 0 75px 6px rgba(255,255,255,1);
+  }
+  100% {
+    box-shadow:
+      0 0px 6px currentColor,
+      inset 0 150px 4px rgba(255,255,255,0.9);
+  }
+}
+
+/* Horizontal wire - bright ball highlight traveling RIGHT */
+@keyframes wire-pulse-right {
+  0% {
+    box-shadow:
+      0 0px 6px currentColor,
+      inset 2px 0 4px rgba(255,255,255,0.9);
+  }
+  50% {
+    box-shadow:
+      0 0px 16px currentColor,
+      inset 160px 0 6px rgba(255,255,255,1);
+  }
+  100% {
+    box-shadow:
+      0 0px 6px currentColor,
+      inset 320px 0 4px rgba(255,255,255,0.9);
+  }
+}
+
+/* Light indicator glow green when notified */
+@keyframes light-glow {
+  0% {
+    background: #ffd700;
+    box-shadow: 0 0 6px #ffd700;
+  }
+  100% {
+    background: #4eff4e;
+    box-shadow: 0 0 12px #4eff4e;
+  }
+}
+
+/* ── Controls Section ─────────────────────────────────────────────────────── */
+.controls-section {
+  background: var(--bg2);
+  border: 2px solid #ffeb3b;
+  border-radius: 4px;
+  padding: 0.6rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 8px rgba(255, 235, 59, 0.15);
+}
+
+.controls-section h3 {
+  margin-top: 0;
+  color: var(--text);
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.control-group {
+  margin-bottom: 0.6rem;
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.control-group label {
+  font-size: 0.75rem;
+  color: var(--text);
+  font-weight: 600;
+  margin: 0;
+}
+
+.btn-mini {
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--accent5);
+  background: transparent;
+  color: var(--accent5);
+  border-radius: 2px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-mini:hover {
+  background: var(--accent5);
+  color: var(--bg);
+  box-shadow: 0 2px 8px rgba(116, 192, 252, 0.3);
+}
+
+.control-group .value {
+  color: var(--accent5);
+  font-weight: 700;
+}
+
+.slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg3);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin-bottom: 0.25rem;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent5);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(116, 192, 252, 0.4);
+  transition: all 0.2s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  width: 18px;
+  height: 18px;
+  box-shadow: 0 2px 12px rgba(116, 192, 252, 0.6);
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent5);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(116, 192, 252, 0.4);
+  transition: all 0.2s;
+}
+
+.slider::-moz-range-thumb:hover {
+  width: 18px;
+  height: 18px;
+  box-shadow: 0 2px 12px rgba(116, 192, 252, 0.6);
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-bottom: 0.4rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.4rem 0.9rem;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--sans);
+}
+
+.btn-primary {
+  background: var(--accent5);
+  color: var(--bg);
+}
+
+.btn-primary:hover {
+  background: #85d5ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(116, 192, 252, 0.3);
+}
+
+.btn-secondary {
+  background: var(--accent3);
+  color: var(--bg);
+}
+
+.btn-secondary:hover {
+  background: #5fd4bb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(78, 201, 176, 0.3);
+}
+
+.btn-tertiary {
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-tertiary:hover {
+  background: var(--border);
+  transform: translateY(-1px);
+}
+
+/* ── Charts Section ─────────────────────────────────────────────────────── */
+.charts-section {
+  margin-bottom: 1rem;
+}
+
+.charts-section h3 {
+  font-size: 0.95rem;
+  margin: 0 0 0.75rem 0;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.chart-card {
+  background: var(--bg2);
+  border: 2px solid #4ec9b0;
+  border-radius: 4px;
+  padding: 0.6rem;
+  margin-bottom: 0.6rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(78, 201, 176, 0.1);
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.observer-beeper {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffd700;
+  box-shadow: 0 0 6px #ffd700;
+  animation: listening 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes listening {
+  0%, 100% {
+    background: #ffd700;
+    box-shadow: 0 0 6px #ffd700;
+  }
+  50% {
+    background: #ffed4e;
+    box-shadow: 0 0 10px #ffd700;
+  }
+}
+
+.observer-beeper.observing {
+  animation: observe 0.6s ease-out forwards;
+}
+
+@keyframes observe {
+  0% {
+    background: #4eff4e;
+    box-shadow: 0 0 12px #4eff4e;
+  }
+  100% {
+    background: #ffd700;
+    box-shadow: 0 0 6px #ffd700;
+  }
+}
+
+.chart-card h4 {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+
+/* Temperature Chart */
+.chart-container {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  font-size: 0.8rem;
+}
+
+.line-chart {
+  flex: 1;
+  height: 60px;
+  background: var(--bg3);
+  border-radius: 3px;
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+}
+
+.grid-line {
+  stroke: var(--border);
+  stroke-width: 0.5;
+  opacity: 0.5;
+}
+
+.temp-line {
+  stroke: #74c0fc;
+  filter: drop-shadow(0 0 2px #74c0fc);
+}
+
+.temp-dot {
+  fill: #74c0fc;
+  filter: drop-shadow(0 0 3px #74c0fc);
+  animation: dot-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% {
+    r: 3;
+    filter: drop-shadow(0 0 3px #74c0fc);
+  }
+  50% {
+    r: 4;
+    filter: drop-shadow(0 0 6px #74c0fc);
+  }
+}
+
+.bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  gap: 0.5rem;
+}
+
+.bar {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent5), var(--accent3));
+  border-radius: 3px 3px 0 0;
+  transition: all 0.3s;
+  cursor: pointer;
+  min-height: 2px;
+}
+
+.bar:hover {
+  filter: brightness(1.2);
+}
+
+.bar-label {
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.chart-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  min-width: 120px;
+}
+
+.info-item {
+  color: var(--text);
+}
+
+.info-item strong {
+  color: var(--accent5);
+}
+
+/* Humidity Gauge */
+.gauge-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.75rem;
+}
+
+.gauge-background {
+  width: 100%;
+  height: 20px;
+  background: var(--bg3);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.gauge-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ec9b0, #6bcb77);
+  border-radius: 20px;
+  transition: width 0.4s ease-out;
+  position: relative;
+}
+
+.gauge-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.gauge-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gauge-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent3);
+  font-family: var(--mono);
+}
+
+.gauge-history {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.history-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent3);
+  transition: opacity 0.3s;
+}
+
+/* Pressure & Wind Chart */
+.dual-chart-container {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0.75rem;
+  align-items: stretch;
+  font-size: 0.75rem;
+}
+
+.dual-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-title {
+  font-size: 0.7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent5);
+  font-family: var(--mono);
+}
+
+.metric-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 50px;
+  background: var(--bg3);
+  border-radius: 3px;
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+}
+
+.mini-bar {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  transition: all 0.3s;
+  cursor: pointer;
+  min-height: 2px;
+}
+
+.pressure-bar {
+  background: linear-gradient(180deg, var(--accent4), #ff6b35);
+}
+
+.wind-bar {
+  background: linear-gradient(180deg, var(--accent5), #5a8cff);
+}
+
+.mini-bar:hover {
+  filter: brightness(1.2);
+}
+
+.metric-divider {
+  background: var(--border);
+  width: 1px;
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+.demo-footer {
+  background: var(--bg3);
+  border-left: 2px solid var(--accent);
+  padding: 0.6rem 1rem;
+  border-radius: 0 3px 3px 0;
+  margin-top: 0.75rem;
+  font-size: 0.7rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.demo-footer p {
+  margin: 0;
+}
+
+/* ── Light Labels ──────────────────────────────────────────────────────────── */
+.light-label {
+  position: absolute;
+  font-size: 0.65rem;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.temp-label {
+  color: #00d9ff;
+  left: 440px;
+  top: 532px;
+}
+
+.humidity-label {
+  color: #4eff4e;
+  left: 465px;
+  top: 552px;
+}
+
+.pressure-label {
+  color: #ffb347;
+  left: 490px;
+  top: 572px;
+}
+
+/* ── Wire Color Text Matching ──────────────────────────────────────────────── */
+/* Temperature - Cyan */
+.controls-section .control-group:nth-of-type(1) label {
+  color: #00d9ff;
+}
+
+.charts-column .chart-card:nth-of-type(1) h4 {
+  color: #00d9ff;
+}
+
+/* Humidity - Green */
+.controls-section .control-group:nth-of-type(2) label {
+  color: #4eff4e;
+}
+
+.charts-column .chart-card:nth-of-type(2) h4 {
+  color: #4eff4e;
+}
+
+/* Pressure & Wind - Orange */
+.controls-section .control-group:nth-of-type(3) label,
+.controls-section .control-group:nth-of-type(4) label {
+  color: #ffb347;
+}
+
+.charts-column .chart-card:nth-of-type(3) h4 {
+  color: #ffb347;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .demo-container {
+    padding: 1rem;
+  }
+
+  .demo-header {
+    margin-bottom: 2rem;
+  }
+
+  .demo-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .chart-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .dual-chart-container {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-divider {
+    display: none;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

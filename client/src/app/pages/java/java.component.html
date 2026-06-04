@@ -3,7 +3,17 @@
     <h1>Java <span>Cheat Sheet</span></h1>
     <p>// backend systems edition</p>
   </header>
-  <div class="grid">
+
+  <!-- Tabs -->
+  <div class="cheatsheet-tabs">
+    <button [class.active]="currentTab === 'sheet'" (click)="switchTab('sheet')">Sheet</button>
+    <button [class.active]="currentTab === 'imports'" (click)="switchTab('imports')">Imports</button>
+    <button [class.active]="currentTab === 'testing'" (click)="switchTab('testing')">Testing</button>
+  </div>
+
+  <!-- SHEET TAB -->
+  @if (currentTab === 'sheet') {
+    <div class="grid">
 
     <div class="card">
       <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">compile &amp; run</span></div>
@@ -276,9 +286,81 @@ gradle test
       </div>
     </div>
 
-  </div>
+    </div>
+  } <!-- end sheet tab -->
 
-  <div class="testing-section">
+  <!-- IMPORTS TAB -->
+  @if (currentTab === 'imports') {
+    <div class="grid imports-grid">
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">spring-boot</span></div>
+      <div class="code-block"><pre><span class="cmt">// web framework with embedded Tomcat</span>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+<span class="kw">import</span> org.springframework.stereotype.<span class="tp">Service</span>;
+<span class="ann">&#64;Service</span>
+<span class="kw">public class</span> <span class="tp">UserService</span> &#123;
+    <span class="kw">public</span> <span class="tp">User</span> <span class="fn">findById</span>(<span class="tp">long</span> id) &#123; <span class="cmt">/* ... */</span> &#125;
+&#125;</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">okhttp / jackson</span></div>
+      <div class="code-block"><pre><span class="cmt">// HTTP client</span>
+<span class="kw">import</span> okhttp3.<span class="tp">OkHttpClient</span>;
+<span class="kw">var</span> client = <span class="kw">new</span> <span class="tp">OkHttpClient</span>();
+<span class="kw">var</span> request = <span class="kw">new</span> <span class="tp">Request</span>.<span class="tp">Builder</span>()
+    .<span class="fn">url</span>(<span class="str">"https://api.example.com/users"</span>)
+    .<span class="fn">build</span>();
+<span class="kw">var</span> response = client.<span class="fn">newCall</span>(request).<span class="fn">execute</span>();
+
+<span class="cmt">// JSON serialization</span>
+<span class="kw">import</span> com.fasterxml.jackson.databind.<span class="tp">ObjectMapper</span>;
+<span class="kw">var</span> mapper = <span class="kw">new</span> <span class="tp">ObjectMapper</span>();
+<span class="tp">User</span> user = mapper.<span class="fn">readValue</span>(json, <span class="tp">User</span>.<span class="kw">class</span>);</pre></div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">hibernate</span></div>
+      <div class="code-block"><pre><span class="cmt">// ORM persistence</span>
+<span class="kw">import</span> javax.persistence.*;
+<span class="ann">&#64;Entity</span>
+<span class="ann">&#64;Table</span>(name = <span class="str">"users"</span>)
+<span class="kw">public class</span> <span class="tp">User</span> &#123;
+    <span class="ann">&#64;Id</span>
+    <span class="kw">private long</span> id;
+    <span class="kw">private</span> <span class="tp">String</span> email;
+&#125;
+
+<span class="cmt">// Query</span>
+<span class="kw">var</span> users = session.<span class="fn">createQuery</span>(
+    <span class="str">"from User where active = true"</span>, <span class="tp">User</span>.<span class="kw">class</span>)
+    .<span class="fn">getResultList</span>();</pre></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div><span class="card-title">junit / mockito</span></div>
+      <div class="code-block"><pre><span class="cmt">// Testing framework</span>
+<span class="kw">import</span> org.junit.jupiter.api.<span class="tp">Test</span>;
+<span class="kw">import</span> org.mockito.<span class="tp">Mockito</span>;
+
+<span class="ann">&#64;Test</span>
+<span class="kw">void</span> <span class="fn">testFindUser</span>() &#123;
+    <span class="kw">var</span> repo = <span class="fn">Mockito</span>.<span class="fn">mock</span>(<span class="tp">UserRepository</span>.<span class="kw">class</span>);
+    <span class="fn">assertEquals</span>(<span class="str">"alice"</span>, repo.<span class="fn">getName</span>());
+&#125;</pre></div>
+    </div>
+
+    </div>
+  } <!-- end imports tab -->
+
+  <!-- TESTING TAB -->
+  @if (currentTab === 'testing') {
+    <div class="testing-section">
     <div class="testing-header">
       <div class="testing-header-title">// <span>testing</span></div>
       <div class="testing-header-stack"><a href="https://junit.org/junit5" target="_blank" rel="noopener">JUnit 5</a> · <a href="https://site.mockito.org" target="_blank" rel="noopener">Mockito</a> · <a href="https://www.jacoco.org" target="_blank" rel="noopener">JaCoCo</a> · <a href="https://www.selenium.dev" target="_blank" rel="noopener">Selenium</a></div>
@@ -463,7 +545,9 @@ spied.<span class="fn">add</span>(<span class="str">"hello"</span>);
       </div>
 
     </div>
-  </div>
+    </div>
+  } <!-- end testing tab -->
+
 </div>
 
   <app-footer />

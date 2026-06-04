@@ -57,4 +57,35 @@ pre { font-family: var(--mono); font-size: 0.78rem; line-height: 1.75; color: va
 .pill-red    { color: var(--accent2); border-color: #e05c5c44; background: #e05c5c11; }
 .pill-purple { color: var(--accent4); border-color: #c792ea44; background: #c792ea11; }
 
+.cheatsheet-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+
+.cheatsheet-tabs button {
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.2s;
+}
+
+.cheatsheet-tabs button:hover {
+  color: var(--text);
+}
+
+.cheatsheet-tabs button.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
 /* ── Testing Section ─────────────────────────────────────────────────────────── */

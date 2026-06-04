@@ -1,0 +1,244 @@
+<div class="demo-container">
+  <div class="demo-header">
+    <h2>Weather Station Observer Pattern</h2>
+    <p class="demo-subtitle">Update weather readings below. Charts observe and update automatically.</p>
+  </div>
+
+  <div class="demo-main" [class.buttons-locked]="buttonsLocked">
+    <!-- CIRCUIT WIRES -->
+    <div class="wire-container">
+      <!-- Temperature wire (Cyan) -->
+      <div class="circuit-wire wire-temp"
+           [class.input-active]="activeInputWires.includes('wire-temp')"
+           [class.output-active]="activeOutputWires.includes('wire-temp')"></div>
+      <span class="light-label temp-label">Temperature</span>
+      <!-- Humidity wire (Green) -->
+      <div class="circuit-wire wire-humidity"
+           [class.input-active]="activeInputWires.includes('wire-humidity')"
+           [class.output-active]="activeOutputWires.includes('wire-humidity')"></div>
+      <span class="light-label humidity-label">Humidity</span>
+      <!-- Pressure wire (Orange) -->
+      <div class="circuit-wire wire-pressure"
+           [class.input-active]="activeInputWires.includes('wire-pressure')"
+           [class.output-active]="activeOutputWires.includes('wire-pressure')"></div>
+      <span class="light-label pressure-label">Pressure</span>
+      <!-- Wind wire (Red) -->
+      <div class="circuit-wire wire-wind"
+           [class.input-active]="activeInputWires.includes('wire-wind')"
+           [class.output-active]="activeOutputWires.includes('wire-wind')"></div>
+    </div>
+
+    <!-- LEFT COLUMN: CONTROLS + SUBJECT -->
+    <div class="controls-column">
+      <!-- INPUT CONTROLS -->
+      <div class="controls-section">
+        <h3>Weather Controls</h3>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label>Temperature: <span class="value">{{ temperature.toFixed(1) }}°C</span></label>
+            <button class="btn-mini" (click)="submitTemperature()" title="Update temperature">↑</button>
+          </div>
+          <input
+            type="range"
+            [(ngModel)]="temperature"
+            [min]="temperatureMin"
+            [max]="temperatureMax"
+            step="0.5"
+            class="slider">
+          <div class="range-labels">
+            <span>{{ temperatureMin }}°C</span>
+            <span>{{ temperatureMax }}°C</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label>Humidity: <span class="value">{{ humidity.toFixed(1) }}%</span></label>
+            <button class="btn-mini" (click)="submitHumidity()" title="Update humidity">↑</button>
+          </div>
+          <input
+            type="range"
+            [(ngModel)]="humidity"
+            [min]="humidityMin"
+            [max]="humidityMax"
+            step="1"
+            class="slider">
+          <div class="range-labels">
+            <span>{{ humidityMin }}%</span>
+            <span>{{ humidityMax }}%</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label>Pressure: <span class="value">{{ pressure.toFixed(1) }} hPa</span></label>
+            <button class="btn-mini" (click)="submitPressure()" title="Update pressure">↑</button>
+          </div>
+          <input
+            type="range"
+            [(ngModel)]="pressure"
+            [min]="pressureMin"
+            [max]="pressureMax"
+            step="1"
+            class="slider">
+          <div class="range-labels">
+            <span>{{ pressureMin }}</span>
+            <span>{{ pressureMax }}</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label>Wind Speed: <span class="value">{{ windSpeed.toFixed(1) }} km/h</span></label>
+            <button class="btn-mini" (click)="submitWindSpeed()" title="Update wind speed">↑</button>
+          </div>
+          <input
+            type="range"
+            [(ngModel)]="windSpeed"
+            [min]="windSpeedMin"
+            [max]="windSpeedMax"
+            step="0.5"
+            class="slider">
+          <div class="range-labels">
+            <span>{{ windSpeedMin }}</span>
+            <span>{{ windSpeedMax }}</span>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn btn-primary" (click)="submitDay()">Submit Day</button>
+          <button class="btn btn-secondary" (click)="randomizeValues()">Randomize</button>
+          <button class="btn btn-tertiary" (click)="reset()">Reset</button>
+        </div>
+      </div>
+
+      <!-- SUBJECT BOX -->
+      <div class="subject-box">
+        <div class="subject-label">WeatherStation</div>
+        <div class="observer-tags">
+          <div class="observer-tag" [class.glowing]="observerGlow.temp" #tagTemp>
+            <span class="tag-method">updateTemperatureChart()</span>
+          </div>
+          <div class="observer-tag" [class.glowing]="observerGlow.humidity" #tagHumidity>
+            <span class="tag-method">updateHumidityChart()</span>
+          </div>
+          <div class="observer-tag" [class.glowing]="observerGlow.pressure" #tagPressure>
+            <span class="tag-method">updatePressureChart()</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: CHARTS -->
+    <div class="charts-column">
+    <h3>Observer Charts</h3>
+
+    <!-- Temperature Chart -->
+    <div class="chart-card" [class.gleaming]="chartGleaming.temp">
+      <div class="chart-header">
+        <div class="observer-beeper" #tempBeeper></div>
+        <h4>Temperature Trend</h4>
+      </div>
+      <div class="chart-container">
+        <svg class="line-chart" viewBox="0 0 300 100" preserveAspectRatio="none">
+          <!-- Grid lines -->
+          <line x1="0" y1="25" x2="300" y2="25" class="grid-line" />
+          <line x1="0" y1="50" x2="300" y2="50" class="grid-line" />
+          <line x1="0" y1="75" x2="300" y2="75" class="grid-line" />
+
+          <!-- Temperature line -->
+          @if (temperatureData.length > 0) {
+            <polyline
+              [attr.points]="getTemperaturePath()"
+              class="temp-line"
+              fill="none"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
+            <circle
+              [attr.cx]="((temperatureData.length - 1) / (temperatureData.length - 1 || 1)) * 300"
+              [attr.cy]="100 - ((temperatureData[temperatureData.length - 1] - temperatureMin) / (temperatureMax - temperatureMin)) * 100"
+              r="3"
+              class="temp-dot" />
+          }
+        </svg>
+        <div class="chart-info">
+          <div class="info-item">Current: <strong>{{ temperatureData.length > 0 ? temperatureData[temperatureData.length - 1].toFixed(1) : '0' }}°C</strong></div>
+          <div class="info-item">Range: {{ temperatureMin }}°C - {{ temperatureMax }}°C</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Humidity Chart -->
+    <div class="chart-card" [class.gleaming]="chartGleaming.humidity">
+      <div class="chart-header">
+        <div class="observer-beeper" #humidityBeeper></div>
+        <h4>Humidity Gauge</h4>
+      </div>
+      <div class="gauge-container">
+        <div class="gauge-background">
+          <div
+            class="gauge-fill"
+            [style.width.%]="humidityData.length > 0 ? humidityData[humidityData.length - 1] : 0">
+          </div>
+        </div>
+        <div class="gauge-label">
+          <span class="gauge-value">{{ humidityData.length > 0 ? humidityData[humidityData.length - 1].toFixed(0) : '0' }}%</span>
+        </div>
+        <div class="gauge-history">
+          History:
+          @for (humidity of humidityData; track $index) {
+            <span class="history-dot" [style.opacity]="0.3 + (humidity / 100) * 0.7"></span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Pressure & Wind Chart -->
+    <div class="chart-card" [class.gleaming]="chartGleaming.pressure">
+      <div class="chart-header">
+        <div class="observer-beeper" #pressureBeeper></div>
+        <h4>Pressure & Wind</h4>
+      </div>
+      <div class="dual-chart-container">
+        <div class="dual-metric">
+          <div class="metric-title">Pressure</div>
+          <div class="metric-value">
+            {{ pressureData.length > 0 ? pressureData[pressureData.length - 1].toFixed(0) : '0' }} hPa
+          </div>
+          <div class="metric-chart">
+            @for (pressure of pressureData; track $index) {
+              <div
+                class="mini-bar pressure-bar"
+                [style.height.%]="((pressure - pressureMin) / (pressureMax - pressureMin)) * 100"
+                [title]="pressure.toFixed(0) + ' hPa'">
+              </div>
+            }
+          </div>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="dual-metric">
+          <div class="metric-title">Wind Speed</div>
+          <div class="metric-value">
+            {{ windSpeedData.length > 0 ? windSpeedData[windSpeedData.length - 1].toFixed(1) : '0' }} km/h
+          </div>
+          <div class="metric-chart">
+            @for (wind of windSpeedData; track $index) {
+              <div
+                class="mini-bar wind-bar"
+                [style.height.%]="(wind / windSpeedMax) * 100"
+                [title]="wind.toFixed(1) + ' km/h'">
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="demo-footer">
+    <p><strong>How it works:</strong> Each chart is an Observer that watches the WeatherStation (Subject). When you submit a day, the station notifies all observers, who automatically update their displays with the new data.</p>
+  </div>
+</div>

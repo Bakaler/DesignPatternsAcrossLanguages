@@ -56,4 +56,79 @@ pre { font-family: var(--mono); font-size: 0.78rem; line-height: 1.75; color: va
 .pill-red    { color: var(--accent2); border-color: #e05c5c44; background: #e05c5c11; }
 .pill-purple { color: #c792ea;        border-color: #c792ea44; background: #c792ea11; }
 
-/* ── Testing Section ─────────────────────────────────────────────────────────── */
+/* ── Cheatsheet Tabs ─────────────────────────────────────────────────────────── */
+
+.cheatsheet-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.cheatsheet-tabs button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.cheatsheet-tabs button:hover {
+  color: var(--text);
+}
+
+.cheatsheet-tabs button.active {
+  color: var(--accent);
+}
+
+.cheatsheet-tabs button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.cheatsheet-tabs button.tab-live {
+  background: linear-gradient(135deg, #f0a500, #ff8c42);
+  color: #000;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 0.5rem 1.2rem;
+  box-shadow: 0 4px 12px rgba(240, 165, 0, 0.3);
+  margin-left: auto;
+}
+
+.cheatsheet-tabs button.tab-live:hover {
+  box-shadow: 0 6px 16px rgba(240, 165, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.cheatsheet-tabs button.tab-live.active {
+  color: #000;
+}
+
+.cheatsheet-tabs button.tab-live.active::after {
+  background: #000;
+}
+
+.imports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+/* ── Live Example Section ────────────────────────────────────────────────────── */
+
+.live-example-section {
+  margin-top: 2rem;
+}

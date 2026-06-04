@@ -1,6 +1,6 @@
 <div class="page">
 
-  <!-- ── HERO ── -->
+  <!-- HERO -->
   <header class="hero">
     <div>
       <p class="hero-label">Reference Sheet</p>
@@ -14,7 +14,7 @@
     </div>
   </header>
 
-  <!-- ── INTRO ── -->
+  <!-- INTRO -->
   <section class="section">
     <p class="section-label">01 - Introduction</p>
     <h2 class="section-title">What are Design Patterns?</h2>
@@ -34,7 +34,7 @@
     </div>
   </section>
 
-  <!-- ── 3 CATEGORIES ── -->
+  <!-- 3 CATEGORIES -->
   <section class="section">
     <p class="section-label">02 - All 23 Patterns</p>
     <h2 class="section-title">Click Any Pattern to View Implementation</h2>
@@ -64,7 +64,7 @@
     </div>
   </section>
 
-  <!-- ── IMPLEMENTATION VIEWER ── -->
+  <!-- IMPLEMENTATION VIEWER -->
   <section class="section viewer-section">
     <p class="section-label">03 - Implementation</p>
 
@@ -101,7 +101,8 @@
           <div class="viewer-lang-tabs">
             @for (tab of allTabs; track tab) {
               <button
-                [class]="'lang-tab' + (tab === 'readme' ? ' readme-tab' : '') + (activeLang === tab ? ' active' : '') + (!tabAvailable(tab) ? ' unavailable' : '')"
+                [class]="'lang-tab' + (tab === 'readme' ? ' readme-tab' : '') + (activeLang === tab ? ' active' : '') + (!tabAvailable(tab) ? ' unavailable' : '') + (tab === 'demo' ? ' demo-tab' : '')"
+                [attr.data-is-demo]="tab === 'demo' ? true : null"
                 [disabled]="!tabAvailable(tab)"
                 (click)="switchTab(tab)">
                 {{ tabLabel(tab) }}
@@ -219,9 +220,18 @@
 
       </div>
     }
+
+    <!-- LIVE DEMO TAB -->
+    @if (activeLang === 'demo') {
+      <div class="viewer-section">
+        <div class="viewer-demo-wrap">
+          <app-observer-weather-demo></app-observer-weather-demo>
+        </div>
+      </div>
+    }
   </section>
 
-  <!-- ── COMMENTS ── -->
+  <!-- COMMENTS -->
   @if (selected) {
     <section class="section comment-section-wrap">
       <app-comment-section [patternKey]="selected.category.toLowerCase() + '-' + selected.slug.toLowerCase()" />
