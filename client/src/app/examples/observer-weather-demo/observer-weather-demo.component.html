@@ -117,13 +117,13 @@
       <div class="subject-box">
         <div class="subject-label">WeatherStation</div>
         <div class="observer-tags">
-          <div class="observer-tag" [class.glowing]="observerGlow.temp" #tagTemp>
+          <div class="observer-tag tag-temp" [class.glowing]="observerGlow.temp" #tagTemp>
             <span class="tag-method">updateTemperatureChart()</span>
           </div>
-          <div class="observer-tag" [class.glowing]="observerGlow.humidity" #tagHumidity>
+          <div class="observer-tag tag-humidity" [class.glowing]="observerGlow.humidity" #tagHumidity>
             <span class="tag-method">updateHumidityChart()</span>
           </div>
-          <div class="observer-tag" [class.glowing]="observerGlow.pressure" #tagPressure>
+          <div class="observer-tag tag-pressure" [class.glowing]="observerGlow.pressure" #tagPressure>
             <span class="tag-method">updatePressureChart()</span>
           </div>
         </div>
@@ -135,7 +135,7 @@
     <h3>Observer Charts</h3>
 
     <!-- Temperature Chart -->
-    <div class="chart-card" [class.gleaming]="chartGleaming.temp">
+    <div class="chart-card chart-temp" [class.gleaming]="chartGleaming.temp">
       <div class="chart-header">
         <div class="observer-beeper" #tempBeeper></div>
         <h4>Temperature Trend</h4>
@@ -171,7 +171,7 @@
     </div>
 
     <!-- Humidity Chart -->
-    <div class="chart-card" [class.gleaming]="chartGleaming.humidity">
+    <div class="chart-card chart-humidity" [class.gleaming]="chartGleaming.humidity">
       <div class="chart-header">
         <div class="observer-beeper" #humidityBeeper></div>
         <h4>Humidity Gauge</h4>
@@ -196,7 +196,7 @@
     </div>
 
     <!-- Pressure & Wind Chart -->
-    <div class="chart-card" [class.gleaming]="chartGleaming.pressure">
+    <div class="chart-card chart-pressure" [class.gleaming]="chartGleaming.pressure">
       <div class="chart-header">
         <div class="observer-beeper" #pressureBeeper></div>
         <h4>Pressure & Wind</h4>

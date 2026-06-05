@@ -666,6 +666,30 @@
   border: 1px solid #4ec9b035;
 }
 
+.status-basic {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff40;
+}
+
+.status-upcoming {
+  background: #5a5a6e12;
+  color: #8a8a9e;
+  border: 1px solid #5a5a6e35;
+}
+
+.status-sisters {
+  background: #4a9eff12;
+  color: #4a9eff;
+  border: 1px solid #4a9eff35;
+}
+
+.status-demo {
+  background: #6bcb7712;
+  color: #6bcb77;
+  border: 1px solid #6bcb7735;
+}
+
 /* ── APPROACH ──────────────────────────────────────────────────────────────── */
 .approach {
   margin-bottom: 4rem;

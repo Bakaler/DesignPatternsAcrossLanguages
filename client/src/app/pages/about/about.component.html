@@ -1,36 +1,5 @@
 <div class="page">
 
-  <!-- Hero -->
-  <section class="about-hero">
-    <p class="about-eyebrow">The Developer</p>
-    <h1 class="about-name"><span class="accent">Alexander</span> Burnes-Baker</h1>
-    <p class="about-role">Senior Software Engineer</p>
-    <div class="about-links">
-      <a href="https://www.linkedin.com/in/alexander-baker-055279124/" target="_blank" rel="noopener" class="about-link">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-        LinkedIn
-      </a>
-      <a href="https://github.com/Bakaler" target="_blank" rel="noopener" class="about-link">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-        GitHub
-      </a>
-    </div>
-  </section>
-
-  <!-- A / B view selector -->
-  <div class="view-selector">
-    <button class="view-btn" [class.active]="activeTab === 'developer'"
-            (click)="activeTab = 'developer'; settings.playUiClick()">
-      <span class="view-key">A</span>
-      <span class="view-label">The Developer</span>
-    </button>
-    <button class="view-btn" [class.active]="activeTab === 'project'"
-            (click)="activeTab = 'project'; settings.playUiClick()">
-      <span class="view-key">B</span>
-      <span class="view-label">The Project</span>
-    </button>
-  </div>
-
   <!-- Drag wrapper - owns the translate transform and z-index lift -->
   <div class="panel-drag-wrapper"
        [class.panel-lifted]="hasMovedOnce"
@@ -42,348 +11,22 @@
     <div #panelEl class="panel"
          [class.panel-locked]="isLocked">
 
-    <!-- Drag handle -->
-    <div class="panel-handle" (mousedown)="startDrag($event)">
 
-      <!-- Left: grip + hint -->
-      <div class="panel-handle-hint-wrap"
-           data-tooltip="Drag anywhere on screen. Release to ripple (Analog) or bob (Natural).">
-        <div class="panel-grip">
-          <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor" aria-hidden="true">
-            <circle cx="2" cy="2" r="1"/><circle cx="6" cy="2" r="1"/>
-            <circle cx="2" cy="6" r="1"/><circle cx="6" cy="6" r="1"/>
-            <circle cx="2" cy="10" r="1"/><circle cx="6" cy="10" r="1"/>
-          </svg>
-        </div>
-        <span class="panel-handle-hint">drag to reposition</span>
-      </div>
 
-      <!-- Center: mode toggle -->
-      <div class="panel-mode-toggle">
-        <button class="pm-btn"
-                data-tooltip="Sharp rectangular rings on drop"
-                [class.active]="rippleMode === 'analog'"
-                (mousedown)="$event.stopPropagation()"
-                (click)="setMode('analog')">Analog</button>
-        <button class="pm-btn"
-                data-tooltip="Spring-physics bob. Wavy rings on each upward peak."
-                [class.active]="rippleMode === 'natural'"
-                (mousedown)="$event.stopPropagation()"
-                (click)="setMode('natural')">Natural</button>
-      </div>
-
-      <!-- Right: weight + reset + lock -->
-      <div class="panel-handle-actions">
-
-        <div class="ph-weight-group">
-          <button class="ph-weight-btn"
-                  data-tooltip="Light: small, quick rings"
-                  [class.active]="rippleWeight === 1"
-                  (mousedown)="$event.stopPropagation()"
-                  (click)="rippleWeight = 1; settings.playUiClick()">1</button>
-          <button class="ph-weight-btn"
-                  data-tooltip="Medium: balanced rings"
-                  [class.active]="rippleWeight === 2"
-                  (mousedown)="$event.stopPropagation()"
-                  (click)="rippleWeight = 2; settings.playUiClick()">2</button>
-          <button class="ph-weight-btn"
-                  data-tooltip="Heavy: large, slow rings"
-                  [class.active]="rippleWeight === 3"
-                  (mousedown)="$event.stopPropagation()"
-                  (click)="rippleWeight = 3; settings.playUiClick()">3</button>
-        </div>
-
-        <div class="ph-sep"></div>
-
-        <button class="ph-btn"
-                data-tooltip="Spring back to origin"
-                (mousedown)="$event.stopPropagation()"
-                (click)="resetPanel(); settings.playUiClick()">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-            <path d="M3 3v5h5"/>
-          </svg>
-        </button>
-
-        <button class="ph-btn" [class.active]="isLocked"
-                [attr.data-tooltip]="isLocked ? 'Unlock panel' : 'Lock panel in place'"
-                (mousedown)="$event.stopPropagation()"
-                (click)="isLocked = !isLocked; settings.playUiClick()">
-          @if (isLocked) {
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          } @else {
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
-            </svg>
-          }
-        </button>
-      </div>
-    </div>
-
-    @if (activeTab === 'developer') {
-
-      <!-- 01 Me -->
+      <!-- 00 About -->
       <div class="section-block">
         <div class="section-label">
-          01 - Me
-          <div class="section-zoom">
-            <button class="sz-btn"       [class.active]="zoomMe===1" (click)="zoomMe=1; settings.playUiClick()">A</button>
-            <button class="sz-btn sz-md" [class.active]="zoomMe===2" (click)="zoomMe=2; settings.playUiClick()">A</button>
-            <button class="sz-btn sz-lg" [class.active]="zoomMe===3" (click)="zoomMe=3; settings.playUiClick()">A</button>
-          </div>
+          00 - About
         </div>
-        <section [class]="'about-bio zoom-' + zoomMe">
-          <div class="bio-main">
-            <h3>Who I Am</h3>
-            <p>
-              Software engineer specialising in backend systems, infrastructure automation, and
-              data-intensive applications, with production experience across distributed systems,
-              cloud services (AWS, GCP), CI/CD pipelines, and API-first architectures.
-            </p>
-            <br>
-            <p>
-              At the Federal Reserve, I led automation frameworks that saved 10,000+ annual hours
-              and $300K+ in operational costs. At SAi, I'm building authentication infrastructure
-              and billing systems across distributed services. I've designed solutions at both
-              enterprise scale and early-stage startup speed, with a focus on clean architecture,
-              performance, and cross-team engineering enablement.
-            </p>
-            <br>
-            <p>
-              I started with a BA in Anthropology before switching paths to Computer Science at Oregon
-              State. I've picked up a new language at every job since, which is partly what led here.
-              This project is the intersection of studying and building: a personal codex of every Gang
-              of Four pattern, written from scratch across five languages.
-            </p>
-          </div>
-          <div class="bio-side">
-            <h3>Currently</h3>
-            <div class="bio-currently">
-              <div class="currently-item">
-                <span class="ci-label">role</span>
-                <span class="ci-value">Senior Software Engineer</span>
-              </div>
-              <div class="currently-item">
-                <span class="ci-label">company</span>
-                <span class="ci-value">SAi</span>
-              </div>
-            </div>
-
-            <h3 style="margin-top:1.8rem">Stack</h3>
-            <div class="stack-categories">
-              <div class="stack-row">
-                <span class="stack-cat">lang</span>
-                <span class="stack-vals">Python · JS/TS · C# · Ruby</span>
-              </div>
-              <div class="stack-row">
-                <span class="stack-cat">fx</span>
-                <span class="stack-vals">Node.js · .NET · Ansible · Express</span>
-              </div>
-              <div class="stack-row">
-                <span class="stack-cat">db</span>
-                <span class="stack-vals">MongoDB · MySQL · Redis · Druid</span>
-              </div>
-              <div class="stack-row">
-                <span class="stack-cat">tools</span>
-                <span class="stack-vals">AWS · GCP · Docker · Git · Dynatrace</span>
-              </div>
-            </div>
-          </div>
+        <section class="about-intro">
+          <p>A personal codex of Gang of Four design patterns, implemented across five languages.</p>
         </section>
       </div>
 
-      <!-- 02 Experience -->
+      <!-- 01 Design Patterns & Languages -->
       <div class="section-block">
         <div class="section-label">
-          02 - Experience
-          <div class="section-zoom">
-            <button class="sz-btn"       [class.active]="zoomExp===1" (click)="zoomExp=1; settings.playUiClick()">A</button>
-            <button class="sz-btn sz-md" [class.active]="zoomExp===2" (click)="zoomExp=2; settings.playUiClick()">A</button>
-            <button class="sz-btn sz-lg" [class.active]="zoomExp===3" (click)="zoomExp=3; settings.playUiClick()">A</button>
-          </div>
-        </div>
-        <section [class]="'experience zoom-' + zoomExp">
-
-          <div class="exp-item">
-            <div class="exp-meta">
-              <span class="exp-dates">June 2025<br>Present</span>
-            </div>
-            <div class="exp-body">
-              <div class="exp-header">
-                <span class="exp-role">Senior Software Engineer</span>
-                <span class="exp-sep">·</span>
-                <span class="exp-company">SAi, Salt Lake City, UT</span>
-              </div>
-              <ul class="exp-bullets">
-                <li>Designed and built a cross-application SSO system using Stytch and a custom identity service, enabling unified auth across multiple products.</li>
-                <li>Architected a credit ledger and billing system with transaction history, admin tooling, tiered balances, and deterministic withdrawal prioritization.</li>
-                <li>Deployed and operated production systems across AWS Elastic Beanstalk, Lambda, CloudFront, and S3.</li>
-              </ul>
-              <div class="exp-tech">
-                <button class="tech-tag" (click)="clickTag($event)">TypeScript</button>
-                <button class="tech-tag" (click)="clickTag($event)">Node.js</button>
-                <button class="tech-tag" (click)="clickTag($event)">AWS</button>
-                <button class="tech-tag" (click)="clickTag($event)">MongoDB</button>
-                <button class="tech-tag" (click)="clickTag($event)">Ruby on Rails</button>
-                <button class="tech-tag" (click)="clickTag($event)">Stytch</button>
-                <button class="tech-tag" (click)="clickTag($event)">OOP</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="exp-item">
-            <div class="exp-meta">
-              <span class="exp-dates">Nov 2023<br>June 2025</span>
-            </div>
-            <div class="exp-body">
-              <div class="exp-header">
-                <span class="exp-role">Software Engineer II</span>
-                <span class="exp-sep">·</span>
-                <span class="exp-company">Federal Reserve, Kansas City, KS</span>
-              </div>
-              <ul class="exp-bullets">
-                <li>Led automation architecture monitoring 12 applications and 1,000+ datapoints, saving 10,000+ hours/year and $300K+ annually.</li>
-                <li>Designed cloud colocation migration verification pipelines, analysing 100M+ build files across 15 formats.</li>
-                <li>Built FileHub: a SharePoint + Microsoft Graph API system to automate file archiving and strengthen security posture.</li>
-                <li>Created a modular, object-oriented Ansible framework enabling reusable components and scalable automation.</li>
-                <li>Led core architecture decisions and coding standards as a founding team member; created and hosted monthly internal coding challenges to upskill the team.</li>
-              </ul>
-              <div class="exp-tech">
-                <button class="tech-tag" (click)="clickTag($event)">Python</button>
-                <button class="tech-tag" (click)="clickTag($event)">Ansible</button>
-                <button class="tech-tag" (click)="clickTag($event)">Dynatrace</button>
-                <button class="tech-tag" (click)="clickTag($event)">SharePoint</button>
-                <button class="tech-tag" (click)="clickTag($event)">PyTest</button>
-                <button class="tech-tag" (click)="clickTag($event)">CI/CD</button>
-                <button class="tech-tag" (click)="clickTag($event)">OOP</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="exp-item">
-            <div class="exp-meta">
-              <span class="exp-dates">Jan 2023<br>Nov 2023</span>
-            </div>
-            <div class="exp-body">
-              <div class="exp-header">
-                <span class="exp-role">Software Developer</span>
-                <span class="exp-sep">·</span>
-                <span class="exp-company">Notoros, St. Louis, MO</span>
-              </div>
-              <ul class="exp-bullets">
-                <li>Designed MongoDB schemas and backend services using TypeScript and Node.js, with the core platform built entirely in-house.</li>
-                <li>Built domain-driven business logic and REST APIs with strict validation and maintainable service boundaries.</li>
-                <li>Pushed test coverage to 80%+ and developed scalable Angular UI components for dynamic user workflows.</li>
-              </ul>
-              <div class="exp-tech">
-                <button class="tech-tag" (click)="clickTag($event)">TypeScript</button>
-                <button class="tech-tag" (click)="clickTag($event)">Node.js</button>
-                <button class="tech-tag" (click)="clickTag($event)">MongoDB</button>
-                <button class="tech-tag" (click)="clickTag($event)">Angular</button>
-                <button class="tech-tag" (click)="clickTag($event)">Mocha</button>
-                <button class="tech-tag" (click)="clickTag($event)">Functional Programming</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Other experience -->
-          <div class="exp-other">
-            <div class="exp-other-label">Also</div>
-            <div class="exp-other-grid">
-
-              <div class="exp-other-item">
-                <div class="eo-row">
-                  <span class="eo-role">SDE Intern</span>
-                  <span class="eo-sep">·</span>
-                  <span class="eo-company">Amazon, New York, NY</span>
-                  <span class="eo-dates">Summer 2022</span>
-                </div>
-                <p class="eo-desc">Migrated tens of terabytes from S3 to Apache-Druid, cutting query times from hours to minutes. Built in Python, Java, and AWS. Analysed and presented findings, comparing current vs. experimental approaches, to team leads and client stakeholders.</p>
-              </div>
-
-              <div class="exp-other-item">
-                <div class="eo-row">
-                  <span class="eo-role">Learning Assistant, Data Structures</span>
-                  <span class="eo-sep">·</span>
-                  <span class="eo-company">Oregon State University</span>
-                  <span class="eo-dates">2021-2022</span>
-                </div>
-                <p class="eo-desc">Held weekly office hours and led exam review sessions. Developed a course-wide coding style guide, refactored legacy Gradescope grading scripts to improve throughput, and expanded exam content to better assess student understanding of core concepts.</p>
-              </div>
-
-              <div class="exp-other-item">
-                <div class="eo-row">
-                  <span class="eo-role">CnC Programmer</span>
-                  <span class="eo-sep">·</span>
-                  <span class="eo-company">SFDS, Brooklyn, NY</span>
-                  <span class="eo-dates">2018-2020</span>
-                </div>
-                <p class="eo-desc">Programmed toolpaths for four CNC machines using V-Carve and RhinoCAM across acrylic, hardwood, foam, and composites. Nested materials to minimise waste, managed long-term production files for mass manufacturing runs, and adjusted programs to material tolerances at ±0.001".</p>
-              </div>
-
-              <div class="exp-other-item">
-                <div class="eo-row">
-                  <span class="eo-role">Teaching Assistant · Model United Nations</span>
-                  <span class="eo-sep">·</span>
-                  <span class="eo-company">California State Chico</span>
-                  <span class="eo-dates">2016-2018</span>
-                </div>
-                <p class="eo-desc">Co-led CSU Chico's MUN team competing at international conferences, placing top 5% nationally. Developed curriculum and prepared lectures, conducted office hours, and managed team recruitment and performance reviews.</p>
-              </div>
-
-              <div class="exp-other-item eo-compact">
-                <div class="eo-row">
-                  <span class="eo-role">SC2 Modder</span>
-                  <span class="eo-sep">·</span>
-                  <span class="eo-company">Custom Hero Revival · Dalaran Strike</span>
-                  <span class="eo-dates">2021-Present</span>
-                </div>
-              </div>
-
-              <div class="exp-other-item eo-compact">
-                <div class="eo-row">
-                  <span class="eo-role">Unity Developer</span>
-                  <span class="eo-sep">·</span>
-                  <span class="eo-company">Personal Projects</span>
-                  <span class="eo-dates">2024-Present</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <!-- Education -->
-          <div class="education">
-            <div class="exp-other-label">Education</div>
-            <div class="edu-grid">
-              <div class="edu-item">
-                <span class="edu-school">Oregon State University</span>
-                <span class="edu-degree">BS in Computer Science</span>
-                <span class="edu-year">2022</span>
-              </div>
-              <div class="edu-item">
-                <span class="edu-school">California State Chico</span>
-                <span class="edu-degree">BA in Anthropology</span>
-                <span class="edu-year">2018</span>
-              </div>
-            </div>
-          </div>
-
-        </section>
-      </div>
-
-    }
-
-    @if (activeTab === 'project') {
-
-      <!-- 03 Design Patterns & Languages -->
-      <div class="section-block">
-        <div class="section-label">
-          03 - Design Patterns &amp; Languages
+          01 - Design Patterns &amp; Languages
           <div class="section-zoom">
             <button class="sz-btn"       [class.active]="zoomProject===1" (click)="zoomProject=1; settings.playUiClick()">A</button>
             <button class="sz-btn sz-md" [class.active]="zoomProject===2" (click)="zoomProject=2; settings.playUiClick()">A</button>
@@ -407,9 +50,61 @@
         </section>
       </div>
 
-      <!-- 04 Secondary Endeavours -->
+      <!-- 02 Sisters & Demos -->
       <div class="section-block">
-        <div class="section-label">04 - Secondary Endeavours</div>
+        <div class="section-label">
+          02 - Sisters &amp; Demos
+          <div class="section-zoom">
+            <button class="sz-btn"       [class.active]="zoomSisters===1" (click)="zoomSisters=1; settings.playUiClick()">A</button>
+            <button class="sz-btn sz-md" [class.active]="zoomSisters===2" (click)="zoomSisters=2; settings.playUiClick()">A</button>
+            <button class="sz-btn sz-lg" [class.active]="zoomSisters===3" (click)="zoomSisters=3; settings.playUiClick()">A</button>
+          </div>
+        </div>
+        <section [class]="'project-features zoom-' + zoomSisters">
+          <p class="features-intro">
+            Interactive demos and related patterns that complement the core Gang of Four implementations.
+          </p>
+          <div class="features-grid">
+            <!-- Demo -->
+            <div class="feature-card" style="cursor: pointer;" (click)="settings.playUiClick(); navigateTo('/gof?p=Observer')">
+              <div class="feature-num">1</div>
+              <div class="feature-title">Live Observer Demo</div>
+              <div class="feature-image">
+                <img src="assets/patterns/images/observer-demo.png" alt="Observer Pattern Demo" style="width: 100%; border-radius: 4px;" />
+              </div>
+              <p class="feature-body">Interactive visualization of the Observer pattern with weather station simulation, signal flow, and real-time observer updates.</p>
+              <a href="/gof?p=Observer" class="feature-link">View Observer Pattern →</a>
+            </div>
+
+            <!-- Sisters -->
+            <div class="feature-card" style="cursor: pointer;">
+              <div class="feature-num">2</div>
+              <div class="feature-title">Sister Patterns</div>
+              <div class="feature-images">
+                <div class="sister-img-slot" style="cursor: pointer;" (click)="settings.playUiClick(); navigateTo('/gof?p=Chain of Responsibility')">
+                  <img src="assets/patterns/images/sister-pattern-1.png" alt="Chain of Responsibility" style="width: 100%; border-radius: 4px; margin-bottom: 0.8rem;" />
+                  <a href="/gof?p=Chain of Responsibility" class="feature-link">View Pattern →</a>
+                </div>
+                <div class="sister-img-slot" style="cursor: pointer;" (click)="settings.playUiClick(); navigateTo('/gof?p=Interpreter')">
+                  <img src="assets/patterns/images/sister-pattern-2.png" alt="Interpreter" style="width: 100%; border-radius: 4px; margin-bottom: 0.8rem;" />
+                  <a href="/gof?p=Interpreter" class="feature-link">View Pattern →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 03 Secondary Endeavours -->
+      <div class="section-block">
+        <div class="section-label">
+          03 - Secondary Endeavours
+          <div class="section-zoom">
+            <button class="sz-btn"       [class.active]="zoomProject===1" (click)="zoomProject=1; settings.playUiClick()">A</button>
+            <button class="sz-btn sz-md" [class.active]="zoomProject===2" (click)="zoomProject=2; settings.playUiClick()">A</button>
+            <button class="sz-btn sz-lg" [class.active]="zoomProject===3" (click)="zoomProject=3; settings.playUiClick()">A</button>
+          </div>
+        </div>
         <section [class]="'project-features zoom-' + zoomProject">
           <p class="features-intro">
             Small interactive touches scattered across the site.
@@ -427,9 +122,9 @@
         </section>
       </div>
 
-      <!-- 05 Power Words -->
+      <!-- 03 Power Words -->
       <div class="section-block">
-        <div class="section-label">05 - Power Words</div>
+        <div class="section-label">03 - Power Words</div>
         <section class="power-words-section">
 
           <blockquote class="pw-quote">
@@ -453,8 +148,6 @@
 
         </section>
       </div>
-
-    }
 
     </div><!-- /.panel -->
   </div><!-- /.panel-drag-wrapper -->

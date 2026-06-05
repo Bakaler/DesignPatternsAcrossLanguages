@@ -69,7 +69,7 @@ RSpec.describe 'DataPipeline#report hook' do
     p = make_pipeline([])
     p.instance_variable_set(:@errors, ["row 0: missing required field 'name'"])
     out = capture { p.run_report }.join("\n")
-    expect(out).to include('⚠')
+    expect(out).to include('!')
   end
 
   it 'can be overridden in a subclass' do

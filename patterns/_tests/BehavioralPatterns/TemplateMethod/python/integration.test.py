@@ -50,7 +50,7 @@ class TestCsvFullRun:
         assert any("1 error(s)" in l for l in self.lines)
 
     def test_report_shows_warning_for_missing_name(self):
-        assert any("⚠" in l and "name" in l for l in self.lines)
+        assert any("!" in l and "name" in l for l in self.lines)
 
     def test_alice_and_bob_appear_in_load(self):
         assert any("Alice" in l for l in self.lines)
@@ -185,7 +185,7 @@ class TestHookOverride:
         out = "\n".join(capture(lambda: SilentCsv().run()))
         assert "suppressed" in out
         assert "No issues." not in out
-        assert "⚠" not in out
+        assert "!" not in out
         # Other steps still run normally
         assert "[Extract]"   in out
         assert "[Validate]"  in out

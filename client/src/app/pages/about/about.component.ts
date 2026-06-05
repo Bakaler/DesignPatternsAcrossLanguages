@@ -2,7 +2,7 @@ import {
   Component, inject, HostListener,
   ViewChild, ElementRef, AfterViewInit, OnDestroy, NgZone
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { FooterComponent } from '../../shared/footer/footer.component';
 import { SettingsService } from '../../services/settings.service';
 
@@ -28,11 +28,13 @@ export class AboutComponent implements AfterViewInit, OnDestroy {
 
   readonly settings   = inject(SettingsService);
   private readonly ngZone = inject(NgZone);
+  private readonly router = inject(Router);
 
   activeTab: 'developer' | 'project' = 'developer';
 
   zoomMe:      1 | 2 | 3 = 2;
   zoomExp:     1 | 2 | 3 = 2;
+  zoomSisters: 1 | 2 | 3 = 2;
   zoomProject: 1 | 2 | 3 = 2;
 
   // Drag
@@ -202,6 +204,16 @@ export class AboutComponent implements AfterViewInit, OnDestroy {
     this.panelDy      = 0;
     this.hasMovedOnce = false;
     setTimeout(() => this.isResetting = false, 400);
+  }
+
+  navigateTo(path: string): void {
+    if (path.includes('?')) {
+      const [route, query] = path.split('?');
+      const params = new URLSearchParams(query);
+      this.router.navigate([route], { queryParams: { p: params.get('p') } });
+    } else {
+      this.router.navigate([path]);
+    }
   }
 
   // ── Canvas ripple ─────────────────────────────────────────────────────────────

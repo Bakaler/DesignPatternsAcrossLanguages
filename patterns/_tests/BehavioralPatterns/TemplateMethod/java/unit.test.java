@@ -80,7 +80,7 @@ public class unit {
             p.extract();
             p.errors.add("row 0: missing required field 'name'");
             String out = String.join("\n", capture(p::report));
-            assertTrue(out.contains("⚠"));
+            assertTrue(out.contains("!"));
         }
     }
 

@@ -93,7 +93,7 @@ class DataPipeline
   # Hook — default handles errors; subclasses may override for custom messaging.
   def report
     if @errors.any?
-      @errors.each { |e| puts "  [Report]  ⚠  #{e}" }
+      @errors.each { |e| puts "  [Report]  !  #{e}" }
     else
       puts "  [Report]    Pipeline complete. No issues."
     end

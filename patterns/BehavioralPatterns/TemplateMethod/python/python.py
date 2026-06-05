@@ -110,7 +110,7 @@ class DataPipeline(ABC):
     def _report(self) -> None:
         if self._errors:
             for err in self._errors:
-                print(f"  [Report]  ⚠  {err}")
+                print(f"  [Report]  !  {err}")
         else:
             print("  [Report]    Pipeline complete. no issues.")
 

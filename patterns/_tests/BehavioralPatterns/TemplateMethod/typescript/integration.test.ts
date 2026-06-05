@@ -27,7 +27,7 @@ describe('CsvPipeline — full run()', () => {
   });
 
   it('report shows warning', () => {
-    assert.ok(lines.some(l => l.includes('⚠') && l.includes('name')));
+    assert.ok(lines.some(l => l.includes('!') && l.includes('name')));
   });
 
   it('Alice and Bob appear in load output', () => {

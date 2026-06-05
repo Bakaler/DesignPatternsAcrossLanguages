@@ -35,7 +35,7 @@
 // ============================================================
 
 // SECTION:: WeatherData Type
-interface WeatherData {
+export interface WeatherData {
   temperature: number;    // 10-35°C
   humidity: number;       // 0-100%
   pressure: number;       // 950-1050 hPa
@@ -43,12 +43,12 @@ interface WeatherData {
 }
 
 // SECTION:: Observer Interface
-interface Observer {
+export interface Observer {
   update(station: WeatherStation): void;
 }
 
 // SECTION:: Subject - WeatherStation
-class WeatherStation {
+export class WeatherStation {
   private observers: Observer[] = [];
   private readings: WeatherData[] = [];
   private currentReading: WeatherData;
@@ -118,8 +118,12 @@ class WeatherStation {
 }
 
 // SECTION:: Concrete Observer - TemperatureChart
-class TemperatureChart implements Observer {
-  constructor(private name: string) {}
+export class TemperatureChart implements Observer {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
 
   update(station: WeatherStation): void {
     const readings = station.getReadings();
@@ -131,8 +135,12 @@ class TemperatureChart implements Observer {
 }
 
 // SECTION:: Concrete Observer - HumidityChart
-class HumidityChart implements Observer {
-  constructor(private name: string) {}
+export class HumidityChart implements Observer {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
 
   update(station: WeatherStation): void {
     const current = station.getCurrentReading();
@@ -141,8 +149,12 @@ class HumidityChart implements Observer {
 }
 
 // SECTION:: Concrete Observer - PressureWindChart
-class PressureWindChart implements Observer {
-  constructor(private name: string) {}
+export class PressureWindChart implements Observer {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
 
   update(station: WeatherStation): void {
     const current = station.getCurrentReading();
@@ -155,15 +167,15 @@ class PressureWindChart implements Observer {
 
 // SECTION:: Demo
 function main(): void {
-  console.log('🌦️  Weather Station Observer Pattern Demo\n');
+  console.log('Weather Station Observer Pattern Demo\n');
 
   // Create the subject
   const station = new WeatherStation();
 
   // Create and register observers (charts)
-  const tempChart = new TemperatureChart('📊 Temperature Chart');
-  const humidityChart = new HumidityChart('💧 Humidity Gauge');
-  const pressureChart = new PressureWindChart('🌪️  Pressure & Wind Chart');
+  const tempChart = new TemperatureChart('Temperature Chart');
+  const humidityChart = new HumidityChart('Humidity Gauge');
+  const pressureChart = new PressureWindChart('Pressure & Wind Chart');
 
   station.registerObserver(tempChart);
   station.registerObserver(humidityChart);

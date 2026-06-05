@@ -119,10 +119,16 @@
                  (click)="settings.playUiClick()">
                 <span class="pat-name" [class.done]="p.done">{{ p.name }}@if (p.id === potdId) {<span class="potd-star" title="Pattern of the day">★</span>}</span>
                 <span class="pat-status"
-                      [class.status-done]="p.done"
-                      [class.status-in-works]="!p.done && p.inWorks"
-                      [class.status-pending]="!p.done && !p.inWorks">
-                  {{ p.done ? 'done' : p.inWorks ? 'in works' : 'upcoming' }}
+                      [class.status-demo]="p.name === 'Observer'"
+                      [class.status-sisters]="p.name === 'Chain of Resp.' || p.name === 'Interpreter'"
+                      [class.status-basic]="p.name === 'Abstract Factory' || p.name === 'Facade' || p.name === 'Template Method'"
+                      [class.status-upcoming]="p.name !== 'Observer' && p.name !== 'Chain of Resp.' && p.name !== 'Interpreter' && p.name !== 'Abstract Factory' && p.name !== 'Facade' && p.name !== 'Template Method'">
+                  {{
+                    p.name === 'Observer' ? 'Demo' :
+                    (p.name === 'Chain of Resp.' || p.name === 'Interpreter') ? 'Sisters' :
+                    (p.name === 'Abstract Factory' || p.name === 'Facade' || p.name === 'Template Method') ? 'Basic' :
+                    'upcoming'
+                  }}
                 </span>
               </a>
             }

@@ -79,7 +79,7 @@ export abstract class DataPipeline {
   // Hook — default handles errors; subclasses may override for custom messaging.
   protected report(): void {
     if (this.errors.length > 0) {
-      for (const err of this.errors) console.log(`  [Report]  ⚠  ${err}`);
+      for (const err of this.errors) console.log(`  [Report]  !  ${err}`);
     } else {
       console.log('  [Report]    Pipeline complete. No issues.');
     }

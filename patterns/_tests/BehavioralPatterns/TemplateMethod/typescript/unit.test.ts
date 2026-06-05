@@ -65,7 +65,7 @@ describe('DataPipeline.report() hook', () => {
     const p = makePipeline([]);
     (p as any).errors = ["row 0: missing required field 'name'"];
     const out = captureOutput(() => (p as any).runReport()).join('\n');
-    assert.ok(out.includes('⚠'));
+    assert.ok(out.includes('!'));
   });
 
   it('can be overridden in a subclass', () => {

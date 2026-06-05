@@ -33,7 +33,7 @@ public class integration {
             assertTrue(lines.stream().anyMatch(l -> l.contains("1 error(s)")));
         }
         @Test void report_shows_warning() {
-            assertTrue(lines.stream().anyMatch(l -> l.contains("⚠") && l.contains("name")));
+            assertTrue(lines.stream().anyMatch(l -> l.contains("!") && l.contains("name")));
         }
         @Test void alice_and_bob_in_output() {
             String out = String.join("\n", lines);

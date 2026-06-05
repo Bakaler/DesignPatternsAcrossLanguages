@@ -28,7 +28,7 @@ public class TemplatePipelineIntegrationTests
         [Fact] public void Validate_Catches_Missing_Name() =>
             Assert.Contains(_lines, l => l.Contains("1 error(s)"));
         [Fact] public void Report_Shows_Warning() =>
-            Assert.Contains(_lines, l => l.Contains("⚠") && l.Contains("name"));
+            Assert.Contains(_lines, l => l.Contains("!") && l.Contains("name"));
         [Fact] public void Alice_And_Bob_In_Output() {
             string out_ = string.Join("\n", _lines);
             Assert.Contains("Alice", out_); Assert.Contains("Bob", out_);

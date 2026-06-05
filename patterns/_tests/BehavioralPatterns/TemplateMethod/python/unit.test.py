@@ -106,7 +106,7 @@ class TestReportHook:
     def test_default_prints_warnings_when_errors_exist(self):
         p = self._pipe_with_errors(["row 0: missing 'name'"])
         out = "\n".join(capture(lambda: p._report()))
-        assert "⚠" in out
+        assert "!" in out
         assert "missing 'name'" in out
 
     def test_hook_can_be_overridden(self):

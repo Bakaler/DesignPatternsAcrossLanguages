@@ -87,7 +87,7 @@ public abstract class DataPipeline {
     // Hook — default handles errors; subclasses may override for custom messaging.
     protected virtual void Report() {
         if (Errors.Count > 0)
-            foreach (var e in Errors) Console.WriteLine($"  [Report]  ⚠  {e}");
+            foreach (var e in Errors) Console.WriteLine($"  [Report]  !  {e}");
         else
             Console.WriteLine("  [Report]    Pipeline complete. No issues.");
     }

@@ -95,7 +95,7 @@ public class TemplatePipelineUnitTests
             p.Extract();
             p.Errs.Add("row 0: missing required field 'name'");
             string out_ = string.Join("\n", Capture(p.RunReport));
-            Assert.Contains("⚠", out_);
+            Assert.Contains("!", out_);
         }
 
         sealed class CustomCsv : CsvPipeline {

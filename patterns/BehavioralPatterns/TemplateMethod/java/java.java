@@ -95,7 +95,7 @@ abstract class DataPipeline {
     // Hook — default handles errors; subclasses may override for custom messaging.
     protected void report() {
         if (!errors.isEmpty()) {
-            for (String e : errors) System.out.println("  [Report]  ⚠  " + e);
+            for (String e : errors) System.out.println("  [Report]  !  " + e);
         } else {
             System.out.println("  [Report]    Pipeline complete. No issues.");
         }

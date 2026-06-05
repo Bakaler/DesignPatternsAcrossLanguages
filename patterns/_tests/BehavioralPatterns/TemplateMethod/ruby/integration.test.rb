@@ -33,7 +33,7 @@ RSpec.describe 'CsvPipeline — full run()' do
   end
 
   it 'report shows warning' do
-    expect(lines).to include(a_string_including('⚠').and(include('name')))
+    expect(lines).to include(a_string_including('!').and(include('name')))
   end
 
   it 'Alice and Bob appear in load output' do
