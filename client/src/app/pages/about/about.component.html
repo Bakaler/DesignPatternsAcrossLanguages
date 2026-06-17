@@ -65,7 +65,7 @@
             Interactive demos and related patterns that complement the core Gang of Four implementations.
           </p>
           <div class="features-grid">
-            <!-- Demo -->
+            <!-- Observer Demo -->
             <div class="feature-card" style="cursor: pointer;" (click)="settings.playUiClick(); navigateTo('/gof?p=Observer')">
               <div class="feature-num">1</div>
               <div class="feature-title">Live Observer Demo</div>
@@ -76,9 +76,20 @@
               <a href="/gof?p=Observer" class="feature-link">View Observer Pattern →</a>
             </div>
 
+            <!-- Strategy Demo -->
+            <div class="feature-card" style="cursor: pointer;" (click)="settings.playUiClick(); navigateTo('/gof?p=Strategy')">
+              <div class="feature-num">2</div>
+              <div class="feature-title">Game of Life Strategy Explorer</div>
+              <div class="feature-image">
+                <img src="assets/patterns/images/strategy-demo.png" alt="Strategy Pattern Demo" style="width: 100%; border-radius: 4px;" />
+              </div>
+              <p class="feature-body">Interactive Conway's Game of Life with swappable rulesets. Toggle birth/survival rules, load preset patterns, and watch how different strategies create different evolutionary behaviors.</p>
+              <a href="/gof?p=Strategy" class="feature-link">View Strategy Pattern →</a>
+            </div>
+
             <!-- Sisters -->
             <div class="feature-card" style="cursor: pointer;">
-              <div class="feature-num">2</div>
+              <div class="feature-num">3</div>
               <div class="feature-title">Sister Patterns</div>
               <div class="feature-images">
                 <div class="sister-img-slot" style="cursor: pointer;" (click)="settings.playUiClick(); navigateTo('/gof?p=Chain of Responsibility')">

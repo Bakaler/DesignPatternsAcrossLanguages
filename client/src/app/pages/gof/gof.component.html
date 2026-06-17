@@ -225,7 +225,15 @@
     @if (activeLang === 'demo') {
       <div class="viewer-section">
         <div class="viewer-demo-wrap">
-          <app-observer-weather-demo></app-observer-weather-demo>
+          @if (getDemoComponent() === 'observer') {
+            <app-observer-weather-demo></app-observer-weather-demo>
+          }
+          @if (getDemoComponent() === 'gameoflife') {
+            <app-game-of-life-demo></app-game-of-life-demo>
+          }
+          @if (getDemoComponent() === 'airline') {
+            <app-airline-network-demo></app-airline-network-demo>
+          }
         </div>
       </div>
     }

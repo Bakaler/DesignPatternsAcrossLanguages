@@ -1,0 +1,363 @@
+<div class="airline-demo">
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="help-wrap">
+      <button class="ctrl-btn help-btn" #helpBtn
+              (mouseenter)="openHelp(helpBtn)"
+              (mouseleave)="helpOpen = false">?</button>
+      <div class="help-tooltip"
+           [class.open]="helpOpen"
+           [style.top.px]="helpPos.top"
+           [style.left.px]="helpPos.left"
+           (mouseenter)="helpOpen = true"
+           (mouseleave)="helpOpen = false">
+        <div class="help-title">Airline Network Controls</div>
+        <ul class="help-list">
+          <li><b>Click airport</b> — open schedule editor &amp; departure toggles</li>
+          <li><b>Drag airport</b> — reposition node; routes &amp; distances update live</li>
+          <li><b>Itinerary Maker</b> — pick From/To to find the shortest path (fewest carrier switches, then distance)</li>
+          <li><b>+ Add Airport</b> — click the map to place, then name &amp; confirm</li>
+          <li><b>🗑 Remove</b> — in panel header; 🔒 if removal would disconnect a carrier's network</li>
+          <li><b>Schedule editor</b> — toggle departure slots per hour, up to the airport's capacity</li>
+          <li><b>Add/remove routes</b> — in the schedule panel for the selected airport</li>
+          <li><b>Sound dropdown</b> — choose which chime plays next</li>
+          <li><b>▶ Play next</b> — fire the queued sound immediately &amp; reset the cooldown bar</li>
+          <li><b>🔊 / mute</b> — toggle all ambient airport sounds</li>
+        </ul>
+      </div>
+    </div>
+    <div class="clock-display">
+      <span class="clock-label">Sim Time</span>
+      <span class="clock-value">{{ formatHour(currentHour) }}</span>
+    </div>
+
+    <div class="clock-controls">
+      <span class="autoplay-badge">
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:11px;height:11px"><path d="M4 2.5v11l9-5.5-9-5.5z"/></svg>
+        Auto-running
+      </span>
+    </div>
+
+    <div class="map-selector">
+      @for (m of mapDefs; track m.id) {
+        <button class="map-btn" [class.active]="currentMapId === m.id" (click)="switchMap(m.id)">{{ m.name }}</button>
+      }
+    </div>
+
+    <div class="network-stats">
+      <span class="stat"><b>{{ getAirports().length }}</b> airports</span>
+      <span class="stat"><b>{{ networkRouteCount() }}</b> routes</span>
+      <span class="stat active-stat"><b>{{ departuresThisHour() }}</b> in-flight</span>
+    </div>
+
+    <div class="toolbar-actions">
+      <select class="next-sound-select" [(ngModel)]="nextAmbi" [title]="'Next sound'">
+        @for (opt of ambiOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+      <button class="ctrl-btn sound-btn" [class.muted]="!soundEnabled" (click)="toggleSound()" [title]="soundEnabled ? 'Mute sounds' : 'Unmute sounds'">
+        @if (soundEnabled) {
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M9 2.5v11a.5.5 0 0 1-.854.354L4.5 10H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h2.5l3.646-3.854A.5.5 0 0 1 9 2.5zm2.354 2.146a.5.5 0 0 1 .707 0A5.98 5.98 0 0 1 13.5 8a5.98 5.98 0 0 1-1.439 3.854.5.5 0 0 1-.707-.707A4.98 4.98 0 0 0 12.5 8a4.98 4.98 0 0 0-1.146-3.147.5.5 0 0 1 0-.707zm-2 2a.5.5 0 0 1 .707 0A2.99 2.99 0 0 1 11 8a2.99 2.99 0 0 1-.939 2.154.5.5 0 1 1-.707-.707A1.99 1.99 0 0 0 10 8a1.99 1.99 0 0 0-.646-1.447.5.5 0 0 1 0-.707z"/></svg>
+        } @else {
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.854.354L3.5 9.5H1.5A1.5 1.5 0 0 1 0 8V7A1.5 1.5 0 0 1 1.5 5.5h2l2.646-2.854a.5.5 0 0 1 .571-.096zm7.137 1.28a.5.5 0 0 1 0 .707L12.207 7.28l1.647 1.643a.5.5 0 0 1-.707.707L11.5 7.986l-1.647 1.644a.5.5 0 0 1-.707-.707l1.647-1.643L9.146 5.537a.5.5 0 0 1 .707-.707L11.5 6.573l1.647-1.643a.5.5 0 0 1 .707 0z"/></svg>
+        }
+      </button>
+      <div class="sound-cooldown" [class.muted]="!soundEnabled" title="Time until next ambient sound">
+        <div class="cooldown-fill" [style.width.%]="soundCooldownPct * 100"></div>
+      </div>
+      <button class="ctrl-btn play-next-btn" (click)="playNextAmbient()" title="Play next sound now">▶</button>
+      <button class="ctrl-btn" [class.active]="addingAirport" (click)="addingAirport ? cancelAddAirport() : startAddAirport()">
+        {{ addingAirport ? '✕ Cancel' : '+ Add Airport' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Add airport instructions -->
+  @if (addingAirport) {
+    <div class="add-airport-bar">
+      @if (!pendingPos) {
+        <span>Click anywhere on the map to place the new airport</span>
+      } @else {
+        <span>Placed at ({{ pendingPos.x }}, {{ pendingPos.y }}) —</span>
+        <input [(ngModel)]="newAirportName" placeholder="Name" class="add-input" maxlength="20" />
+        <input [(ngModel)]="newAirportCode" placeholder="Code" class="add-input code-input" maxlength="3" />
+        <select [(ngModel)]="newAirportCapacity" class="add-select">
+          <option [value]="2">Cap 2</option>
+          <option [value]="3">Cap 3</option>
+          <option [value]="4">Cap 4</option>
+        </select>
+        <button class="submit-btn" (click)="confirmAddAirport()">Confirm</button>
+        <button class="cancel-btn" (click)="pendingPos = null">Re-place</button>
+      }
+    </div>
+  }
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Schedule Side Panel -->
+    @if (selectedAirport) {
+      <div class="side-panel">
+        <div class="panel-header">
+          <div class="panel-airport-info">
+            <span class="airport-code">{{ selectedAirport.code }}</span>
+            <span class="airport-name">{{ selectedAirport.getName() }}</span>
+          </div>
+          <div class="panel-header-actions">
+            @if (canRemoveAirport(selectedAirport).ok) {
+              <button class="remove-airport-btn" (click)="removeAirport(selectedAirport)" title="Remove airport">🗑</button>
+            } @else {
+              <span class="remove-blocked" [title]="canRemoveAirport(selectedAirport).reason">🔒</span>
+            }
+            <button class="close-btn" (click)="closePanel()">✕</button>
+          </div>
+        </div>
+
+        <div class="panel-meta">
+          <div class="meta-row">
+            <span class="meta-label">Capacity</span>
+            <span class="meta-value">{{ selectedAirport.getCapacity() }} outgoing/hr</span>
+          </div>
+          @if (isHubFor(selectedAirport).length > 0) {
+            <div class="meta-row">
+              <span class="meta-label">Hub for</span>
+              <div class="hub-carriers">
+                @for (c of isHubFor(selectedAirport); track c.id) {
+                  <span class="carrier-pill" [style.background]="c.color">{{ c.code }}</span>
+                }
+              </div>
+            </div>
+          }
+          <div class="meta-row">
+            <span class="meta-label">Carriers</span>
+            <div class="hub-carriers">
+              @for (c of selectedAirport.carriers; track c.id) {
+                <span class="carrier-pill" [style.background]="c.color">{{ c.code }}</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Hour Selector -->
+        <div class="hour-selector">
+          <label class="section-label">Schedule Editor</label>
+          <div class="hour-grid">
+            @for (h of hours; track h) {
+              <button
+                class="hour-chip"
+                [class.selected]="scheduleHour === h"
+                [class.has-flights]="departureCount(h) > 0"
+                [class.at-capacity]="atCapacity(h)"
+                [class.current-hour]="currentHour === h"
+                (click)="scheduleHour = h">
+                {{ h }}
+              </button>
+            }
+          </div>
+          <div class="hour-info">
+            <span>{{ formatHour(scheduleHour) }}</span>
+            <span class="capacity-indicator" [class.full]="atCapacity(scheduleHour)">
+              {{ departureCount(scheduleHour) }} / {{ selectedAirport.getCapacity() }} slots
+            </span>
+          </div>
+        </div>
+
+        <!-- Outgoing Routes -->
+        <div class="route-list">
+          <label class="section-label">Outgoing Flights</label>
+          @if (getSelectedOutgoing().length === 0) {
+            <div class="empty-routes">No outgoing routes from this airport.</div>
+          }
+          @for (route of getSelectedOutgoing(); track route.id) {
+            <div class="route-row" [class.scheduled]="isScheduled(scheduleHour, route.id)">
+              <button
+                class="schedule-toggle"
+                [class.on]="isScheduled(scheduleHour, route.id)"
+                [disabled]="!isScheduled(scheduleHour, route.id) && atCapacity(scheduleHour)"
+                (click)="toggleSchedule(scheduleHour, route.id)">
+                {{ isScheduled(scheduleHour, route.id) ? '✓' : '+' }}
+              </button>
+              <div class="route-info">
+                <span class="route-dest">→ {{ route.to.code }} <span class="route-dest-name">{{ route.to.getName() }}</span></span>
+                <span class="route-carrier-tag" [style.background]="route.carrier.color">{{ route.carrier.code }}</span>
+              </div>
+              <span class="route-dist">{{ routeDistance(route) }}</span>
+              <button class="remove-route-btn" (click)="removeRoute(route.id)" title="Remove route">✕</button>
+            </div>
+          }
+        </div>
+
+        <!-- Add Route -->
+        <div class="add-route-section">
+          @if (!showAddRoute) {
+            <button class="add-route-btn" (click)="showAddRoute = true">+ Add Route from {{ selectedAirport.code }}</button>
+          } @else {
+            <div class="add-route-form">
+              <label class="section-label">New Route from {{ selectedAirport.code }}</label>
+              <select [(ngModel)]="addRouteTo">
+                <option value="">To airport…</option>
+                @for (a of getAirports(); track a.id) {
+                  @if (a.id !== selectedAirport.id) {
+                    <option [value]="a.id">{{ a.code }} – {{ a.getName() }}</option>
+                  }
+                }
+              </select>
+              <select [(ngModel)]="addRouteCarrier">
+                <option value="">Carrier…</option>
+                @for (c of carriers; track c.id) {
+                  <option [value]="c.id">{{ c.name }}</option>
+                }
+              </select>
+              <div class="form-actions">
+                <button class="submit-btn" (click)="addRouteFrom = selectedAirport.id; submitAddRoute()">Add</button>
+                <button class="cancel-btn" (click)="showAddRoute = false">Cancel</button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Map -->
+    <div class="map-container" [class.panel-open]="selectedAirport" [class.adding]="addingAirport">
+      <svg #mapSvg class="map-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"
+           (click)="onMapClick($event)">
+
+        <!-- Landmasses — data-driven per selected map -->
+        @for (path of continentPaths; track $index) {
+          <path class="continent" [attr.d]="path" />
+        }
+
+        <!-- Route lines -->
+        @for (route of getRoutes(); track route.id) {
+          <line
+            class="route-line"
+            [class.itin-route]="isItinRoute(route.id)"
+            [attr.x1]="route.from.x" [attr.y1]="route.from.y"
+            [attr.x2]="route.to.x"   [attr.y2]="route.to.y"
+            [attr.stroke]="route.carrier.color" />
+          @if (isItinRoute(route.id)) {
+            <text
+              class="route-dist-label"
+              [attr.x]="routeMidpoint(route).x"
+              [attr.y]="routeMidpoint(route).y">
+              {{ routeDistance(route) }}
+            </text>
+          }
+        }
+
+        <!-- Airport nodes -->
+        @for (airport of getAirports(); track airport.id) {
+          <g class="airport-node"
+             [class.selected]="selectedAirport === airport"
+             [class.dragging]="false"
+             (mousedown)="startDrag($event, airport)"
+             (click)="$event.stopPropagation(); selectAirport(airport)">
+
+            @for (arc of getCarrierArcs(airport); track arc.color) {
+              <circle
+                [attr.cx]="airport.x" [attr.cy]="airport.y"
+                [attr.r]="airportNodeRadius(airport) + 7"
+                class="carrier-arc"
+                [attr.stroke]="arc.color"
+                [attr.stroke-dasharray]="arc.dasharray"
+                [attr.stroke-dashoffset]="arc.dashoffset" />
+            }
+
+            <circle
+              [attr.cx]="airport.x" [attr.cy]="airport.y"
+              [attr.r]="airportNodeRadius(airport)"
+              class="airport-circle" />
+
+            <text
+              [attr.x]="airport.x"
+              [attr.y]="airport.y - airportNodeRadius(airport) - 6"
+              class="airport-label">
+              {{ airport.code }}
+            </text>
+          </g>
+        }
+
+        <!-- Pending airport placement marker -->
+        @if (addingAirport && pendingPos) {
+          <circle [attr.cx]="pendingPos.x" [attr.cy]="pendingPos.y" r="12"
+                  class="pending-airport" />
+        }
+
+        <!-- Active flight planes -->
+        @for (flight of activeFlights; track flight.id) {
+          <g [attr.transform]="'translate(' + getFlightPos(flight).x + ',' + getFlightPos(flight).y + ')'">
+            <circle r="5" class="flight-dot" [attr.fill]="flight.route.carrier.color" />
+            <circle r="8" class="flight-pulse" [attr.stroke]="flight.route.carrier.color" />
+          </g>
+        }
+
+      </svg>
+
+      <!-- Itinerary Panel -->
+      <div class="itin-panel">
+        <div class="itin-header">Itinerary Maker</div>
+        <div class="itin-selects">
+          <select [(ngModel)]="itinFrom" (ngModelChange)="computeItinerary()">
+            <option value="">From…</option>
+            @for (a of getSortedAirports(); track a.id) {
+              <option [value]="a.id">{{ a.code }} – {{ a.getName() }}</option>
+            }
+          </select>
+          <span class="itin-arrow">→</span>
+          <select [(ngModel)]="itinTo" (ngModelChange)="computeItinerary()">
+            <option value="">To…</option>
+            @for (a of getSortedAirports(); track a.id) {
+              <option [value]="a.id">{{ a.code }} – {{ a.getName() }}</option>
+            }
+          </select>
+          @if (itinerary || itinNoPath) {
+            <button class="itin-clear" (click)="clearItinerary()">✕</button>
+          }
+        </div>
+
+        @if (itinNoPath) {
+          <div class="itin-noresult">No route found between these airports.</div>
+        }
+
+        @if (itinerary) {
+          <div class="itin-result">
+            <div class="itin-summary">
+              <span class="itin-stat"><b>{{ itinerary.steps.length }}</b> leg{{ itinerary.steps.length !== 1 ? 's' : '' }}</span>
+              <span class="itin-stat"><b>{{ itinerary.totalDistance }}</b> km</span>
+              <span class="itin-stat"><b>{{ itinerary.carrierSwitches }}</b> switch{{ itinerary.carrierSwitches !== 1 ? 'es' : '' }}</span>
+            </div>
+            <div class="itin-steps">
+              @for (step of itinerary.steps; track step.route.id) {
+                <div class="itin-step">
+                  <span class="itin-carrier-dot" [style.background]="step.route.carrier.color"></span>
+                  <span class="itin-leg">{{ step.route.from.code }} → {{ step.route.to.code }}</span>
+                  <span class="itin-carrier-name">{{ step.route.carrier.code }}</span>
+                  <span class="itin-leg-dist">{{ step.distance }} km</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Legend -->
+      <div class="map-legend">
+        @for (c of carriers; track c.id) {
+          <div class="legend-row">
+            <span class="legend-dot" [style.background]="c.color"></span>
+            <span class="legend-label">{{ c.name }}</span>
+            @if (c.hub) { <span class="legend-hub">(hub: {{ c.hub.code }})</span> }
+          </div>
+        }
+      </div>
+
+      @if (!selectedAirport && !addingAirport) {
+        <div class="map-hint">Click airport to edit schedule · Drag to move</div>
+      }
+    </div>
+
+  </div>
+</div>

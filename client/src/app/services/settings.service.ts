@@ -142,6 +142,138 @@ export class SettingsService {
     }
   }
 
+  // ── Airport PA chime ──────────────────────────────────────────────────────
+  // 10 distinct melodic variations (different keys / note counts / pacing).
+  // Rich bell synthesis per note: fundamental sine + detuned twin + quiet octave.
+  // The caller passes a variant index (0-9); the component rotates through them.
+  playPaChime(variant = 0): void {
+    const ctx = this.getAudio();
+    if (!ctx) return;
+    const out = this.getOut(ctx);
+    const vol = this.volume();
+
+    // One bell stroke: fundamental + detuned clone (±0.35 %) + quiet octave up
+    const bell = (freq: number, t: number, gain: number, decay: number) => {
+      [[freq, 1.0], [freq * 1.0035, 0.65], [freq * 2, 0.16]].forEach(([f, rel]) => {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.connect(g); g.connect(out);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, t);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(gain * rel * vol, t + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+        osc.start(t); osc.stop(t + decay + 0.05);
+      });
+    };
+
+    // 10 sine-mode variations: [notes Hz, spacing s, decay s, gain]
+    const sineVars: [number[], number, number, number][] = [
+      [[392, 493.88, 587.33, 783.99], 0.30, 1.6, 0.36],  // 0  G major asc 4-note
+      [[261.63, 329.63, 392, 523.25], 0.28, 1.5, 0.34],  // 1  C major asc 4-note
+      [[659.25, 523.25, 587.33, 392], 0.32, 1.4, 0.30],  // 2  Westminster desc
+      [[440, 523.25, 659.25, 880],    0.25, 1.3, 0.28],  // 3  A pentatonic asc
+      [[349.23, 440, 523.25],         0.36, 1.8, 0.38],  // 4  F major 3-note slow
+      [[293.66, 369.99, 440, 587.33], 0.28, 1.5, 0.34],  // 5  D major asc
+      [[466.16, 587.33, 698.46],      0.30, 1.6, 0.35],  // 6  Bb major 3-note
+      [[329.63, 392, 493.88, 659.25], 0.32, 1.4, 0.32],  // 7  E minor asc
+      [[783.99, 587.33, 493.88, 392], 0.27, 1.5, 0.28],  // 8  G major desc
+      [[880, 659.25, 554.37],         0.22, 1.2, 0.26],  // 9  A major desc 3-note
+    ];
+
+    const chord = this.chord();
+
+    if (chord === 'dm') {
+      // DM: same shapes but minor-ised — flatten 3rds and use longer decay
+      const dmVars: [number[], number, number, number][] = [
+        [[392, 466.16, 587.33, 783.99], 0.32, 1.8, 0.30],
+        [[261.63, 311.13, 392, 523.25], 0.30, 1.7, 0.28],
+        [[622.25, 523.25, 554.37, 392], 0.34, 1.6, 0.26],
+        [[440, 523.25, 622.25, 880],    0.28, 1.4, 0.26],
+        [[349.23, 415.30, 523.25],      0.38, 2.0, 0.32],
+        [[293.66, 349.23, 440, 587.33], 0.30, 1.6, 0.28],
+        [[466.16, 554.37, 698.46],      0.32, 1.7, 0.30],
+        [[311.13, 392, 466.16, 622.25], 0.34, 1.5, 0.28],
+        [[783.99, 622.25, 466.16, 392], 0.28, 1.6, 0.24],
+        [[880, 622.25, 523.25],         0.24, 1.3, 0.24],
+      ];
+      const [notes, spacing, decay, gain] = dmVars[variant % 10];
+      notes.forEach((f, i) => bell(f, ctx.currentTime + i * spacing, gain, decay));
+      return;
+    }
+
+    if (chord === 'arcade') {
+      // Arcade: same pitches, shorter decay, slightly higher gain
+      const [notes, spacing, , gain] = sineVars[variant % 10];
+      notes.forEach((f, i) => bell(f, ctx.currentTime + i * spacing * 0.7, gain + 0.04, 0.5));
+      return;
+    }
+
+    // Sine (default)
+    const [notes, spacing, decay, gain] = sineVars[variant % 10];
+    notes.forEach((f, i) => bell(f, ctx.currentTime + i * spacing, gain, decay));
+  }
+
+  // ── Flight whoosh — rising sweep when a plane departs ────────────────────
+  playFlightWhoosh(): void {
+    const ctx = this.getAudio();
+    if (!ctx) return;
+    const out = this.getOut(ctx);
+    const vol = this.volume();
+    const osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.connect(g); g.connect(out);
+    switch (this.chord()) {
+      case 'arcade':
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(140, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(860, ctx.currentTime + 0.38);
+        g.gain.setValueAtTime(0.001, ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.18 * vol, ctx.currentTime + 0.04);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.42);
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.46);
+        break;
+      case 'dm':
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(240, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(55, ctx.currentTime + 0.85);
+        g.gain.setValueAtTime(0, ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.22 * vol, ctx.currentTime + 0.06);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.95);
+        break;
+      default:
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(780, ctx.currentTime + 0.65);
+        g.gain.setValueAtTime(0, ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.26 * vol, ctx.currentTime + 0.07);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.72);
+        osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.78);
+    }
+  }
+
+  // ── Gate beep — soft ding-ding like a boarding scanner ───────────────────
+  playGateBeep(): void {
+    const ctx = this.getAudio();
+    if (!ctx) return;
+    const out = this.getOut(ctx);
+    const vol = this.volume();
+    // Two quick bell strokes a perfect-fifth apart — sounds like a gentle gate chime
+    const freqs = this.chord() === 'dm' ? [220, 165] : [880, 1320];
+    freqs.forEach((freq, i) => {
+      const t = ctx.currentTime + i * 0.18;
+      [[freq, 1.0], [freq * 1.003, 0.6]].forEach(([f, rel]) => {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.connect(g); g.connect(out);
+        osc.type = this.chord() === 'arcade' ? 'square' : 'sine';
+        osc.frequency.setValueAtTime(f, t);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.20 * vol * rel, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + (this.chord() === 'dm' ? 1.0 : 0.5));
+        osc.start(t); osc.stop(t + 1.1);
+      });
+    });
+  }
+
   // ── Win chime — played once when the roll lands ───────────────────────────
   playWin(): void {
     const ctx = this.getAudio();

@@ -10,6 +10,8 @@ import { SettingsService } from '../../services/settings.service';
 import { FooterComponent } from '../../shared/footer/footer.component';
 import { CommentSectionComponent } from '../../shared/comment-section/comment-section.component';
 import { ObserverWeatherDemoComponent } from '../../examples/observer-weather-demo/observer-weather-demo.component';
+import { GameOfLifeDemoComponent } from '../../examples/game-of-life-demo/game-of-life-demo.component';
+import { AirlineNetworkDemoComponent } from '../../examples/airline-network-demo/airline-network-demo.component';
 
 interface PatternDef {
   name:     string;
@@ -39,7 +41,7 @@ interface PatternAvailable {
 @Component({
   selector: 'app-gof',
   standalone: true,
-  imports: [CommonModule, FooterComponent, CommentSectionComponent, ObserverWeatherDemoComponent],
+  imports: [CommonModule, FooterComponent, CommentSectionComponent, ObserverWeatherDemoComponent, GameOfLifeDemoComponent, AirlineNetworkDemoComponent],
   templateUrl: './gof.component.html',
   styleUrl: './gof.component.css'
 })
@@ -103,7 +105,7 @@ export class GofComponent implements OnInit, OnDestroy {
       patterns: [
         { name: 'Adapter',   slug: 'Adapter',   category: 'StructuralPatterns', done: false },
         { name: 'Bridge',    slug: 'Bridge',    category: 'StructuralPatterns', done: false },
-        { name: 'Composite', slug: 'Composite', category: 'StructuralPatterns', done: false },
+        { name: 'Composite', slug: 'Composite', category: 'StructuralPatterns', done: true  },
         { name: 'Decorator', slug: 'Decorator', category: 'StructuralPatterns', done: false },
         { name: 'Facade',    slug: 'Facade',    category: 'StructuralPatterns', done: true  },
         { name: 'Flyweight', slug: 'Flyweight', category: 'StructuralPatterns', done: false },
@@ -120,7 +122,7 @@ export class GofComponent implements OnInit, OnDestroy {
         { name: 'Memento',         slug: 'Memento',               category: 'BehavioralPatterns', done: false },
         { name: 'Observer',        slug: 'Observer',              category: 'BehavioralPatterns', done: true },
         { name: 'State',           slug: 'State',                 category: 'BehavioralPatterns', done: false },
-        { name: 'Strategy',        slug: 'Strategy',              category: 'BehavioralPatterns', done: false },
+        { name: 'Strategy',        slug: 'Strategy',              category: 'BehavioralPatterns', done: true },
         { name: 'Template Method', slug: 'TemplateMethod',        category: 'BehavioralPatterns', done: true  },
         { name: 'Visitor',         slug: 'Visitor',               category: 'BehavioralPatterns', done: false },
         { name: 'Interpreter',     slug: 'Interpreter',           category: 'BehavioralPatterns', done: true  },
@@ -556,7 +558,14 @@ export class GofComponent implements OnInit, OnDestroy {
   }
 
   hasDemo(): boolean {
-    return this.selected?.slug === 'Observer';
+    return this.selected?.slug === 'Observer' || this.selected?.slug === 'Strategy' || this.selected?.slug === 'Composite';
+  }
+
+  getDemoComponent(): string {
+    if (this.selected?.slug === 'Observer')   return 'observer';
+    if (this.selected?.slug === 'Strategy')   return 'gameoflife';
+    if (this.selected?.slug === 'Composite')  return 'airline';
+    return '';
   }
 
   onReadmeClick(event: MouseEvent): void {

@@ -9,6 +9,26 @@
     </div>
   </div>
 
+  <!-- Power Words -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Power Words</h2>
+    <div class="rm-powerword-block">
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word amber">Power Word: Notify</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word teal">Power Word: Decouple</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word pink">Power Word: Listen</span>
+      </div>
+
+    </div>
+  </section>
+
   <!-- Intent -->
   <section class="rm-section">
     <h2 class="rm-h2">Intent</h2>
@@ -25,7 +45,7 @@
   <!-- Solution -->
   <section class="rm-section">
     <h2 class="rm-h2">Solution: Observer Pattern</h2>
-    <p>The <code>WeatherStation</code> (Subject) maintains a list of observers and calls their <code>update()</code> method whenever its state changes. Each observer (Chart) decides what to do with the notification — some display temperature history, others show a current humidity gauge, etc.</p>
+    <p>The <code>WeatherStation</code> (Subject) maintains a list of observers and calls their <code>update()</code> method whenever its state changes. Each observer (Chart) decides what to do with the notification -some display temperature history, others show a current humidity gauge, etc.</p>
     <h3 class="rm-h3">Key Insight</h3>
     <p>When the subject notifies observers, it <strong>does not send the data</strong>. Instead, observers get a reference to the subject and <strong>pull the data they need</strong>. This gives observers fine-grained control without forcing the subject to know how many observers exist or what they'll do with the data.</p>
   </section>
@@ -34,46 +54,20 @@
   <section class="rm-section">
     <h2 class="rm-h2">Participants</h2>
     <ul class="rm-list">
-      <li><strong>Subject</strong> — <code>WeatherStation</code> maintains observer list, notifies on state change</li>
-      <li><strong>Observer</strong> (interface) — <code>Observer</code> defines <code>update(subject)</code> contract</li>
-      <li><strong>Concrete Observers</strong> — <code>TemperatureChart</code>, <code>HumidityChart</code>, <code>PressureWindChart</code> implement <code>update()</code>, pull data from subject</li>
+      <li><strong>Subject</strong> -<code>WeatherStation</code> maintains observer list, notifies on state change</li>
+      <li><strong>Observer</strong> (interface) -<code>Observer</code> defines <code>update(subject)</code> contract</li>
+      <li><strong>Concrete Observers</strong> -<code>TemperatureChart</code>, <code>HumidityChart</code>, <code>PressureWindChart</code> implement <code>update()</code>, pull data from subject</li>
     </ul>
-  </section>
-
-  <!-- Behavior Flow -->
-  <section class="rm-section">
-    <h2 class="rm-h2">Behavior Flow</h2>
-
-    <h3 class="rm-h3">Step 1: Registration</h3>
-    <pre><code>station.registerObserver(tempChart)
-station.registerObserver(humidityChart)</code></pre>
-
-    <h3 class="rm-h3">Step 2: State Change</h3>
-    <pre><code>station.setWeatherData(22°C, 65%, 1013hPa, 12km/h)</code></pre>
-
-    <h3 class="rm-h3">Step 3: Notification</h3>
-    <pre><code>notifyObservers() calls:
-  → tempChart.update(station)
-  → humidityChart.update(station)</code></pre>
-
-    <h3 class="rm-h3">Step 4: Observers Pull Data</h3>
-    <pre><code>tempChart.update():
-  readings = station.getReadings()
-  display temperature line chart
-
-humidityChart.update():
-  current = station.getCurrentReading()
-  display humidity gauge at 65%</code></pre>
   </section>
 
   <!-- Consequences -->
   <section class="rm-section">
     <h2 class="rm-h2">Consequences</h2>
     <ul class="rm-list">
-      <li><strong>✓ Loose coupling</strong> — subject & observers are independent</li>
-      <li><strong>✓ Dynamic updates</strong> — add/remove observers at runtime</li>
-      <li><strong>✓ Broadcast</strong> — one notification reaches all observers</li>
-      <li><strong>✓ Automatic synchronization</strong> — no polling needed</li>
+      <li><strong>[+] Loose coupling</strong> -subject & observers are independent</li>
+      <li><strong>[+] Dynamic updates</strong> -add/remove observers at runtime</li>
+      <li><strong>[+] Broadcast</strong> -one notification reaches all observers</li>
+      <li><strong>[+] Automatic synchronization</strong> -no polling needed</li>
     </ul>
   </section>
 
@@ -81,11 +75,11 @@ humidityChart.update():
   <section class="rm-section">
     <h2 class="rm-h2">Real-World Examples</h2>
     <ul class="rm-list">
-      <li><strong>UI Events</strong> — Button (subject) notifies click handlers, logging, analytics (observers)</li>
-      <li><strong>MVC/MVVM</strong> — Model (subject) auto-syncs Views (observers)</li>
-      <li><strong>Event Emitters</strong> — Event source notifies listeners (Node.js, browsers)</li>
-      <li><strong>Pub/Sub</strong> — Message broker coordinates publishers and subscribers</li>
-      <li><strong>Reactive Streams</strong> — Observable notifies Subscribers (RxJS, Reactor)</li>
+      <li><strong>UI Events</strong> -Button (subject) notifies click handlers, logging, analytics (observers)</li>
+      <li><strong>MVC/MVVM</strong> -Model (subject) auto-syncs Views (observers)</li>
+      <li><strong>Event Emitters</strong> -Event source notifies listeners (Node.js, browsers)</li>
+      <li><strong>Pub/Sub</strong> -Message broker coordinates publishers and subscribers</li>
+      <li><strong>Reactive Streams</strong> -Observable notifies Subscribers (RxJS, Reactor)</li>
     </ul>
   </section>
 
@@ -96,29 +90,29 @@ humidityChart.update():
     <h3 class="rm-h3">1. Push Model (shown above)</h3>
     <p>Subject sends data: <code>observer.update(data)</code></p>
     <ul class="rm-list">
-      <li><strong>Pro:</strong> Less coupling, observer doesn't need subject reference</li>
-      <li><strong>Con:</strong> Subject must know which data observers need</li>
+      <li><strong>[+] Less coupling</strong> - observer doesn't need subject reference</li>
+      <li><strong>[-] Subject overhead</strong> - must know which data observers need</li>
     </ul>
 
     <h3 class="rm-h3">2. Pull Model (more common)</h3>
     <p>Subject notifies only: <code>observer.update(subject)</code></p>
     <ul class="rm-list">
-      <li><strong>Pro:</strong> Flexible, observers pull only what they need</li>
-      <li><strong>Con:</strong> Observers must know subject interface</li>
+      <li><strong>[+] Flexible</strong> - observers pull only what they need</li>
+      <li><strong>[-] Coupling</strong> - observers must know subject interface</li>
     </ul>
 
     <h3 class="rm-h3">3. Event-Driven Variant</h3>
     <p>Subject publishes named events: <code>notify('temperature-changed')</code></p>
     <ul class="rm-list">
-      <li><strong>Pro:</strong> Fine-grained control, can ignore unneeded events</li>
-      <li><strong>Con:</strong> More boilerplate, harder to trace</li>
+      <li><strong>[+] Fine-grained</strong> - control can ignore unneeded events</li>
+      <li><strong>[-] Complex</strong> - more boilerplate, harder to trace</li>
     </ul>
   </section>
 
   <!-- Key Takeaway -->
   <section class="rm-section">
     <h2 class="rm-h2">Key Takeaway</h2>
-    <p><strong>Observer decouples producers from consumers.</strong> The subject doesn't care who listens—observers are pluggable. When you need one-to-many notifications with dynamic subscription, Observer is your pattern.</p>
+    <p><strong>Observer decouples producers from consumers.</strong> The subject doesn't care who listens - observers are pluggable. When you need one-to-many notifications with dynamic subscription, Observer is your pattern.</p>
   </section>
 
 </div>

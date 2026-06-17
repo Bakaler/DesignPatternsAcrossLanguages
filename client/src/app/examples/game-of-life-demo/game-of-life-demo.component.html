@@ -1,0 +1,167 @@
+<div class="game-of-life-container">
+  <div class="demo-layout">
+    <!-- CONTROLS PANEL -->
+    <div class="controls-panel">
+      <div class="control-group">
+        <h3>Playback</h3>
+        <button (click)="play(); settings.playUiClick()" [disabled]="isRunning" class="btn-play">
+          Play
+        </button>
+        <button (click)="stop(); settings.playUiClick()" [disabled]="!isRunning" class="btn-stop">
+          Stop
+        </button>
+        <button (click)="reset(); settings.playUiClick()" [disabled]="isRunning || generation === 0" class="btn-reset">
+          Reset
+        </button>
+        <button (click)="stepOnce(); settings.playUiClick()" class="btn-step">
+          Step
+        </button>
+        <button (click)="randomize(); settings.playUiClick()" class="btn-randomize">
+          Randomize
+        </button>
+        <button (click)="clear(); settings.playUiClick()" class="btn-clear">
+          Clear
+        </button>
+      </div>
+
+      <div class="control-group">
+        <h3>Speed</h3>
+        <input
+          type="range"
+          min="10"
+          max="500"
+          [(ngModel)]="animationSpeed"
+          class="speed-slider"
+        />
+        <input
+          type="number"
+          [value]="getBPM()"
+          (change)="setBPM($event)"
+          (keydown)="$event.key === 'Enter' && setBPM($event)"
+          class="speed-input"
+          min="120"
+          max="6000"
+        />
+        <span class="speed-label">BPM</span>
+      </div>
+
+
+      <div class="stats">
+        <div class="stat-item">
+          <span class="label">Generation:</span>
+          <span class="value">{{ generation }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="label">Alive:</span>
+          <span class="value">{{ getAliveCount() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RULES PANEL -->
+    <div class="rules-panel">
+      <div class="rules-section">
+        <h3>Live Cell Rules</h3>
+        <p class="section-desc">Cell survives with N neighbors</p>
+        <div class="rule-grid">
+          <div
+            *ngFor="let neighbors of [0, 1, 2, 3, 4, 5, 6, 7, 8]"
+            class="rule-toggle"
+          >
+            <button
+              (click)="toggleLiveRule(neighbors); settings.playUiClick()"
+              [class.active]="liveRules[neighbors]"
+              class="rule-btn"
+            >
+              {{ neighbors }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rules-section">
+        <h3>Dead Cell Rules</h3>
+        <p class="section-desc">Cell born with N neighbors</p>
+        <div class="rule-grid">
+          <div
+            *ngFor="let neighbors of [0, 1, 2, 3, 4, 5, 6, 7, 8]"
+            class="rule-toggle"
+          >
+            <button
+              (click)="toggleDeadRule(neighbors); settings.playUiClick()"
+              [class.active]="deadRules[neighbors]"
+              class="rule-btn"
+            >
+              {{ neighbors }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rules-presets">
+        <h3>Presets</h3>
+        <button (click)="applyRulePreset('conway'); settings.playUiClick()" class="preset-rule-btn">Conway</button>
+        <button (click)="applyRulePreset('highlife'); settings.playUiClick()" class="preset-rule-btn">HighLife</button>
+        <button (click)="applyRulePreset('seeds'); settings.playUiClick()" class="preset-rule-btn">Seeds</button>
+        <button (click)="applyRulePreset('coagulations'); settings.playUiClick()" class="preset-rule-btn">Coagulations</button>
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid-container" (mousedown)="onGridMouseDown()" (mouseup)="onGridMouseUp()">
+      <div class="grid">
+        <div
+          *ngFor="let row of grid; let y = index"
+          class="row"
+        >
+          <div
+            *ngFor="let cell of row; let x = index"
+            class="cell"
+            [class.alive]="cell"
+            (click)="toggleCell(x, y); settings.playUiClick()"
+            [style.width.px]="cellSize"
+            [style.height.px]="cellSize"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHAPE GRID -->
+    <div class="shape-panel">
+      <div class="presets-left">
+        <button *ngFor="let preset of presets.slice(0, 5)" (click)="loadPreset(preset); settings.playUiClick()" class="preset-btn" title="{{ preset.name }}">{{ preset.name }}</button>
+      </div>
+
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <div class="shape-grid-container">
+          <div class="shape-grid">
+            <div
+              *ngFor="let row of shapeGrid; let y = index"
+              class="shape-row"
+            >
+              <div
+                *ngFor="let cell of row; let x = index"
+                class="shape-cell"
+                [class.alive]="cell"
+                [class.origin]="x === shapeOriginX && y === shapeOriginY"
+                (click)="toggleShapeCell(x, y, $event); settings.playUiClick()"
+              ></div>
+            </div>
+          </div>
+          <p class="shape-hint">Ctrl+Click to set origin</p>
+        </div>
+
+        <div class="shape-actions">
+          <button (click)="toggleShapePlacingMode(); settings.playUiClick()" [class.active]="isShapePlacingMode" class="btn-shape">
+            Place (`)
+          </button>
+          <button (click)="clearShape(); settings.playUiClick()" class="btn-clear-shape">Clear</button>
+        </div>
+      </div>
+
+      <div class="presets-right">
+        <button *ngFor="let preset of presets.slice(5, 10)" (click)="loadPreset(preset); settings.playUiClick()" class="preset-btn" title="{{ preset.name }}">{{ preset.name }}</button>
+      </div>
+    </div>
+  </div>
+</div>

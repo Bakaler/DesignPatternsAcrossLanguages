@@ -1,0 +1,612 @@
+/* ── Container ─────────────────────────────────────────────────────────── */
+.airline-demo {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 580px;
+  background: #0d1117;
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: #e6edf3;
+}
+
+/* ── Toolbar ───────────────────────────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 10px 18px;
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  flex-shrink: 0;
+}
+
+.clock-display {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.clock-label { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: #8b949e; }
+.clock-value { font-size: 15px; font-weight: 700; color: #58a6ff; font-variant-numeric: tabular-nums; }
+
+.clock-controls { display: flex; gap: 6px; }
+
+.ctrl-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background: #21262d;
+  color: #c9d1d9;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.ctrl-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.ctrl-btn:hover:not(:disabled) { background: #30363d; border-color: #58a6ff; color: #fff; }
+.ctrl-btn:disabled { opacity: .4; cursor: default; }
+.autoplay-badge {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: #3fb950; font-weight: 500;
+}
+
+/* Map selector */
+.map-selector {
+  display: flex;
+  gap: 4px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 7px;
+  padding: 3px;
+}
+.map-btn {
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: #8b949e;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+  white-space: nowrap;
+}
+.map-btn:hover { background: #21262d; color: #c9d1d9; }
+.map-btn.active { background: #1f6feb; color: #fff; }
+
+.network-stats {
+  display: flex;
+  gap: 14px;
+  margin-left: auto;
+  margin-right: 0;
+}
+.stat { font-size: 12px; color: #8b949e; }
+.stat b { color: #c9d1d9; font-weight: 600; }
+.active-stat b { color: #58a6ff; }
+
+/* ── Main Layout ───────────────────────────────────────────────────────── */
+.main-area {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Side Panel ────────────────────────────────────────────────────────── */
+.side-panel {
+  width: 270px;
+  flex-shrink: 0;
+  background: #161b22;
+  border-right: 1px solid #30363d;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid #21262d;
+}
+.panel-airport-info { display: flex; flex-direction: column; gap: 2px; }
+.airport-code { font-size: 22px; font-weight: 800; color: #58a6ff; letter-spacing: .04em; }
+.airport-name { font-size: 12px; color: #8b949e; }
+.close-btn {
+  background: none; border: none; color: #8b949e; cursor: pointer;
+  font-size: 14px; line-height: 1; padding: 4px; border-radius: 4px;
+}
+.close-btn:hover { color: #e6edf3; background: #21262d; }
+
+.panel-meta { padding: 10px 14px; border-bottom: 1px solid #21262d; display: flex; flex-direction: column; gap: 6px; }
+.meta-row { display: flex; align-items: center; gap: 8px; }
+.meta-label { font-size: 11px; color: #8b949e; width: 56px; flex-shrink: 0; }
+.meta-value { font-size: 12px; color: #c9d1d9; }
+.hub-carriers { display: flex; gap: 5px; flex-wrap: wrap; }
+.carrier-pill {
+  font-size: 10px; font-weight: 700; color: #fff;
+  padding: 2px 6px; border-radius: 4px; letter-spacing: .05em;
+}
+
+/* ── Hour Selector ─────────────────────────────────────────────────────── */
+.hour-selector { padding: 12px 14px; border-bottom: 1px solid #21262d; }
+.section-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #8b949e; margin-bottom: 8px; }
+
+.hour-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+}
+.hour-chip {
+  aspect-ratio: 1;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  background: #0d1117;
+  color: #8b949e;
+  font-size: 9px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .12s;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+.hour-chip:hover { background: #21262d; color: #c9d1d9; }
+.hour-chip.selected { background: #1f6feb; border-color: #388bfd; color: #fff; }
+.hour-chip.has-flights { border-color: #388bfd44; color: #58a6ff; }
+.hour-chip.at-capacity { border-color: #f85149aa; }
+.hour-chip.current-hour { box-shadow: 0 0 0 1px #f0883e; }
+.hour-chip.selected.has-flights { background: #1f6feb; }
+
+.hour-info {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 8px; font-size: 11px; color: #8b949e;
+}
+.capacity-indicator { color: #58a6ff; }
+.capacity-indicator.full { color: #f85149; }
+
+/* ── Route List ────────────────────────────────────────────────────────── */
+.route-list { padding: 12px 14px; border-bottom: 1px solid #21262d; flex: 1; }
+.empty-routes { font-size: 12px; color: #8b949e; font-style: italic; }
+
+.route-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #21262d22;
+}
+.route-row:last-child { border-bottom: none; }
+
+.schedule-toggle {
+  width: 22px; height: 22px; border-radius: 5px;
+  border: 1px solid #30363d; background: #0d1117;
+  color: #8b949e; font-size: 12px; font-weight: 700;
+  cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .12s;
+}
+.schedule-toggle.on { background: #238636; border-color: #2ea043; color: #fff; }
+.schedule-toggle:disabled { opacity: .35; cursor: not-allowed; }
+.schedule-toggle:not(.on):not(:disabled):hover { border-color: #388bfd; color: #58a6ff; }
+
+.route-info { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.route-dest { font-size: 12px; color: #c9d1d9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.route-dest-name { color: #8b949e; font-size: 11px; }
+.route-carrier-tag {
+  font-size: 9px; font-weight: 700; color: #fff;
+  padding: 1px 5px; border-radius: 3px; flex-shrink: 0;
+}
+.remove-route-btn {
+  background: none; border: none; color: #8b949e; cursor: pointer;
+  font-size: 11px; padding: 2px 4px; border-radius: 3px; flex-shrink: 0; opacity: 0;
+  transition: opacity .12s;
+}
+.route-row:hover .remove-route-btn { opacity: 1; }
+.remove-route-btn:hover { background: #f8514922; color: #f85149; }
+
+/* ── Add Route ─────────────────────────────────────────────────────────── */
+.add-route-section { padding: 12px 14px; }
+
+.add-route-btn {
+  width: 100%; padding: 7px;
+  border: 1px dashed #30363d; border-radius: 6px;
+  background: none; color: #8b949e; font-size: 12px;
+  cursor: pointer; transition: all .12s;
+}
+.add-route-btn:hover { border-color: #388bfd; color: #58a6ff; background: #1f6feb11; }
+
+.add-route-form { display: flex; flex-direction: column; gap: 8px; }
+.add-route-form select {
+  padding: 6px 8px; border-radius: 5px;
+  border: 1px solid #30363d; background: #0d1117;
+  color: #c9d1d9; font-size: 12px; width: 100%;
+}
+.form-actions { display: flex; gap: 6px; }
+.submit-btn {
+  flex: 1; padding: 6px; border-radius: 5px;
+  background: #238636; border: 1px solid #2ea043;
+  color: #fff; font-size: 12px; cursor: pointer;
+}
+.submit-btn:hover { background: #2ea043; }
+.cancel-btn {
+  padding: 6px 10px; border-radius: 5px;
+  background: #21262d; border: 1px solid #30363d;
+  color: #8b949e; font-size: 12px; cursor: pointer;
+}
+.cancel-btn:hover { color: #c9d1d9; }
+
+/* ── Map ───────────────────────────────────────────────────────────────── */
+.map-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #0d1117;
+}
+
+.map-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 560px;
+}
+
+.continent {
+  fill: #161b22;
+  stroke: #30363d;
+  stroke-width: 1.5;
+}
+
+/* Route lines */
+.route-line {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-opacity: 0.4;
+  transition: stroke-opacity .2s;
+}
+.route-line:hover { stroke-opacity: 0.85; stroke-width: 2.5; }
+
+/* Airport nodes */
+.airport-node { cursor: pointer; }
+
+.airport-circle {
+  fill: #21262d;
+  stroke: #8b949e;
+  stroke-width: 2.5;
+  transition: fill .15s, stroke .15s;
+}
+.airport-node:hover .airport-circle {
+  fill: #30363d;
+  stroke: #58a6ff;
+}
+.airport-node.selected .airport-circle {
+  fill: #1f6feb;
+  stroke: #58a6ff;
+  stroke-width: 2;
+}
+.carrier-arc {
+  fill: none;
+  stroke-width: 3;
+  stroke-opacity: 0.85;
+}
+
+.airport-label {
+  font-size: 10px;
+  font-weight: 700;
+  fill: #c9d1d9;
+  text-anchor: middle;
+  pointer-events: none;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+.airport-node.selected .airport-label { fill: #fff; }
+
+/* Flight dots */
+.flight-dot {
+  filter: drop-shadow(0 0 3px currentColor);
+}
+.flight-pulse {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-opacity: 0;
+  animation: flight-ripple 1s ease-out infinite;
+}
+
+@keyframes flight-ripple {
+  0%   { r: 5;  stroke-opacity: 0.6; }
+  100% { r: 14; stroke-opacity: 0; }
+}
+
+/* Legend */
+.map-legend {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  background: #161b22cc;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  backdrop-filter: blur(4px);
+}
+.legend-row { display: flex; align-items: center; gap: 7px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { font-size: 11px; color: #c9d1d9; }
+.legend-hub { font-size: 10px; color: #8b949e; }
+
+.map-hint {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #21262dcc;
+  border: 1px solid #30363d;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 11px;
+  color: #8b949e;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ── Toolbar actions ───────────────────────────────────────────────────── */
+.toolbar-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.ctrl-btn.active { background: #1f6feb33; border-color: #388bfd; color: #58a6ff; }
+
+.sound-btn svg { width: 14px; height: 14px; }
+.sound-btn.muted { color: #8b949e; border-color: #30363d; }
+.sound-btn.muted:hover { color: #f85149; border-color: #f85149; }
+
+/* Help icon + tooltip */
+.help-wrap {
+  position: relative;
+}
+.help-btn {
+  font-size: 15px;
+  font-weight: 700;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+  color: #58a6ff;
+  border-color: #388bfd55;
+}
+.help-btn:hover { background: #1f6feb33; border-color: #58a6ff; }
+.help-tooltip {
+  display: none;
+  position: fixed;
+  width: 320px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 14px 16px;
+  z-index: 9999;
+  box-shadow: 0 8px 24px #00000088;
+}
+.help-tooltip.open { display: block; }
+.help-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #58a6ff;
+  margin-bottom: 10px;
+}
+.help-list {
+  margin: 0;
+  padding: 0 0 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.help-list li {
+  font-size: 11px;
+  color: #8b949e;
+  line-height: 1.4;
+}
+.help-list li b { color: #c9d1d9; }
+
+/* Next sound dropdown */
+.next-sound-select {
+  padding: 4px 7px;
+  border-radius: 6px;
+  border: 1px solid #30363d;
+  background: #21262d;
+  color: #8b949e;
+  font-size: 11px;
+  cursor: pointer;
+  height: 28px;
+  max-width: 120px;
+}
+.next-sound-select:hover { border-color: #58a6ff; color: #c9d1d9; }
+.next-sound-select:focus { outline: none; border-color: #388bfd; }
+
+/* Cooldown bar — thin pill that fills left→right until the next ambient sound */
+.sound-cooldown {
+  width: 52px;
+  height: 4px;
+  border-radius: 2px;
+  background: #21262d;
+  border: 1px solid #30363d;
+  overflow: hidden;
+  align-self: center;
+  flex-shrink: 0;
+}
+.sound-cooldown.muted { opacity: 0.25; }
+.cooldown-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #388bfd 0%, #58a6ff 100%);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+/* ── Add airport bar ───────────────────────────────────────────────────── */
+.add-airport-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 18px;
+  background: #1f6feb18;
+  border-bottom: 1px solid #388bfd44;
+  font-size: 12px;
+  color: #58a6ff;
+  flex-shrink: 0;
+}
+.add-input {
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid #388bfd66;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-size: 12px;
+  width: 120px;
+}
+.add-input.code-input { width: 54px; text-transform: uppercase; }
+.add-select {
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid #30363d;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-size: 12px;
+}
+
+/* ── Map adding cursor ─────────────────────────────────────────────────── */
+.map-container.adding .map-svg { cursor: crosshair; }
+.airport-node { cursor: grab; }
+.airport-node:active { cursor: grabbing; }
+
+/* ── Pending airport placement ─────────────────────────────────────────── */
+.pending-airport {
+  fill: none;
+  stroke: #58a6ff;
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+  animation: pending-pulse 1s ease-in-out infinite;
+}
+@keyframes pending-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ── Remove airport button ─────────────────────────────────────────────── */
+.panel-header-actions { display: flex; align-items: center; gap: 4px; }
+.remove-airport-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: 14px; padding: 3px 5px; border-radius: 4px;
+  opacity: 0.5; transition: opacity .15s, background .15s;
+}
+.remove-airport-btn:hover { opacity: 1; background: #f8514922; }
+.remove-blocked { font-size: 13px; opacity: 0.35; cursor: help; padding: 3px 5px; }
+
+/* ── Route distance label ──────────────────────────────────────────────── */
+.route-dist { font-size: 10px; color: #8b949e; flex-shrink: 0; }
+
+/* ── Itinerary route highlight ─────────────────────────────────────────── */
+.route-line.itin-route {
+  stroke-opacity: 1 !important;
+  stroke-width: 3 !important;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+.route-dist-label {
+  font-size: 10px;
+  fill: #e6edf3;
+  text-anchor: middle;
+  pointer-events: none;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: #0d1117;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+/* ── Itinerary Panel ───────────────────────────────────────────────────── */
+.itin-panel {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 260px;
+  background: #161b22ee;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+}
+
+.itin-header {
+  padding: 9px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #8b949e;
+  border-bottom: 1px solid #21262d;
+}
+
+.itin-selects {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  flex-wrap: wrap;
+}
+.itin-selects select {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 6px;
+  border-radius: 5px;
+  border: 1px solid #30363d;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-size: 11px;
+}
+.itin-arrow { color: #8b949e; font-size: 13px; flex-shrink: 0; }
+.itin-clear {
+  background: none; border: none; color: #8b949e; cursor: pointer;
+  font-size: 13px; padding: 2px 5px; border-radius: 4px; flex-shrink: 0;
+}
+.itin-clear:hover { color: #f85149; background: #f8514922; }
+
+.itin-noresult {
+  padding: 10px 14px;
+  font-size: 11px;
+  color: #f85149;
+  border-top: 1px solid #21262d;
+}
+
+.itin-result { border-top: 1px solid #21262d; }
+
+.itin-summary {
+  display: flex;
+  gap: 12px;
+  padding: 8px 14px;
+  border-bottom: 1px solid #21262d;
+}
+.itin-stat { font-size: 11px; color: #8b949e; }
+.itin-stat b { color: #58a6ff; }
+
+.itin-steps { padding: 6px 0; }
+.itin-step {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  font-size: 11px;
+}
+.itin-step:not(:last-child) { border-bottom: 1px solid #21262d22; }
+.itin-carrier-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.itin-leg { color: #c9d1d9; font-weight: 600; flex: 1; }
+.itin-carrier-name {
+  font-size: 9px; font-weight: 700; color: #8b949e;
+  background: #21262d; padding: 1px 5px; border-radius: 3px;
+}
+.itin-leg-dist { color: #8b949e; font-size: 10px; }

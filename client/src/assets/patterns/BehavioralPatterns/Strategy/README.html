@@ -1,0 +1,154 @@
+<div class="rm-wrap">
+
+  <!-- Hero -->
+  <div class="rm-hero">
+    <span class="rm-badge behavioral">Behavioral</span>
+    <h1 class="rm-hero-title">Strategy</h1>
+    <div class="rm-hero-meta">
+      <span>GoF pg. 315</span>
+    </div>
+  </div>
+
+  <!-- Power Words -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Power Words</h2>
+    <div class="rm-powerword-block">
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word amber">Power Word: Encapsulate</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word teal">Power Word: Choose</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word pink">Power Word: Compose</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Intent -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Intent</h2>
+    <p>Define a family of algorithms, encapsulate each one, and make them interchangeable. Clients can select an algorithm at runtime. This pattern promotes loose coupling: the context doesn't care which strategy it uses; strategies don't know about each other; and new strategies can be added without changing existing code.</p>
+  </section>
+
+  <!-- Problem -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Problem</h2>
+    <p>Conway's Game of Life follows a simple rule: a live cell with 2 or 3 neighbors survives; a dead cell with exactly 3 neighbors is born. But what if you want to explore <em>other</em> rulesets? HighLife (which adds 6-neighbor births)? Seeds (birth-only at 2 neighbors)? Coagulations (3 or 5 survivors)?</p>
+    <p>If you hardcode each ruleset into the <code>GameOfLife</code> class, it becomes a bloated mess: every new ruleset requires code changes, the grid logic gets tangled with rule logic, testing different rule combinations is painful, and runtime switching is clunky.</p>
+    <p><strong>How do you make evolution rules swappable without coupling the grid to any particular ruleset?</strong></p>
+  </section>
+
+  <!-- Solution -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Solution: Strategy Pattern</h2>
+    <p>Encapsulate each ruleset as a <strong>Strategy</strong>: a separate object that knows how to determine if a cell lives, dies, or is born. The <code>GameOfLife</code> (Context) doesn't hardcode survival/birth logic—it delegates to its current Strategy.</p>
+    <p>When you want to switch rulesets, you simply pass in a different Strategy. No grid changes. No conditionals. Just plug-and-play rule families.</p>
+    <h3 class="rm-h3">Key Insight</h3>
+    <p>The Context (grid) only needs to know: <em>"Does this cell survive with N neighbors?"</em> It doesn't care <em>how</em> the Strategy answers—that's the Strategy's job. By isolating the "how," you decouple evolution from rulesets and enable dynamic composition.</p>
+  </section>
+
+  <!-- Participants -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Participants</h2>
+    <ul class="rm-list">
+      <li><strong>Strategy</strong> (interface): <code>LifeRule</code> defines the contract for <code>outcome(neighbors, isAlive)</code></li>
+      <li><strong>Concrete Strategies</strong>: <code>SurvivalRule</code>, <code>BirthRule</code> implement rule logic for cells with N neighbors</li>
+      <li><strong>Composition</strong>: <code>Ruleset</code> combines multiple strategies (e.g., [Survival 2-3] + [Birth 3])</li>
+      <li><strong>Context</strong>: <code>GameOfLife</code> holds a Ruleset and calls strategies to evolve the grid</li>
+    </ul>
+  </section>
+
+  <!-- Consequences -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Consequences</h2>
+    <ul class="rm-list">
+      <li><strong>[+] Open/Closed Principle</strong> - Add new rulesets without changing GameOfLife</li>
+      <li><strong>[+] Encapsulation</strong> - Each rule is self-contained; no monolithic conditionals</li>
+      <li><strong>[+] Runtime flexibility</strong> - Swap or compose strategies while grid runs</li>
+      <li><strong>[+] Testability</strong> - Test each rule in isolation; test grid with mock strategies</li>
+      <li><strong>[+] Code reuse</strong> - Combine rules in any composition (Ruleset is composable)</li>
+      <li><strong>[-] Slight overhead</strong> - More objects, more indirection (negligible for this scale)</li>
+    </ul>
+  </section>
+
+  <!-- Real-World Examples -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Real-World Examples</h2>
+    <ul class="rm-list">
+      <li><strong>Sorting</strong> - QuickSort, MergeSort, HeapSort (pick one for array)</li>
+      <li><strong>Pathfinding</strong> - Dijkstra, A*, BFS (choose based on cost)</li>
+      <li><strong>Payment</strong> - CreditCard, PayPal, ApplePay (user selects at checkout)</li>
+      <li><strong>Rendering</strong> - OpenGL, DirectX, Vulkan (set at engine startup)</li>
+      <li><strong>Compression</strong> - ZIP, RAR, 7z (choose per file)</li>
+      <li><strong>Game AI</strong> - Aggressive, Defensive, Cowardly (swap mid-game)</li>
+    </ul>
+  </section>
+
+  <!-- Pattern Variants -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Pattern Variants</h2>
+
+    <h3 class="rm-h3">1. Strategy as Data (Stateless)</h3>
+    <p>Rules are simple functions or objects with no mutable state.</p>
+    <pre><code>const survival = new SurvivalRule([2, 3]);  // No state, reusable</code></pre>
+    <ul class="rm-list">
+      <li><strong>[+] Lightweight</strong> - no side effects</li>
+      <li><strong>[-] Limited</strong> - for complex logic</li>
+    </ul>
+
+    <h3 class="rm-h3">2. Strategy with State (Stateful)</h3>
+    <p>Rules maintain internal state (e.g., memory of past generations).</p>
+    <pre><code>class AdaptiveRule implements LifeRule {
+  generationMemory = [];
+  outcome(neighbors, isAlive) { /* adjust based on history */ }
+}</code></pre>
+    <ul class="rm-list">
+      <li><strong>[+] Adaptive</strong> - enables learning strategies</li>
+      <li><strong>[-] Hard to test</strong> - risk of side effects</li>
+    </ul>
+
+    <h3 class="rm-h3">3. Composition of Strategies (used here)</h3>
+    <p>Combine multiple strategies into a Ruleset.</p>
+    <pre><code>ruleset.addRule(survivalRule);
+ruleset.addRule(birthRule);
+// Together they define one complete ruleset</code></pre>
+    <ul class="rm-list">
+      <li><strong>[+] Flexible</strong> - reusable building blocks</li>
+      <li><strong>[-] Complex</strong> - order may matter, need clear composition rules</li>
+    </ul>
+  </section>
+
+  <!-- Presets -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Game of Life Ruleset Presets</h2>
+    <p>The demo includes four preset rulesets. Each is a different Strategy applied to the same 40x40 grid:</p>
+    <ul class="rm-list">
+      <li><strong>Conway</strong> (B3/S23) - The original; creates stable structures and oscillators</li>
+      <li><strong>HighLife</strong> (B36/S23) - Like Conway plus 6-neighbor births; more prolific</li>
+      <li><strong>Seeds</strong> (B2/S) - Birth-only at 2; dies after one generation; chaotic</li>
+      <li><strong>Coagulations</strong> (B3/S235) - Survive at 2, 3, or 5; tends toward slow clusters</li>
+    </ul>
+  </section>
+
+  <!-- Key Takeaway -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Key Takeaway</h2>
+    <p><strong>Strategy decouples what to do from how to do it.</strong> The grid doesn't care if you're following Conway's rules or HighLife - it just asks the ruleset and reacts. When you need to let clients (or users) choose behavior at runtime, encapsulate each option as a Strategy and swap freely.</p>
+  </section>
+
+  <!-- Related -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Related Patterns</h2>
+    <ul class="rm-list">
+      <li><strong>Interpreter</strong> - Like Strategy, but evaluates expressions instead of switching algorithms. Both decouple logic into separate classes.</li>
+      <li><strong>State</strong> - State changes behavior as internal state changes; Strategy lets clients choose.</li>
+      <li><strong>Template Method</strong> - Template defines algorithm skeleton in base class; Strategy lets subclasses choose alternative algorithms.</li>
+    </ul>
+  </section>
+
+</div>
