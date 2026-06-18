@@ -1,0 +1,29 @@
+
+Airport
+  returns the airport name
+  returns own capacity
+  starts with zero routes
+  increments route count with add_route
+  print_tree includes the name
+  print_tree includes the capacity
+
+RegionalNetwork
+  returns the region name
+  get_capacity sums its airports
+  get_route_count sums routes across airports
+  remove reduces get_capacity
+  empty region has capacity 0 and route count 0
+  print_tree includes name and airports
+
+AirportNetwork
+  get_capacity recurses through regions
+  get_route_count recurses through all levels
+  remove region updates totals
+
+Uniformity (core pattern guarantee)
+  same call on leaf and composite
+  three-level tree resolves from root with one call
+
+Finished in 0.00491 seconds (files took 0.12431 seconds to load)
+17 examples, 0 failures
+

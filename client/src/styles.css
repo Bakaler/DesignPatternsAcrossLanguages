@@ -511,6 +511,9 @@ body::before {
     0 0 45px #e05c8a22;
 }
 
+/* ── Power Words tooltip — driven by Angular in gof.component ────────────────*/
+.rm-h2[data-tooltip] { cursor: default; }
+
 /* ── Links ───────────────────────────────────────────────────────────────────*/
 .rm-link {
   font-family: 'JetBrains Mono', monospace;

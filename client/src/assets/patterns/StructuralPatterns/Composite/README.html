@@ -1,121 +1,264 @@
-<h1 class="rm-h1">Composite</h1>
-<p class="rm-p">
-  Compose objects into tree structures to represent part-whole hierarchies.
-  Composite lets clients treat individual objects and compositions of objects uniformly —
-  the same interface works whether you're talking to a leaf or to the whole tree.
-</p>
+<div class="rm-wrap">
 
-<h2 class="rm-h2">Intent</h2>
-<p class="rm-p">
-  You have a tree of objects. Code that works on a single node should work identically on
-  a subtree or the entire tree, without the caller ever having to check <em>which</em> it's
-  talking to. The Composite pattern enforces this by making every node — leaf and container
-  alike — implement the same <strong>Component</strong> interface.
-</p>
+  <!-- ── Hero ── -->
+  <div class="rm-hero">
+    <span class="rm-badge structural">Structural</span>
+    <h1 class="rm-hero-title">Composite</h1>
+    <div class="rm-hero-meta">
+      <span>GoF pg. 163</span>
+    </div>
+  </div>
 
-<h2 class="rm-h2">Participants</h2>
-<ul class="rm-ul">
-  <li><strong>Component</strong> — the shared interface. Declares operations that make sense
-    for both leaves and composites (e.g. <code>getCapacity()</code>, <code>addConnection()</code>,
-    <code>getOutgoingRoutes()</code>).</li>
-  <li><strong>Leaf</strong> — a node with no children. Implements Component directly.
-    In this demo: <code>Airport</code>. Each airport manages its own connections and
-    24-hour departure schedule.</li>
-  <li><strong>Composite</strong> — a node that holds children and implements Component by
-    delegating to them. In this demo: <code>AirportNetwork</code>. Adding a connection,
-    removing one, or querying total capacity all recurse through every child airport.</li>
-  <li><strong>Client</strong> — talks only to the Component interface. Never cares whether
-    it has a single airport or the whole US network.</li>
-</ul>
+  <!-- ── Power Words ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2" data-tooltip=""The young priest spoke aloud the power words to use the powers of the Light." — Blood of Our Fathers, Warcraft">Power Words</h2>
+    <div class="rm-powerword-block">
 
-<h2 class="rm-h2">Structure</h2>
-<p class="rm-p">
-  The interface that ties everything together:
-</p>
-<pre class="rm-pre"><code>interface AirNetworkComponent {
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word amber">Power Word: Uniformity</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word teal">Power Word: Recursion</span>
+      </div>
+
+      <div class="rm-powerword-item">
+        <span class="rm-powerword-word pink">Power Word: Hierarchy</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Attributions ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Attributions</h2>
+
+    <div class="rm-attribution-book">
+      <div class="rm-attribution-book-title">Design Patterns: Elements of Reusable Object-Oriented Software</div>
+      <div class="rm-attribution-book-authors">Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides</div>
+      <div class="rm-attribution-book-forward">Forward by Grady Booch</div>
+    </div>
+
+    <ul class="rm-list plain" style="margin-top: 1rem;">
+      <li>
+        <a class="rm-link" href="https://www.cs.unc.edu/~stotts/GOF/hires/pat4cso.htm" target="_blank">
+          cs.unc.edu &rarr; GoF Pattern Reference (Composite)
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://refactoring.guru/design-patterns/composite" target="_blank">
+          refactoring.guru &rarr; Composite Pattern
+        </a>
+      </li>
+      <li>
+        <a class="rm-link" href="https://www.geeksforgeeks.org/composite-design-pattern/" target="_blank">
+          geeksforgeeks.org &rarr; Composite Design Pattern
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ── Intent ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Intent</h2>
+    <div class="rm-callout">
+      Compose objects into <strong>tree structures</strong> to represent part-whole hierarchies.
+      Composite lets clients treat individual objects and compositions of objects
+      <strong>uniformly</strong>. The same interface works at every level of the tree.
+    </div>
+    <p class="rm-p">
+      You have a tree of objects. Code that operates on a single node should work identically
+      on a subtree or the whole tree, without the caller ever checking <em>which</em> it is
+      talking to. The Composite pattern enforces this by giving every node the same
+      <span class="rm-code">Component</span> interface, whether it is a leaf or a container.
+    </p>
+  </section>
+
+  <!-- ── The Problem It Solves ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">The Problem It Solves</h2>
+    <p class="rm-p">
+      An airline network needs to track total capacity and outgoing routes. The network
+      contains airports. Airports belong to regional groupings. Code that queries the whole
+      network, a single region, or a single airport should not need to know which level it
+      is at.
+    </p>
+    <p class="rm-p">
+      Without Composite, every query becomes a type check. Is this a network, a region, or
+      an airport? Is it a leaf or a container? Add a new level to the hierarchy and every
+      caller needs to be updated.
+    </p>
+    <p class="rm-p">
+      With Composite, every node answers the same questions. Call
+      <span class="rm-code">getCapacity()</span> on the top-level network and the call
+      recurses through every region and every airport automatically. The caller writes
+      zero looping or branching code.
+    </p>
+  </section>
+
+  <!-- ── Structure ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Structure</h2>
+    <p class="rm-p">
+      The interface that ties the entire tree together:
+    </p>
+    <pre class="rm-pre"><code>interface AirNetworkComponent {
   getName(): string;
-  getCapacity(): number;           // leaf: its own cap  |  composite: sum of all children
-  addConnection(route): void;      // leaf: push locally  |  composite: delegate to children
+  getCapacity(): number;        // leaf: own cap  |  composite: sum of children
+  addConnection(route): void;   // leaf: push locally  |  composite: delegate down
   removeConnection(id): void;
   getOutgoingRoutes(): Route[];
 }</code></pre>
 
-<p class="rm-p">
-  <strong>Airport (Leaf)</strong> implements each operation directly on its own data:
-</p>
-<pre class="rm-pre"><code>class Airport implements AirNetworkComponent {
-  getCapacity() { return this.capacity; }
+    <h3 class="rm-h3">The Three-Level Tree</h3>
+    <p class="rm-p">
+      This demo uses a three-level hierarchy rather than the textbook two. This is where
+      the pattern earns its keep.
+    </p>
+    <pre class="rm-pre"><code>AirportNetwork          ← top-level Composite
+  └── RegionalNetwork   ← mid-level Composite
+        └── Airport     ← Leaf</code></pre>
 
-  addConnection(route) {
-    if (!this.connections.find(r => r.id === route.id))
-      this.connections.push(route);
-  }
+    <p class="rm-p">
+      Calling <span class="rm-code">network.getCapacity()</span> at the top triggers one
+      reduce across regions, each of which triggers its own reduce across airports.
+      Three levels, one method call, zero special cases.
+    </p>
+  </section>
 
-  getOutgoingRoutes() {
-    return this.connections.filter(r => r.from === this);
-  }
-}</code></pre>
+  <!-- ── Participants ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Participants</h2>
+    <table class="rm-table">
+      <thead>
+        <tr>
+          <th>Role</th>
+          <th>In This Implementation</th>
+          <th>Responsibility</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Component (interface)</td>
+          <td><span class="rm-code">AirNetworkComponent</span></td>
+          <td>Declares the shared operations (<span class="rm-code">getCapacity()</span>, <span class="rm-code">getOutgoingRoutes()</span>, <span class="rm-code">addConnection()</span>) that every node must implement regardless of depth.</td>
+        </tr>
+        <tr>
+          <td>Leaf</td>
+          <td><span class="rm-code">Airport</span></td>
+          <td>Terminal node. Implements Component directly on its own data. Manages its own capacity, carrier list, and 24-hour departure schedule.</td>
+        </tr>
+        <tr>
+          <td>Composite (mid-level)</td>
+          <td><span class="rm-code">RegionalNetwork</span></td>
+          <td>Holds a collection of Airports. Implements Component by delegating to children. <span class="rm-code">getCapacity()</span> sums its airports, <span class="rm-code">getOutgoingRoutes()</span> flattens them.</td>
+        </tr>
+        <tr>
+          <td>Composite (top-level)</td>
+          <td><span class="rm-code">AirportNetwork</span></td>
+          <td>Holds a collection of RegionalNetworks. Same interface, one level higher. The root of the tree and the entry point for all queries.</td>
+        </tr>
+        <tr>
+          <td>Client</td>
+          <td>Scheduling engine, itinerary planner, stats bar</td>
+          <td>Talks only to <span class="rm-code">AirNetworkComponent</span>. Never checks what level it is at. Calls <span class="rm-code">getCapacity()</span> and gets back the right number whether it asked the root or a leaf.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 
-<p class="rm-p">
-  <strong>AirportNetwork (Composite)</strong> implements the same interface by iterating
-  its children — the recursion is invisible to callers:
-</p>
-<pre class="rm-pre"><code>class AirportNetwork implements AirNetworkComponent {
-  private airports: Airport[] = [];
+  <!-- ── Consequences ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Consequences</h2>
+    <p class="rm-p">The GoF names three specific consequences. All three are visible in this demo.</p>
 
-  // Aggregates across all children — caller sees one number
-  getCapacity() {
-    return this.airports.reduce((sum, a) => sum + a.getCapacity(), 0);
-  }
+    <h3 class="rm-h3">✓ Defines Class Hierarchies of Primitive and Composite Objects</h3>
+    <p class="rm-p">
+      <span class="rm-code">Airport</span>, <span class="rm-code">RegionalNetwork</span>, and
+      <span class="rm-code">AirportNetwork</span> are distinct classes with different internal
+      structures, but from the outside they are identical. The stats bar that displays total
+      network capacity does not know it is iterating three levels of tree. It just calls
+      <span class="rm-code">getCapacity()</span>.
+    </p>
 
-  // Propagates the connection down to both endpoint leaves
-  addConnection(route) {
-    this.routes.push(route);
-    route.from.addConnection(route);
-    route.to.addConnection(route);
-  }
+    <h3 class="rm-h3">✓ Makes the Client Simple</h3>
+    <p class="rm-p">
+      The scheduling engine that dispatches flights at a given hour calls
+      <span class="rm-code">network.getDeparturesAtHour(hour)</span> once. That single call
+      fans out across every region and every airport, collects scheduled departures, and
+      returns one flat list. The client wrote zero looping code and has no knowledge of the
+      tree structure beneath it.
+    </p>
 
-  // Cascades the removal to every child that holds a reference
-  removeConnection(routeId) {
-    this.routes = this.routes.filter(r => r.id !== routeId);
-    this.airports.forEach(a => a.removeConnection(routeId));
-  }
-}</code></pre>
+    <h3 class="rm-h3">✓ Makes It Easy to Add New Kinds of Components</h3>
+    <p class="rm-p">
+      Adding a new level, say a continent-level grouping above regions, requires one new
+      class that implements <span class="rm-code">AirNetworkComponent</span>. No existing
+      code changes. The stats bar, the itinerary planner, and the scheduling engine all
+      continue to work without modification.
+    </p>
 
-<h2 class="rm-h2">The key insight</h2>
-<p class="rm-p">
-  The scheduling engine that dispatches flights at a given hour doesn't know it's calling into a
-  composite — it just calls <code>network.getDeparturesAtHour(hour)</code>. That single call
-  fans out across every airport in the tree, collects their scheduled departures, and returns
-  one flat list. The client wrote zero looping code.
-</p>
-<p class="rm-p">
-  This uniformity is the payoff: adding a new airport to the network doesn't change any calling
-  code, and querying the full network is syntactically identical to querying a single airport.
-</p>
+    <h3 class="rm-h3">✗ Can Make Design Overly General</h3>
+    <p class="rm-p">
+      The shared interface forces every node to answer the same questions. Operations that
+      only make sense on a composite, like adding a child, end up on the shared interface,
+      which means leaf nodes must either implement them as no-ops or throw. This is the
+      classic tension in Composite: a cleaner interface versus type-safe child management.
+    </p>
+  </section>
 
-<h2 class="rm-h2">When to use</h2>
-<ul class="rm-ul">
-  <li>Your domain has a natural part-whole hierarchy (file systems, UI components, org charts,
-    transport networks).</li>
-  <li>You want client code to ignore the difference between individual items and collections
-    of items.</li>
-  <li>Operations on a group should be the same as operations on a single member.</li>
-</ul>
+  <!-- ── When to Reach For It ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">When to Reach For It</h2>
+    <ul class="rm-list plain">
+      <li>Your domain has a natural part-whole hierarchy such as file systems, UI component trees, org charts, transport networks, or bill-of-materials</li>
+      <li>You want client code to be blind to the difference between individual items and collections of items</li>
+      <li>Operations on a group should be syntactically identical to operations on a single member</li>
+      <li>You expect the hierarchy depth to change over time and do not want that change to ripple into every caller</li>
+    </ul>
+  </section>
 
-<h2 class="rm-h2">Trade-offs</h2>
-<ul class="rm-ul">
-  <li><strong>Pro:</strong> Open/Closed — adding new leaf types doesn't change composites or clients.</li>
-  <li><strong>Pro:</strong> Recursive operations (total capacity, full schedule) come for free.</li>
-  <li><strong>Con:</strong> The common interface can become too general if leaves and composites
-    have meaningfully different operations (e.g. "add child" doesn't make sense on a leaf).</li>
-  <li><strong>Con:</strong> Type safety requires careful design — restricting child-management
-    operations to composites only means either casting or a richer interface hierarchy.</li>
-</ul>
+  <!-- ── Trade-offs ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Trade-offs</h2>
+    <div class="rm-grid-2">
+      <div class="rm-card">
+        <div class="rm-card-title good">Strengths</div>
+        <ul class="rm-list good">
+          <li>Open/Closed. Add a new node type without changing composites or clients</li>
+          <li>Recursive operations come for free. Capacity, routes, and departures all cascade automatically</li>
+          <li>Client code stays clean regardless of tree depth</li>
+          <li>Adding tree levels is a single new class</li>
+        </ul>
+      </div>
+      <div class="rm-card">
+        <div class="rm-card-title bad">Weaknesses</div>
+        <ul class="rm-list bad">
+          <li>The shared interface can become too general if leaves and composites have meaningfully different operations</li>
+          <li>Type safety requires careful design. Child management methods on the interface mean leaves must handle calls that do not apply to them</li>
+          <li>Tightly couples the entire tree to a single interface. Changing that interface touches every node</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-<h2 class="rm-h2">Related patterns</h2>
-<ul class="rm-ul">
-  <li><a href="#" data-pattern="Decorator"><strong>Decorator</strong></a> — also uses recursive composition, but wraps a single object rather than managing a collection of children.</li>
-  <li><a href="#" data-pattern="Flyweight"><strong>Flyweight</strong></a> — often used inside Composite leaf nodes to share intrinsic state across many instances.</li>
-  <li><a href="#" data-pattern="Iterator"><strong>Iterator</strong></a> — natural companion for traversing composite trees.</li>
-</ul>
+  <!-- ── Related Patterns ── -->
+  <section class="rm-section">
+    <h2 class="rm-h2">Related Patterns</h2>
+    <a href="/gof?p=Decorator" class="rm-tag">Decorator</a>
+    <a href="/gof?p=Iterator" class="rm-tag">Iterator</a>
+    <a href="/gof?p=Flyweight" class="rm-tag">Flyweight</a>
+    <a href="/gof?p=Visitor" class="rm-tag">Visitor</a>
+    <p class="rm-p" style="margin-top: 0.8rem;">
+      <strong>Decorator.</strong> Also uses recursive composition but wraps a single object
+      rather than managing a collection of children. Where Composite aggregates, Decorator augments.<br>
+      <strong>Iterator.</strong> Natural companion for traversing composite trees without exposing
+      internal structure. Lets you walk the whole tree with a single iterator.<br>
+      <strong>Flyweight.</strong> Often used inside Composite leaf nodes to share intrinsic state
+      across many instances. Useful when a tree has thousands of identical leaves.<br>
+      <strong>Visitor.</strong> Lets you add operations to a Composite tree without modifying
+      node classes. Visitor and Composite are frequently used together.
+    </p>
+  </section>
+
+</div>

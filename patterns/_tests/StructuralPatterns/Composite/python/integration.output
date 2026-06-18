@@ -1,0 +1,14 @@
+collecting ... collected 11 items
+
+integration.test.py::TestFullNetworkTotals::test_root_capacity ✓    [  9%]
+integration.test.py::TestFullNetworkTotals::test_root_route_count ✓ [ 18%]
+integration.test.py::TestFullNetworkTotals::test_region_capacity_independent_of_siblings ✓ [ 27%]
+integration.test.py::TestMutationsPropagateUp::test_add_airport_increases_root_capacity ✓ [ 36%]
+integration.test.py::TestMutationsPropagateUp::test_remove_airport_decreases_root_capacity ✓ [ 45%]
+integration.test.py::TestMutationsPropagateUp::test_remove_region_removes_all_its_airports ✓ [ 54%]
+integration.test.py::TestAddingNewRegion::test_new_region_resolves_from_root ✓ [ 63%]
+integration.test.py::TestPrintTree::test_root_appears_first ✓       [ 72%]
+integration.test.py::TestPrintTree::test_all_regions_present ✓      [ 81%]
+integration.test.py::TestPrintTree::test_all_airports_present ✓     [ 90%]
+integration.test.py::TestPrintTree::test_airports_indented_more_than_region ✓ [100%]
+

@@ -117,14 +117,28 @@
                  [routerLink]="['/gof']"
                  [queryParams]="{ p: p.name }"
                  (click)="settings.playUiClick()">
-                <span class="pat-name" [class.done]="p.done">{{ p.name }}@if (p.id === potdId) {<span class="potd-star" title="Pattern of the day">★</span>}</span>
+                <span class="pat-name"
+                      [class.done]="p.done"
+                      [class.pat-name--demo]="p.name === 'Observer' || p.name === 'Composite' || p.name === 'Strategy'"
+                      [class.pat-name--sisters]="p.name === 'Chain of Resp.' || p.name === 'Interpreter'"
+                      [class.pat-name--basic]="p.name === 'Abstract Factory' || p.name === 'Facade' || p.name === 'Template Method'"
+                      [class.pat-name--upcoming]="p.name !== 'Observer' && p.name !== 'Composite' && p.name !== 'Strategy' && p.name !== 'Chain of Resp.' && p.name !== 'Interpreter' && p.name !== 'Abstract Factory' && p.name !== 'Facade' && p.name !== 'Template Method'">{{ p.name }}@if (p.id === potdId) {<span class="potd-star" title="Pattern of the day">★</span>}</span>
                 <span class="pat-status"
-                      [class.status-demo]="p.name === 'Observer'"
+                      [class.status-demo]="p.name === 'Observer' || p.name === 'Composite' || p.name === 'Strategy'"
                       [class.status-sisters]="p.name === 'Chain of Resp.' || p.name === 'Interpreter'"
                       [class.status-basic]="p.name === 'Abstract Factory' || p.name === 'Facade' || p.name === 'Template Method'"
-                      [class.status-upcoming]="p.name !== 'Observer' && p.name !== 'Chain of Resp.' && p.name !== 'Interpreter' && p.name !== 'Abstract Factory' && p.name !== 'Facade' && p.name !== 'Template Method'">
+                      [class.status-upcoming]="
+                        p.name !== 'Observer' && 
+                        p.name !== 'Chain of Resp.' && 
+                        p.name !== 'Interpreter' && 
+                        p.name !== 'Abstract Factory' && 
+                        p.name !== 'Facade' && 
+                        p.name !== 'Template Method' &&
+                        p.name !== 'Strategy' &&
+                        p.name !== 'Composite' 
+                      ">
                   {{
-                    p.name === 'Observer' ? 'Demo' :
+                    p.name === 'Observer' || p.name === 'Composite' || p.name === 'Strategy' ? 'Live Demo' :
                     (p.name === 'Chain of Resp.' || p.name === 'Interpreter') ? 'Sisters' :
                     (p.name === 'Abstract Factory' || p.name === 'Facade' || p.name === 'Template Method') ? 'Basic' :
                     'upcoming'

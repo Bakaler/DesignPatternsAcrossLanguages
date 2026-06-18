@@ -1,0 +1,26 @@
+├─ AirportTests ✔
+│  ├─ getName() ✔
+│  ├─ getCapacity() ✔
+│  ├─ getRouteCountStartsZero() ✔
+│  ├─ getRouteCountIncrements() ✔
+│  ├─ printIncludesName() ✔
+│  └─ printIncludesCapacity() ✔
+├─ RegionalNetworkTests ✔
+│  ├─ getName() ✔
+│  ├─ getCapacitySumsAirports() ✔
+│  ├─ getRouteCountSumsAirports() ✔
+│  ├─ removeReducesCapacity() ✔
+│  ├─ emptyRegion() ✔
+│  └─ printIncludesNameAndAirports() ✔
+├─ AirportNetworkTests ✔
+│  ├─ getCapacityRecurses() ✔
+│  ├─ getRouteCountRecurses() ✔
+│  └─ removeRegionUpdatesTotals() ✔
+└─ UniformityTests ✔
+   ├─ sameCallOnLeafAndComposite() ✔
+   └─ threeLevelTreeFromRoot() ✔
+
+Test run finished after 62 ms
+[ 17 tests found     ]
+[ 17 tests successful]
+[  0 tests failed    ]

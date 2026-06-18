@@ -639,6 +639,10 @@
 
 .pat-name { color: #a8a5b4; }
 .pat-name.done { color: var(--text); }
+.pat-name--demo     { color: #6bcb77; }
+.pat-name--sisters  { color: #4a9eff; }
+.pat-name--basic    { color: #ffffff; }
+.pat-name--upcoming { color: #8a8a9e; }
 
 .pat-status {
   font-family: var(--mono);

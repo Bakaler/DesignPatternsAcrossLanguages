@@ -14,12 +14,21 @@
 /* ── Toolbar ───────────────────────────────────────────────────────────── */
 .toolbar {
   display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 10px 18px;
+  flex-direction: column;
   background: #161b22;
   border-bottom: 1px solid #30363d;
   flex-shrink: 0;
+}
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 18px;
+}
+.toolbar-row-stats {
+  padding: 4px 18px 7px;
+  border-top: 1px solid #21262d;
+  gap: 12px;
 }
 
 .clock-display {
@@ -87,6 +96,103 @@
 .stat { font-size: 12px; color: #8b949e; }
 .stat b { color: #c9d1d9; font-weight: 600; }
 .active-stat b { color: #58a6ff; }
+.stat-cap { color: #484f58; font-size: 11px; }
+.stat-divider { color: #30363d; }
+.region-stat { display: flex; align-items: center; gap: 3px; cursor: default; }
+.region-stat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.region-stat-live { font-weight: 700; font-size: 12px; font-variant-numeric: tabular-nums; }
+.region-stat-cap { color: #484f58; font-size: 11px; }
+
+.carrier-stats-group { margin-left: auto; }
+
+.pattern-stat-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.pattern-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.pattern-stat-group:hover { cursor: default; }
+
+.pattern-stat-group--composite:hover {
+  border-color: #3fb95066;
+}
+.pattern-stat-group--composite:hover .pattern-label--composite {
+  opacity: 1;
+  color: #3fb950;
+}
+
+.pattern-stat-group--noncomposite:hover {
+  border-color: #f8514966;
+}
+.pattern-stat-group--noncomposite:hover .pattern-label--noncomposite {
+  opacity: 1;
+  color: #f85149;
+}
+.carrier-stat { display: flex; align-items: center; gap: 3px; cursor: default; }
+.carrier-stat-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.carrier-stat-live { font-weight: 700; font-size: 12px; font-variant-numeric: tabular-nums; }
+
+.region-tooltip-warning {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #30363d;
+  font-size: 10px;
+  color: #8b949e;
+  line-height: 1.5;
+  max-width: 240px;
+}
+
+.region-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 6px 20px #00000077;
+  min-width: 200px;
+  transform: translateY(-100%);
+}
+.region-tooltip-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .03em;
+}
+.region-tooltip-line {
+  font-size: 11px;
+  color: #8b949e;
+}
+.region-tooltip-code {
+  font-size: 10px;
+  color: #484f58;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  margin-top: 2px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  cursor: default;
+  transition: color 0.15s, background 0.15s;
+}
+.region-tooltip-code:hover {
+  color: #f5c842;
+  background: #f5c84218;
+}
 
 /* ── Main Layout ───────────────────────────────────────────────────────── */
 .main-area {
@@ -95,15 +201,20 @@
   overflow: hidden;
 }
 
-/* ── Side Panel ────────────────────────────────────────────────────────── */
+/* ── Side Panel (floating, draggable) ──────────────────────────────────── */
 .side-panel {
+  position: absolute;
   width: 270px;
-  flex-shrink: 0;
+  max-height: calc(100% - 20px);
   background: #161b22;
-  border-right: 1px solid #30363d;
+  border: 1px solid #30363d;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  z-index: 200;
+  box-shadow: 0 8px 32px #00000066;
+  user-select: none;
 }
 
 .panel-header {
@@ -112,7 +223,9 @@
   justify-content: space-between;
   padding: 14px 14px 10px;
   border-bottom: 1px solid #21262d;
+  cursor: grab;
 }
+.panel-header:active { cursor: grabbing; }
 .panel-airport-info { display: flex; flex-direction: column; gap: 2px; }
 .airport-code { font-size: 22px; font-weight: 800; color: #58a6ff; letter-spacing: .04em; }
 .airport-name { font-size: 12px; color: #8b949e; }
@@ -126,10 +239,48 @@
 .meta-row { display: flex; align-items: center; gap: 8px; }
 .meta-label { font-size: 11px; color: #8b949e; width: 56px; flex-shrink: 0; }
 .meta-value { font-size: 12px; color: #c9d1d9; }
+
+.capacity-edit { display: flex; align-items: center; gap: 6px; }
+.capacity-input {
+  width: 44px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  color: #c9d1d9;
+  font-size: 12px;
+  padding: 2px 6px;
+  text-align: center;
+}
+.capacity-input:focus { outline: none; border-color: #58a6ff; }
+.meta-value-unit { font-size: 11px; color: #8b949e; }
 .hub-carriers { display: flex; gap: 5px; flex-wrap: wrap; }
 .carrier-pill {
   font-size: 10px; font-weight: 700; color: #fff;
   padding: 2px 6px; border-radius: 4px; letter-spacing: .05em;
+}
+
+/* Region pills in airport panel */
+.region-pills { display: flex; gap: 3px; flex-wrap: nowrap; min-width: 0; }
+.region-pill {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--rc, #30363d);
+  background: none;
+  color: var(--rc, #8b949e);
+  cursor: pointer;
+  transition: background .12s;
+  opacity: 0.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 72px;
+}
+.region-pill:hover { opacity: 0.85; background: color-mix(in srgb, var(--rc) 15%, transparent); }
+.region-pill.active {
+  background: color-mix(in srgb, var(--rc) 25%, transparent);
+  opacity: 1;
 }
 
 /* ── Hour Selector ─────────────────────────────────────────────────────── */
@@ -262,6 +413,11 @@
   stroke-width: 1.5;
 }
 
+/* Region center dot — identifies which RegionalNetwork (Composite) this Airport (Leaf) belongs to */
+.region-dot {
+  pointer-events: none;
+}
+
 /* Route lines */
 .route-line {
   fill: none;
@@ -275,19 +431,80 @@
 .airport-node { cursor: pointer; }
 
 .airport-circle {
-  fill: #21262d;
-  stroke: #8b949e;
+  fill: color-mix(in srgb, var(--rc) 12%, #21262d);
+  stroke: color-mix(in srgb, var(--rc) 50%, #8b949e);
   stroke-width: 2.5;
   transition: fill .15s, stroke .15s;
 }
 .airport-node:hover .airport-circle {
-  fill: #30363d;
-  stroke: #58a6ff;
+  fill: color-mix(in srgb, var(--rc) 28%, #21262d);
+  stroke: var(--rc);
 }
 .airport-node.selected .airport-circle {
-  fill: #1f6feb;
-  stroke: #58a6ff;
+  fill: color-mix(in srgb, var(--rc) 45%, #21262d);
+  stroke: var(--rc);
+  stroke-width: 2.5;
+}
+.airport-node.region-peer .airport-circle {
+  fill: color-mix(in srgb, var(--rc) 22%, #21262d);
+  stroke: color-mix(in srgb, var(--rc) 70%, #8b949e);
+}
+
+/* Region ping ring */
+.region-ping {
+  fill: none;
   stroke-width: 2;
+  stroke-opacity: 0;
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: region-ping 1.2s ease-out infinite;
+}
+
+@keyframes region-ping {
+  0%   { transform: scale(1);    stroke-opacity: 0.7; }
+  100% { transform: scale(2.2);  stroke-opacity: 0;   }
+}
+
+/* Network hover bounding box */
+.network-hover-box {
+  fill: none;
+  stroke: #58a6ff;
+  stroke-width: 1.5;
+  stroke-opacity: 0.45;
+  stroke-dasharray: 8 5;
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px #58a6ff44);
+}
+
+/* Region hover — golden box */
+.region-hover-box {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-opacity: 0.55;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+
+/* Region hover — airport glow + ping */
+.airport-node.region-hovered .airport-circle {
+  fill: color-mix(in srgb, var(--rc) 35%, #21262d);
+  stroke: var(--rc);
+  filter: drop-shadow(0 0 6px var(--rc));
+}
+
+@keyframes region-ping {
+  0%   { r: var(--ping-r); stroke-opacity: 0.7; }
+  100% { r: calc(var(--ping-r) + 14px); stroke-opacity: 0; }
+}
+
+.airport-node.region-hovered .airport-circle {
+  animation: region-glow-pulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes region-glow-pulse {
+  from { filter: drop-shadow(0 0 4px var(--rc)); }
+  to   { filter: drop-shadow(0 0 11px var(--rc)); }
 }
 .carrier-arc {
   fill: none;

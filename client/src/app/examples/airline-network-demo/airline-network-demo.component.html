@@ -1,57 +1,53 @@
 <div class="airline-demo">
 
-  <!-- Toolbar -->
+  <!-- Toolbar: two rows -->
   <div class="toolbar">
-    <div class="help-wrap">
-      <button class="ctrl-btn help-btn" #helpBtn
-              (mouseenter)="openHelp(helpBtn)"
-              (mouseleave)="helpOpen = false">?</button>
-      <div class="help-tooltip"
-           [class.open]="helpOpen"
-           [style.top.px]="helpPos.top"
-           [style.left.px]="helpPos.left"
-           (mouseenter)="helpOpen = true"
-           (mouseleave)="helpOpen = false">
-        <div class="help-title">Airline Network Controls</div>
-        <ul class="help-list">
-          <li><b>Click airport</b> — open schedule editor &amp; departure toggles</li>
-          <li><b>Drag airport</b> — reposition node; routes &amp; distances update live</li>
-          <li><b>Itinerary Maker</b> — pick From/To to find the shortest path (fewest carrier switches, then distance)</li>
-          <li><b>+ Add Airport</b> — click the map to place, then name &amp; confirm</li>
-          <li><b>🗑 Remove</b> — in panel header; 🔒 if removal would disconnect a carrier's network</li>
-          <li><b>Schedule editor</b> — toggle departure slots per hour, up to the airport's capacity</li>
-          <li><b>Add/remove routes</b> — in the schedule panel for the selected airport</li>
-          <li><b>Sound dropdown</b> — choose which chime plays next</li>
-          <li><b>▶ Play next</b> — fire the queued sound immediately &amp; reset the cooldown bar</li>
-          <li><b>🔊 / mute</b> — toggle all ambient airport sounds</li>
-        </ul>
-      </div>
-    </div>
-    <div class="clock-display">
-      <span class="clock-label">Sim Time</span>
-      <span class="clock-value">{{ formatHour(currentHour) }}</span>
-    </div>
 
-    <div class="clock-controls">
+    <!-- Row 1: identity + map selector + actions -->
+    <div class="toolbar-row">
+      <div class="help-wrap">
+        <button class="ctrl-btn help-btn" #helpBtn
+                (mouseenter)="openHelp(helpBtn)"
+                (mouseleave)="helpOpen = false">?</button>
+        <div class="help-tooltip"
+             [class.open]="helpOpen"
+             [style.top.px]="helpPos.top"
+             [style.left.px]="helpPos.left"
+             (mouseenter)="helpOpen = true"
+             (mouseleave)="helpOpen = false">
+          <div class="help-title">Airline Network Controls</div>
+          <ul class="help-list">
+            <li><b>Click airport</b> — open schedule editor &amp; departure toggles</li>
+            <li><b>Drag airport</b> — reposition node; routes &amp; distances update live</li>
+            <li><b>Itinerary Maker</b> — pick From/To to find the shortest path (fewest carrier switches, then distance)</li>
+            <li><b>+ Add Airport</b> — click the map to place, then name &amp; confirm</li>
+            <li><b>🗑 Remove</b> — in panel header; 🔒 if removal would disconnect a carrier's network</li>
+            <li><b>Schedule editor</b> — toggle departure slots per hour, up to the airport's capacity</li>
+            <li><b>Add/remove routes</b> — in the schedule panel for the selected airport</li>
+            <li><b>Sound dropdown</b> — choose which chime plays next</li>
+            <li><b>▶ Play next</b> — fire the queued sound immediately &amp; reset the cooldown bar</li>
+            <li><b>🔊 / mute</b> — toggle all ambient airport sounds</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="clock-display">
+        <span class="clock-label">Sim Time</span>
+        <span class="clock-value">{{ formatHour(currentHour) }}</span>
+      </div>
+
       <span class="autoplay-badge">
         <svg viewBox="0 0 16 16" fill="currentColor" style="width:11px;height:11px"><path d="M4 2.5v11l9-5.5-9-5.5z"/></svg>
         Auto-running
       </span>
-    </div>
 
-    <div class="map-selector">
-      @for (m of mapDefs; track m.id) {
-        <button class="map-btn" [class.active]="currentMapId === m.id" (click)="switchMap(m.id)">{{ m.name }}</button>
-      }
-    </div>
+      <div class="map-selector">
+        @for (m of mapDefs; track m.id) {
+          <button class="map-btn" [class.active]="currentMapId === m.id" (click)="switchMap(m.id)">{{ m.name }}</button>
+        }
+      </div>
 
-    <div class="network-stats">
-      <span class="stat"><b>{{ getAirports().length }}</b> airports</span>
-      <span class="stat"><b>{{ networkRouteCount() }}</b> routes</span>
-      <span class="stat active-stat"><b>{{ departuresThisHour() }}</b> in-flight</span>
-    </div>
-
-    <div class="toolbar-actions">
+      <div class="toolbar-actions">
       <select class="next-sound-select" [(ngModel)]="nextAmbi" [title]="'Next sound'">
         @for (opt of ambiOptions; track opt.value) {
           <option [value]="opt.value">{{ opt.label }}</option>
@@ -71,7 +67,85 @@
       <button class="ctrl-btn" [class.active]="addingAirport" (click)="addingAirport ? cancelAddAirport() : startAddAirport()">
         {{ addingAirport ? '✕ Cancel' : '+ Add Airport' }}
       </button>
+      </div>
     </div>
+
+    <!-- Row 2: live network stats -->
+    <div class="toolbar-row toolbar-row-stats">
+      <span class="stat"><b>{{ getAirports().length }}</b> airports</span>
+      <span class="stat"><b>{{ networkRouteCount() }}</b> routes</span>
+      <span class="stat active-stat"
+            (mouseenter)="networkHovered = true; setInflightTooltipPos($event)"
+            (mouseleave)="networkHovered = false; closeInflightTooltip()">
+        <b>{{ departuresThisHour() }}</b><span class="stat-cap">/{{ networkCapacity() }}</span> in-flight
+      </span>
+
+      @if (infightTooltipOpen) {
+        <div class="region-tooltip"
+             [style.top.px]="infightTooltipPos.top"
+             [style.left.px]="infightTooltipPos.left"
+             (mouseenter)="networkHovered = true; cancelTooltipClose()"
+             (mouseleave)="networkHovered = false; closeInflightTooltip()">
+          <span class="region-tooltip-name" style="color:#58a6ff">Network</span>
+          <span class="region-tooltip-line">{{ departuresThisHour() }} active · {{ networkCapacity() }} total capacity</span>
+          <span class="region-tooltip-code">getCapacity() → regions.reduce((s, r) => s + r.getCapacity(), 0)</span>
+          <span class="region-tooltip-code">r.getCapacity() → airports.reduce((s, a) => s + a.getCapacity(), 0)</span>
+        </div>
+      }
+      <span class="stat stat-divider">|</span>
+      <div class="pattern-stat-group pattern-stat-group--composite">
+        @for (r of getRegions(); track r.regionId) {
+          <span class="stat region-stat"
+                (mouseenter)="hoverRegion(r, $event)"
+                (mouseleave)="hoverRegion(null, $event)">
+            <span class="region-stat-dot" [style.background]="r.color"></span>
+            <span class="region-stat-live" [style.color]="r.color">{{ regionActiveFlights(r) }}</span><span class="region-stat-cap">/{{ r.getCapacity() }}</span>
+          </span>
+        }
+        <span class="pattern-label pattern-label--composite">Composite Pattern</span>
+      </div>
+
+      <!-- Region tooltip -->
+      @if (hoveredRegion) {
+        <div class="region-tooltip"
+             [style.top.px]="regionTooltipPos.top"
+             [style.left.px]="regionTooltipPos.left"
+             (mouseenter)="cancelTooltipClose()"
+             (mouseleave)="hoverRegion(null)">
+          <span class="region-tooltip-name" [style.color]="hoveredRegion.color">{{ hoveredRegion.getName() }}</span>
+          <span class="region-tooltip-line">{{ hoveredRegion.getAirports().length }} airports · {{ hoveredRegion.getCapacity() }} capacity</span>
+          <span class="region-tooltip-code">getCapacity() → airports.reduce((s, a) => s + a.getCapacity(), 0)</span>
+          <span class="region-tooltip-code">getOutgoingRoutes() → airports.flatMap(a => a.getOutgoingRoutes())</span>
+        </div>
+      }
+
+      <!-- Carriers pushed to the right -->
+      <div class="carrier-stats-group pattern-stat-group pattern-stat-group--noncomposite">
+        <span class="pattern-label pattern-label--noncomposite">Not Composite</span>
+        @for (c of carriers; track c.id) {
+          <span class="stat carrier-stat"
+                (mouseenter)="setCarrierTooltip(c, $event)"
+                (mouseleave)="setCarrierTooltip(null)">
+            <span class="carrier-stat-dot" [style.background]="c.color"></span>
+            <span class="carrier-stat-live" [style.color]="c.color">{{ carrierActiveFlights(c) }}</span><span class="region-stat-cap">/{{ carrierCapacity(c) }}</span>
+          </span>
+        }
+      </div>
+
+      @if (carrierTooltipOpen; as c) {
+        <div class="region-tooltip"
+             [style.top.px]="carrierTooltipPos.top"
+             [style.left.px]="carrierTooltipPos.left"
+             (mouseenter)="cancelTooltipClose()"
+             (mouseleave)="setCarrierTooltip(null)">
+          <span class="region-tooltip-name" [style.color]="c.color">{{ c.name }}</span>
+          <span class="region-tooltip-line">{{ carrierActiveFlights(c) }} active · {{ carrierCapacity(c) }} capacity</span>
+          <span class="region-tooltip-code">getAirports() — composite ✓ recurses the tree</span>
+          <span class="region-tooltip-code">.filter(a => a.carriers.includes(c)) — ✗ external filter</span>
+        </div>
+      }
+    </div>
+
   </div>
 
   <!-- Add airport instructions -->
@@ -97,131 +171,8 @@
   <!-- Main Area -->
   <div class="main-area">
 
-    <!-- Schedule Side Panel -->
-    @if (selectedAirport) {
-      <div class="side-panel">
-        <div class="panel-header">
-          <div class="panel-airport-info">
-            <span class="airport-code">{{ selectedAirport.code }}</span>
-            <span class="airport-name">{{ selectedAirport.getName() }}</span>
-          </div>
-          <div class="panel-header-actions">
-            @if (canRemoveAirport(selectedAirport).ok) {
-              <button class="remove-airport-btn" (click)="removeAirport(selectedAirport)" title="Remove airport">🗑</button>
-            } @else {
-              <span class="remove-blocked" [title]="canRemoveAirport(selectedAirport).reason">🔒</span>
-            }
-            <button class="close-btn" (click)="closePanel()">✕</button>
-          </div>
-        </div>
-
-        <div class="panel-meta">
-          <div class="meta-row">
-            <span class="meta-label">Capacity</span>
-            <span class="meta-value">{{ selectedAirport.getCapacity() }} outgoing/hr</span>
-          </div>
-          @if (isHubFor(selectedAirport).length > 0) {
-            <div class="meta-row">
-              <span class="meta-label">Hub for</span>
-              <div class="hub-carriers">
-                @for (c of isHubFor(selectedAirport); track c.id) {
-                  <span class="carrier-pill" [style.background]="c.color">{{ c.code }}</span>
-                }
-              </div>
-            </div>
-          }
-          <div class="meta-row">
-            <span class="meta-label">Carriers</span>
-            <div class="hub-carriers">
-              @for (c of selectedAirport.carriers; track c.id) {
-                <span class="carrier-pill" [style.background]="c.color">{{ c.code }}</span>
-              }
-            </div>
-          </div>
-        </div>
-
-        <!-- Hour Selector -->
-        <div class="hour-selector">
-          <label class="section-label">Schedule Editor</label>
-          <div class="hour-grid">
-            @for (h of hours; track h) {
-              <button
-                class="hour-chip"
-                [class.selected]="scheduleHour === h"
-                [class.has-flights]="departureCount(h) > 0"
-                [class.at-capacity]="atCapacity(h)"
-                [class.current-hour]="currentHour === h"
-                (click)="scheduleHour = h">
-                {{ h }}
-              </button>
-            }
-          </div>
-          <div class="hour-info">
-            <span>{{ formatHour(scheduleHour) }}</span>
-            <span class="capacity-indicator" [class.full]="atCapacity(scheduleHour)">
-              {{ departureCount(scheduleHour) }} / {{ selectedAirport.getCapacity() }} slots
-            </span>
-          </div>
-        </div>
-
-        <!-- Outgoing Routes -->
-        <div class="route-list">
-          <label class="section-label">Outgoing Flights</label>
-          @if (getSelectedOutgoing().length === 0) {
-            <div class="empty-routes">No outgoing routes from this airport.</div>
-          }
-          @for (route of getSelectedOutgoing(); track route.id) {
-            <div class="route-row" [class.scheduled]="isScheduled(scheduleHour, route.id)">
-              <button
-                class="schedule-toggle"
-                [class.on]="isScheduled(scheduleHour, route.id)"
-                [disabled]="!isScheduled(scheduleHour, route.id) && atCapacity(scheduleHour)"
-                (click)="toggleSchedule(scheduleHour, route.id)">
-                {{ isScheduled(scheduleHour, route.id) ? '✓' : '+' }}
-              </button>
-              <div class="route-info">
-                <span class="route-dest">→ {{ route.to.code }} <span class="route-dest-name">{{ route.to.getName() }}</span></span>
-                <span class="route-carrier-tag" [style.background]="route.carrier.color">{{ route.carrier.code }}</span>
-              </div>
-              <span class="route-dist">{{ routeDistance(route) }}</span>
-              <button class="remove-route-btn" (click)="removeRoute(route.id)" title="Remove route">✕</button>
-            </div>
-          }
-        </div>
-
-        <!-- Add Route -->
-        <div class="add-route-section">
-          @if (!showAddRoute) {
-            <button class="add-route-btn" (click)="showAddRoute = true">+ Add Route from {{ selectedAirport.code }}</button>
-          } @else {
-            <div class="add-route-form">
-              <label class="section-label">New Route from {{ selectedAirport.code }}</label>
-              <select [(ngModel)]="addRouteTo">
-                <option value="">To airport…</option>
-                @for (a of getAirports(); track a.id) {
-                  @if (a.id !== selectedAirport.id) {
-                    <option [value]="a.id">{{ a.code }} – {{ a.getName() }}</option>
-                  }
-                }
-              </select>
-              <select [(ngModel)]="addRouteCarrier">
-                <option value="">Carrier…</option>
-                @for (c of carriers; track c.id) {
-                  <option [value]="c.id">{{ c.name }}</option>
-                }
-              </select>
-              <div class="form-actions">
-                <button class="submit-btn" (click)="addRouteFrom = selectedAirport.id; submitAddRoute()">Add</button>
-                <button class="cancel-btn" (click)="showAddRoute = false">Cancel</button>
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-    }
-
     <!-- Map -->
-    <div class="map-container" [class.panel-open]="selectedAirport" [class.adding]="addingAirport">
+    <div class="map-container" [class.adding]="addingAirport">
       <svg #mapSvg class="map-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid meet"
            (click)="onMapClick($event)">
 
@@ -248,11 +199,35 @@
           }
         }
 
+        <!-- Network hover bounding box -->
+        @if (networkHovered) {
+          @if (getNetworkBoundingBox(); as nb) {
+            <rect class="network-hover-box"
+                  [attr.x]="nb.x" [attr.y]="nb.y"
+                  [attr.width]="nb.w" [attr.height]="nb.h"
+                  rx="16" ry="16" />
+          }
+        }
+
+        <!-- Region hover bounding box -->
+        @if (hoveredRegion; as hr) {
+          @if (getRegionBoundingBox(hr); as bb) {
+            <rect class="region-hover-box"
+                  [attr.x]="bb.x" [attr.y]="bb.y"
+                  [attr.width]="bb.w" [attr.height]="bb.h"
+                  [attr.stroke]="hr.color"
+                  [style.filter]="'drop-shadow(0 0 6px ' + hr.color + '44)'"
+                  rx="12" ry="12" />
+          }
+        }
+
         <!-- Airport nodes -->
         @for (airport of getAirports(); track airport.id) {
           <g class="airport-node"
              [class.selected]="selectedAirport === airport"
-             [class.dragging]="false"
+             [class.region-peer]="isRegionPeer(airport)"
+             [class.region-hovered]="isRegionHovered(airport)"
+             [style.--rc]="getAirportRegion(airport)?.color ?? '#8b949e'"
              (mousedown)="startDrag($event, airport)"
              (click)="$event.stopPropagation(); selectAirport(airport)">
 
@@ -270,6 +245,23 @@
               [attr.cx]="airport.x" [attr.cy]="airport.y"
               [attr.r]="airportNodeRadius(airport)"
               class="airport-circle" />
+
+            @if (isRegionHovered(airport)) {
+              <circle
+                [attr.cx]="airport.x" [attr.cy]="airport.y"
+                [attr.r]="airportNodeRadius(airport)"
+                class="region-ping"
+                [style.stroke]="getAirportRegion(airport)?.color ?? '#8b949e'" />
+            }
+
+            <!-- Region dot — shows which Composite (region) this leaf belongs to -->
+            @if (getAirportRegion(airport); as region) {
+              <circle
+                [attr.cx]="airport.x" [attr.cy]="airport.y"
+                r="3"
+                class="region-dot"
+                [attr.fill]="region.color" />
+            }
 
             <text
               [attr.x]="airport.x"
@@ -356,6 +348,151 @@
 
       @if (!selectedAirport && !addingAirport) {
         <div class="map-hint">Click airport to edit schedule · Drag to move</div>
+      }
+
+      <!-- Floating Airport Panel — position:absolute inside map-container avoids fixed/transform conflict -->
+      @if (selectedAirport) {
+        <div class="side-panel"
+             [style.left.px]="panelPos.x"
+             [style.top.px]="panelPos.y">
+
+          <div class="panel-header" (mousedown)="startPanelDrag($event)">
+            <div class="panel-airport-info">
+              <span class="airport-code">{{ selectedAirport.code }}</span>
+              <span class="airport-name">{{ selectedAirport.getName() }}</span>
+            </div>
+            <div class="panel-header-actions">
+              @if (canRemoveAirport(selectedAirport).ok) {
+                <button class="remove-airport-btn" (click)="removeAirport(selectedAirport)" title="Remove airport">🗑</button>
+              } @else {
+                <span class="remove-blocked" [title]="canRemoveAirport(selectedAirport).reason">🔒</span>
+              }
+              <button class="close-btn" (click)="closePanel()">✕</button>
+            </div>
+          </div>
+
+          <div class="panel-meta">
+            <div class="meta-row">
+              <span class="meta-label">Capacity</span>
+              <div class="capacity-edit">
+                <input class="capacity-input" type="number" min="1" max="10"
+                       [value]="selectedAirport.getCapacity()"
+                       (change)="setCapacity(selectedAirport, +$any($event.target).value)" />
+                <span class="meta-value-unit">outgoing/hr</span>
+              </div>
+            </div>
+            @if (isHubFor(selectedAirport).length > 0) {
+              <div class="meta-row">
+                <span class="meta-label">Hub for</span>
+                <div class="hub-carriers">
+                  @for (c of isHubFor(selectedAirport); track c.id) {
+                    <span class="carrier-pill" [style.background]="c.color">{{ c.code }}</span>
+                  }
+                </div>
+              </div>
+            }
+            <div class="meta-row">
+              <span class="meta-label">Carriers</span>
+              <div class="hub-carriers">
+                @for (c of selectedAirport.carriers; track c.id) {
+                  <span class="carrier-pill" [style.background]="c.color">{{ c.code }}</span>
+                }
+              </div>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Region</span>
+              <div class="region-pills">
+                @for (r of getRegions(); track r.regionId) {
+                  <button
+                    class="region-pill"
+                    [class.active]="getAirportRegion(selectedAirport)?.regionId === r.regionId"
+                    [style.--rc]="r.color"
+                    (click)="moveAirportToRegion(selectedAirport, r.regionId)">
+                    {{ r.getName() }}
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Hour Selector -->
+          <div class="hour-selector">
+            <label class="section-label">Schedule Editor</label>
+            <div class="hour-grid">
+              @for (h of hours; track h) {
+                <button
+                  class="hour-chip"
+                  [class.selected]="scheduleHour === h"
+                  [class.has-flights]="departureCount(h) > 0"
+                  [class.at-capacity]="atCapacity(h)"
+                  [class.current-hour]="currentHour === h"
+                  (click)="scheduleHour = h">
+                  {{ h }}
+                </button>
+              }
+            </div>
+            <div class="hour-info">
+              <span>{{ formatHour(scheduleHour) }}</span>
+              <span class="capacity-indicator" [class.full]="atCapacity(scheduleHour)">
+                {{ departureCount(scheduleHour) }} / {{ selectedAirport.getCapacity() }} slots
+              </span>
+            </div>
+          </div>
+
+          <!-- Outgoing Routes -->
+          <div class="route-list">
+            <label class="section-label">Outgoing Flights</label>
+            @if (getSelectedOutgoing().length === 0) {
+              <div class="empty-routes">No outgoing routes from this airport.</div>
+            }
+            @for (route of getSelectedOutgoing(); track route.id) {
+              <div class="route-row" [class.scheduled]="isScheduled(scheduleHour, route.id)">
+                <button
+                  class="schedule-toggle"
+                  [class.on]="isScheduled(scheduleHour, route.id)"
+                  [disabled]="!isScheduled(scheduleHour, route.id) && atCapacity(scheduleHour)"
+                  (click)="toggleSchedule(scheduleHour, route.id)">
+                  {{ isScheduled(scheduleHour, route.id) ? '✓' : '+' }}
+                </button>
+                <div class="route-info">
+                  <span class="route-dest">→ {{ route.to.code }} <span class="route-dest-name">{{ route.to.getName() }}</span></span>
+                  <span class="route-carrier-tag" [style.background]="route.carrier.color">{{ route.carrier.code }}</span>
+                </div>
+                <span class="route-dist">{{ routeDistance(route) }}</span>
+                <button class="remove-route-btn" (click)="removeRoute(route.id)" title="Remove route">✕</button>
+              </div>
+            }
+          </div>
+
+          <!-- Add Route -->
+          <div class="add-route-section">
+            @if (!showAddRoute) {
+              <button class="add-route-btn" (click)="showAddRoute = true">+ Add Route from {{ selectedAirport.code }}</button>
+            } @else {
+              <div class="add-route-form">
+                <label class="section-label">New Route from {{ selectedAirport.code }}</label>
+                <select [(ngModel)]="addRouteTo">
+                  <option value="">To airport…</option>
+                  @for (a of getAirports(); track a.id) {
+                    @if (a.id !== selectedAirport.id) {
+                      <option [value]="a.id">{{ a.code }} – {{ a.getName() }}</option>
+                    }
+                  }
+                </select>
+                <select [(ngModel)]="addRouteCarrier">
+                  <option value="">Carrier…</option>
+                  @for (c of carriers; track c.id) {
+                    <option [value]="c.id">{{ c.name }}</option>
+                  }
+                </select>
+                <div class="form-actions">
+                  <button class="submit-btn" (click)="addRouteFrom = selectedAirport.id; submitAddRoute()">Add</button>
+                  <button class="cancel-btn" (click)="showAddRoute = false">Cancel</button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
       }
     </div>
 

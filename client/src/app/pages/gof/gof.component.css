@@ -1,3 +1,21 @@
+/* ── Power Words tooltip ─────────────────────────────────────────────────────*/
+.pw-tooltip {
+  position: fixed;
+  z-index: 9999;
+  width: 320px;
+  background: #0f0f16;
+  border: 1px solid #3a3a50;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: 'Georgia', serif;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #c9c7c0;
+  line-height: 1.6;
+  pointer-events: none;
+  box-shadow: 0 8px 28px #000000bb;
+}
+
 /* ── CSS Variables ─────────────────────────────────────────────────────────── */
 :host {
   --bg:        #0a0a0c;
@@ -363,6 +381,7 @@
   background: var(--bg2);
   max-height: 85vh;
   overflow-y: auto;
+  overflow-x: visible;
 }
 
 /* ── README TOC sidebar ───────────────────────────────────────────────────── */

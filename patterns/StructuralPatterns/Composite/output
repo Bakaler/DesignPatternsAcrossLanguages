@@ -1,0 +1,42 @@
+╔══════════════════════════════════════════════════════════════╗
+║           Composite — Airline Network                        ║
+╚══════════════════════════════════════════════════════════════╝
+
+================================================================
+  Network tree
+================================================================
+
+[network] Global Network/
+  [region] West Region/
+    [airport] LAX  (cap: 4, routes: 3)
+    [airport] SFO  (cap: 3, routes: 2)
+  [region] East Region/
+    [airport] JFK  (cap: 5, routes: 4)
+    [airport] ORD  (cap: 3, routes: 2)
+
+================================================================
+  Client queries — same call regardless of node type
+================================================================
+
+  Global Network   get_capacity()=15   get_route_count()=11
+  West Region      get_capacity()= 7   get_route_count()=5
+  East Region      get_capacity()= 8   get_route_count()=6
+  LAX (leaf)       get_capacity()= 4   get_route_count()=3
+  JFK (leaf)       get_capacity()= 5   get_route_count()=4
+
+================================================================
+  Without Composite
+================================================================
+
+  Every caller would need:
+    if isinstance(node, Airport):        return node.capacity
+    if isinstance(node, RegionalNetwork): loop airports
+    if isinstance(node, AirportNetwork):  loop regions + loop airports
+    if new level added:                   add another branch...
+
+  With Composite:
+    node.get_capacity()  — works at every level, always
+
+╔══════════════════════════════════════════════════════════════╗
+║  Done                                                        ║
+╚══════════════════════════════════════════════════════════════╝

@@ -104,24 +104,27 @@ class Airport implements AirNetworkComponent {
   }
 }
 
-// SECTION:: AirportNetwork (Composite)
-// The Composite node. Manages a collection of Airport leaves and all routes
-// between them. Also implements AirNetworkComponent, so a network of airports
-// can be treated the same way as a single airport by outside code.
-class AirportNetwork implements AirNetworkComponent {
+// SECTION:: RegionalNetwork (Composite — mid-level)
+// A Composite that groups a subset of Airport leaves into a named region.
+// Implements the same AirNetworkComponent interface as Airport (Leaf) and
+// AirportNetwork (top-level Composite), so callers treat all three uniformly.
+class RegionalNetwork implements AirNetworkComponent {
   private airports: Airport[] = [];
-  private routes: Route[] = [];
 
-  getName(): string { return 'US Airport Network'; }
+  constructor(
+    public readonly regionId: string,
+    public readonly regionName: string,
+    public readonly color: string,   // SVG zone fill color
+  ) {}
 
-  // Recursive-style aggregate — sums capacity across all children
+  getName(): string { return this.regionName; }
+
+  // Recursively sums leaf capacities — same call works on a single Airport
   getCapacity(): number {
     return this.airports.reduce((sum, a) => sum + a.getCapacity(), 0);
   }
 
-  addAirport(airport: Airport): void {
-    this.airports.push(airport);
-  }
+  addAirport(airport: Airport): void { this.airports.push(airport); }
 
   removeAirport(id: string): void {
     this.airports = this.airports.filter(a => a.id !== id);
@@ -129,7 +132,65 @@ class AirportNetwork implements AirNetworkComponent {
 
   getAirports(): Airport[] { return this.airports; }
 
-  // Delegates connection management down to each relevant leaf
+  // Route connections are owned by the top-level network; region delegates to its leaves
+  addConnection(route: Route): void {
+    if (this.airports.includes(route.from)) route.from.addConnection(route);
+    if (this.airports.includes(route.to))   route.to.addConnection(route);
+  }
+
+  removeConnection(routeId: string): void {
+    this.airports.forEach(a => a.removeConnection(routeId));
+  }
+
+  getOutgoingRoutes(): Route[] {
+    return this.airports.flatMap(a => a.getOutgoingRoutes());
+  }
+
+  // Bounding box of member airports — used to draw the zone shape on the map
+  getBoundingBox(): { x: number; y: number; w: number; h: number } {
+    if (!this.airports.length) return { x: 0, y: 0, w: 0, h: 0 };
+    const xs = this.airports.map(a => a.x);
+    const ys = this.airports.map(a => a.y);
+    const pad = 38;
+    const x = Math.min(...xs) - pad, y = Math.min(...ys) - pad;
+    return { x, y, w: Math.max(...xs) - x + pad * 2, h: Math.max(...ys) - y + pad * 2 };
+  }
+}
+
+// SECTION:: AirportNetwork (top-level Composite)
+// Owns all routes and delegates every AirNetworkComponent call down through
+// RegionalNetwork composites to Airport leaves — two levels of recursion.
+class AirportNetwork implements AirNetworkComponent {
+  private regions: RegionalNetwork[] = [];
+  private routes:  Route[] = [];
+
+  getName(): string { return 'National Air Network'; }
+
+  // Two-level recursion: this → regions → airports
+  getCapacity(): number {
+    return this.regions.reduce((sum, r) => sum + r.getCapacity(), 0);
+  }
+
+  addRegion(region: RegionalNetwork): void { this.regions.push(region); }
+  getRegions(): RegionalNetwork[] { return this.regions; }
+
+  // Flatten all leaves across all regions
+  getAirports(): Airport[] {
+    return this.regions.flatMap(r => r.getAirports());
+  }
+
+  addAirport(airport: Airport, regionId?: string): void {
+    const region = regionId
+      ? this.regions.find(r => r.regionId === regionId)
+      : this.regions[this.regions.length - 1];  // default: last region
+    region?.addAirport(airport);
+  }
+
+  removeAirport(id: string): void {
+    this.regions.forEach(r => r.removeAirport(id));
+  }
+
+  // Delegates connection management down through regions to leaves
   addConnection(route: Route): void {
     if (!this.routes.find(r => r.id === route.id)) {
       this.routes.push(route);
@@ -138,17 +199,17 @@ class AirportNetwork implements AirNetworkComponent {
     }
   }
 
-  // Propagates removal down to every leaf that holds a reference
+  // Propagates removal down through every region to every leaf
   removeConnection(routeId: string): void {
     this.routes = this.routes.filter(r => r.id !== routeId);
-    this.airports.forEach(a => a.removeConnection(routeId));
+    this.regions.forEach(r => r.removeConnection(routeId));
   }
 
   getOutgoingRoutes(): Route[] { return this.routes; }
 
   getDeparturesAtHour(hour: number): { airport: Airport; route: Route }[] {
     const departures: { airport: Airport; route: Route }[] = [];
-    for (const airport of this.airports) {
+    for (const airport of this.getAirports()) {
       for (const routeId of airport.getScheduledRouteIds(hour)) {
         const route = this.routes.find(r => r.id === routeId && r.from === airport);
         if (route) departures.push({ airport, route });
@@ -165,6 +226,8 @@ interface ActiveFlight {
   progress: number;
   startTime: number;
   duration: number;
+  accelFrac: number;    // fraction of total time spent accelerating (and decelerating)
+  accelPosFrac: number; // fraction of total distance covered during accel (and decel)
 }
 
 // SECTION:: Itinerary types
@@ -206,8 +269,24 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
   itinRouteIds = new Set<string>();
   itinNoPath = false;
 
-  // Drag
+  // Airport drag
   private draggingAirport: Airport | null = null;
+
+  // Panel drag
+  panelPos = { x: 20, y: 80 };
+  private panelDragging = false;
+  private panelDragOffset = { x: 0, y: 0 };
+
+  startPanelDrag(e: MouseEvent): void {
+    e.preventDefault();
+    e.stopPropagation();
+    this.panelDragging = true;
+    // offset = mouse position relative to container, minus current panel position
+    const containerRect = this.mapSvgRef?.nativeElement?.parentElement?.getBoundingClientRect();
+    const ox = containerRect ? e.clientX - containerRect.left : e.clientX;
+    const oy = containerRect ? e.clientY - containerRect.top : e.clientY;
+    this.panelDragOffset = { x: ox - this.panelPos.x, y: oy - this.panelPos.y };
+  }
 
   // Add airport
   addingAirport = false;
@@ -374,9 +453,16 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
     const thn = new Airport('thn', 'Thennock',   'THN', 728, 295, 2, [ostmere]);
     const cvr = new Airport('cvr', 'Corvath',    'CVR', 498, 305, 2, [caldenmere, ostmere]);
 
-    [khr, vds, cdm, trv, prt, azp, ost, qrr, brx, nlf, vrx, mld, thn, cvr].forEach(a =>
-      this.network.addAirport(a)
-    );
+    const northern = new RegionalNetwork('north', 'Northern Reaches', '#6366f1');
+    const central  = new RegionalNetwork('central', 'Central Plains',   '#f97316');
+    const eastern  = new RegionalNetwork('eastern', 'Ostmere Isle',     '#06b6d4');
+    [northern, central, eastern].forEach(r => this.network.addRegion(r));
+
+    northern.addAirport(khr); northern.addAirport(vds); northern.addAirport(nlf);
+    northern.addAirport(vrx); northern.addAirport(azp);
+    central.addAirport(cdm);  central.addAirport(trv);  central.addAirport(prt);
+    central.addAirport(brx);  central.addAirport(mld);  central.addAirport(cvr);
+    eastern.addAirport(ost);  eastern.addAirport(qrr);  eastern.addAirport(thn);
 
     khorrath.hub   = khr;
     caldenmere.hub = cdm;
@@ -444,9 +530,17 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
     const str = new Airport('str', 'Strathmore', 'STR', 210, 540, 2, [mw]);
     const esk = new Airport('esk', 'Eskwall',    'ESK', 430, 510, 2, [mw]);
 
-    [hvn, drv, nmr, skl, cld, wst, ern, sbr, grv, vel, mlt, str, esk].forEach(a =>
-      this.network.addAirport(a)
-    );
+    const north2  = new RegionalNetwork('north2',  'Northern Straits', '#6366f1');
+    const south2  = new RegionalNetwork('south2',  'Southern Coast',   '#f97316');
+    const eastern2 = new RegionalNetwork('eastern2', 'Eastern Isle',   '#06b6d4');
+    [north2, south2, eastern2].forEach(r => this.network.addRegion(r));
+
+    north2.addAirport(hvn);  north2.addAirport(drv);  north2.addAirport(nmr);
+    north2.addAirport(skl);  north2.addAirport(cld);  north2.addAirport(wst);
+    south2.addAirport(sbr);  south2.addAirport(grv);  south2.addAirport(vel);
+    south2.addAirport(mlt);  south2.addAirport(str);  south2.addAirport(esk);
+    eastern2.addAirport(ern);
+
     ha.hub = hvn; cx.hub = cld; sx.hub = sbr; mw.hub = mlt;
 
     const routes: [string, Airport, Airport, Carrier][] = [
@@ -492,9 +586,17 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
     const nli = new Airport('nli', 'Nollith',    'NLI', 760,  52, 2, [aa]);
     const shr = new Airport('shr', 'Shornhaven', 'SHR', 925, 505, 2, [cl]);
 
-    [ath, blk, ctr, dwn, esk, frk, gnt, hrb, irg, jrn, nli, shr].forEach(a =>
-      this.network.addAirport(a)
-    );
+    const west3    = new RegionalNetwork('west3',  'Western Highlands', '#6366f1');
+    const central3 = new RegionalNetwork('central3','Aethon Basin',     '#f97316');
+    const east3    = new RegionalNetwork('east3',  'Eastern Shores',    '#06b6d4');
+    [west3, central3, east3].forEach(r => this.network.addRegion(r));
+
+    west3.addAirport(blk);    west3.addAirport(frk);   west3.addAirport(irg);
+    central3.addAirport(ath); central3.addAirport(dwn); central3.addAirport(hrb);
+    central3.addAirport(nli);
+    east3.addAirport(ctr);    east3.addAirport(esk);   east3.addAirport(gnt);
+    east3.addAirport(jrn);    east3.addAirport(shr);
+
     aa.hub = ath; be.hub = blk; cl.hub = ctr; iw.hub = irg;
 
     const routes: [string, Airport, Airport, Carrier][] = [
@@ -561,7 +663,8 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
         const now = performance.now();
 
         this.activeFlights.forEach(f => {
-          f.progress = Math.min((now - f.startTime) / f.duration, 1);
+          const elapsed = now - f.startTime;
+          f.progress = elapsed < 0 ? 0 : Math.min(elapsed / f.duration, 1);
         });
         this.activeFlights = this.activeFlights.filter(f => f.progress < 1);
 
@@ -580,19 +683,62 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
     });
   }
 
-  private launchFlight(route: Route): void {
+  private readonly MAX_FLIGHT_SPEED = 120; // SVG units/s — cruise speed
+  private readonly ACCEL_DIST       = 80;  // SVG units — fixed accel/decel distance for every flight
+
+  private launchFlight(route: Route, delayMs = 0): void {
+    const dx = route.to.x - route.from.x;
+    const dy = route.to.y - route.from.y;
+    const distSvg = Math.sqrt(dx * dx + dy * dy);
+
+    const S = this.MAX_FLIGHT_SPEED;
+    const D = Math.min(this.ACCEL_DIST, distSvg / 2); // cap so accel+decel never exceed total dist
+
+    // Trapezoidal velocity profile:
+    //   accel phase: 0→S over distance D  (avg speed S/2, time = 2D/S)
+    //   cruise phase: constant S           (time = (dist-2D)/S)
+    //   decel phase: symmetric to accel
+    const t_a = (2 * D) / S;                          // seconds per accel/decel phase
+    const t_c = (distSvg - 2 * D) / S;               // cruise time
+    const totalSec = 2 * t_a + t_c;
+    const duration = Math.max(1200, totalSec * 1000); // ms, 1.2s floor
+
+    // Fractions used in getFlightPos to drive the piecewise easing
+    const accelFrac    = t_a / totalSec;        // portion of progress range spent in accel/decel
+    const accelPosFrac = D  / distSvg;          // portion of route distance covered in accel/decel
+
     this.activeFlights.push({
       id: `f${this.flightCounter++}`,
       route,
       progress: 0,
-      startTime: performance.now(),
-      duration: 4000 + Math.random() * 2000,
+      startTime: performance.now() + delayMs,
+      duration,
+      accelFrac,
+      accelPosFrac,
     });
   }
 
   // Uses live airport coordinates so positions update while dragging
   getFlightPos(flight: ActiveFlight): { x: number; y: number } {
-    const t = flight.progress;
+    const p  = flight.progress;
+    const a  = flight.accelFrac;
+    const ap = flight.accelPosFrac;
+
+    // Piecewise trapezoidal easing — same physical accel rate for every flight:
+    //   accel  (p: 0→a)     quadratic ease-in  covering fraction ap of the route
+    //   cruise (p: a→1-a)   linear             covering the middle stretch
+    //   decel  (p: 1-a→1)   quadratic ease-out covering the final ap fraction
+    let t: number;
+    if (p <= a) {
+      const lp = p / a;                             // 0→1 within accel phase
+      t = lp * lp * ap;
+    } else if (p <= 1 - a) {
+      t = ap + ((p - a) / (1 - 2 * a)) * (1 - 2 * ap);
+    } else {
+      const lp = (p - (1 - a)) / a;                // 0→1 within decel phase
+      t = (1 - ap) + (2 * lp - lp * lp) * ap;
+    }
+
     const { x: x1, y: y1 } = flight.route.from;
     const { x: x2, y: y2 } = flight.route.to;
     return { x: x1 + (x2 - x1) * t, y: y1 + (y2 - y1) * t };
@@ -644,6 +790,7 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
 
   private scheduleAmbientSounds(): void {
     const loop = () => {
+      if (!this.animationRunning) return;
       const delay = 10000 + Math.random() * 14000; // 10–24 s
       this.ambiLastAt = performance.now();
       this.ambiNextAt = this.ambiLastAt + delay;
@@ -657,6 +804,7 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
     this.ambiLastAt = performance.now();
     this.ambiNextAt = this.ambiLastAt + 6000;
     this.ambiTimer  = setTimeout(() => {
+      if (!this.animationRunning) return;
       if (this.soundEnabled) this.pickAndPlayAmbi();
       loop();
     }, 6000);
@@ -676,7 +824,7 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
   dispatchHour(hour: number): void {
     const departures = this.network.getDeparturesAtHour(hour);
     for (const { route } of departures) {
-      this.launchFlight(route);
+      this.launchFlight(route, Math.random() * 125);
     }
   }
 
@@ -704,10 +852,42 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
 
   // SECTION:: Airport Selection & Schedule Editing
   selectAirport(airport: Airport): void {
+    if (this.dragMoved) return; // drag just ended — don't open panel
     this.settings.playUiClick();
+    if (this.selectedAirport !== airport) this.panelPos = this.choosePanelPos(airport);
     this.selectedAirport = airport;
     this.scheduleHour = this.currentHour;
     this.showAddRoute = false;
+  }
+
+  private choosePanelPos(airport: Airport): { x: number; y: number } {
+    const containerEl = this.mapSvgRef?.nativeElement?.parentElement;
+    const containerW = containerEl?.clientWidth ?? 1000;
+    const containerH = containerEl?.clientHeight ?? 600;
+
+    // Convert SVG coords (viewBox 0 0 1000 600, xMidYMid meet) to container pixels
+    const scaleX = containerW / 1000;
+    const scaleY = containerH / 600;
+    const scale = Math.min(scaleX, scaleY);
+    const offsetX = (containerW - 1000 * scale) / 2;
+    const offsetY = (containerH - 600 * scale) / 2;
+    const apx = airport.x * scale + offsetX;
+    const apy = airport.y * scale + offsetY;
+
+    const panelW = 280; // panel width + margin
+    const panelH = 180; // rough top portion of panel
+    const margin = 20;
+
+    // Prefer top-left; fall back to top-right if airport is in that zone
+    const topLeftX = margin;
+    const topLeftY = margin;
+    const airportInTopLeft = apx < topLeftX + panelW && apy < topLeftY + panelH;
+
+    if (!airportInTopLeft) return { x: topLeftX, y: topLeftY };
+
+    // Top-right
+    const topRightX = containerW - panelW - margin;
+    return { x: Math.max(margin, topRightX), y: topLeftY };
   }
 
   closePanel(): void {
@@ -732,31 +912,59 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
     return this.selectedAirport.getDepartureCount(hour) >= this.selectedAirport.getCapacity();
   }
 
+  setCapacity(airport: Airport, value: number): void {
+    const clamped = Math.max(1, Math.min(10, value));
+    airport.capacity = clamped;
+    // drop any scheduled departures that now exceed the new cap
+    for (const [hour, slots] of airport.schedule.entries()) {
+      const routes = [...slots];
+      while (routes.length > clamped) {
+        slots.delete(routes.pop()!);
+      }
+    }
+    this.settings.playUiClick();
+  }
+
   getSelectedOutgoing(): Route[] {
     return this.selectedAirport?.getOutgoingRoutes() ?? [];
   }
 
   // SECTION:: Drag Nodes
+  private dragMoved = false;
+
   startDrag(e: MouseEvent, airport: Airport): void {
     e.stopPropagation();
     if (this.addingAirport) return;
     this.settings.playUiClick();
     this.draggingAirport = airport;
+    this.dragMoved = false;
   }
 
-  @HostListener('mousemove', ['$event'])
+  @HostListener('document:mousemove', ['$event'])
   onMouseMove(e: MouseEvent): void {
+    if (this.panelDragging) {
+      const containerRect = this.mapSvgRef?.nativeElement?.parentElement?.getBoundingClientRect();
+      const mx = containerRect ? e.clientX - containerRect.left : e.clientX;
+      const my = containerRect ? e.clientY - containerRect.top : e.clientY;
+      this.panelPos = { x: mx - this.panelDragOffset.x, y: my - this.panelDragOffset.y };
+      this.cdr.detectChanges();
+      return;
+    }
     if (!this.draggingAirport) return;
     const pos = this.svgCoords(e);
     if (!pos) return;
+    this.dragMoved = true;
     this.draggingAirport.x = pos.x;
     this.draggingAirport.y = pos.y;
     if (this.itinerary) this.computeItinerary();
     this.cdr.detectChanges();
   }
 
-  @HostListener('mouseup')
-  onMouseUp(): void { this.draggingAirport = null; }
+  @HostListener('document:mouseup')
+  onMouseUp(): void {
+    this.panelDragging = false;
+    this.draggingAirport = null;
+  }
 
   private svgCoords(e: MouseEvent): { x: number; y: number } | null {
     const svg = this.mapSvgRef?.nativeElement;
@@ -929,8 +1137,82 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
   }
 
   // SECTION:: Template Helpers
-  getAirports(): Airport[] { return this.network.getAirports(); }
-  getRoutes(): Route[]      { return this.network.getOutgoingRoutes(); }
+  getAirports(): Airport[]          { return this.network.getAirports(); }
+  getRoutes(): Route[]              { return this.network.getOutgoingRoutes(); }
+  getRegions(): RegionalNetwork[]   { return this.network.getRegions(); }
+
+  hoveredRegion: RegionalNetwork | null = null;
+  regionTooltipPos = { top: 0, left: 0 };
+  infightTooltipOpen = false;
+  infightTooltipPos  = { top: 0, left: 0 };
+
+  private tooltipCloseTimer: ReturnType<typeof setTimeout> | null = null;
+
+  scheduleTooltipClose(fn: () => void, delay = 120): void {
+    this.cancelTooltipClose();
+    this.tooltipCloseTimer = setTimeout(() => fn(), delay);
+  }
+
+  cancelTooltipClose(): void {
+    if (this.tooltipCloseTimer !== null) {
+      clearTimeout(this.tooltipCloseTimer);
+      this.tooltipCloseTimer = null;
+    }
+  }
+
+  setInflightTooltipPos(e: MouseEvent): void {
+    this.cancelTooltipClose();
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    this.infightTooltipPos = { top: rect.top - 6, left: rect.left };
+    this.infightTooltipOpen = true;
+  }
+
+  closeInflightTooltip(): void {
+    this.scheduleTooltipClose(() => { this.infightTooltipOpen = false; });
+  }
+
+  hoverRegion(r: RegionalNetwork | null, e?: MouseEvent): void {
+    if (r) {
+      this.cancelTooltipClose();
+      const rect = (e!.currentTarget as HTMLElement).getBoundingClientRect();
+      this.regionTooltipPos = { top: rect.top - 6, left: rect.left };
+      this.hoveredRegion = r;
+    } else {
+      this.scheduleTooltipClose(() => { this.hoveredRegion = null; });
+    }
+  }
+
+  isRegionHovered(airport: Airport): boolean {
+    return !!this.hoveredRegion && this.hoveredRegion.getAirports().includes(airport);
+  }
+
+  getRegionBoundingBox(r: RegionalNetwork): { x: number; y: number; w: number; h: number } | null {
+    const airports = r.getAirports();
+    if (airports.length === 0) return null;
+    const pad = 28;
+    const xs = airports.map(a => a.x);
+    const ys = airports.map(a => a.y);
+    const x = Math.min(...xs) - pad;
+    const y = Math.min(...ys) - pad;
+    return { x, y, w: Math.max(...xs) - Math.min(...xs) + pad * 2, h: Math.max(...ys) - Math.min(...ys) + pad * 2 };
+  }
+
+  getAirportRegion(airport: Airport): RegionalNetwork | null {
+    return this.network.getRegions().find(r => r.getAirports().includes(airport)) ?? null;
+  }
+
+  moveAirportToRegion(airport: Airport, regionId: string): void {
+    this.network.getRegions().forEach(r => r.removeAirport(airport.id));
+    const target = this.network.getRegions().find(r => r.regionId === regionId);
+    target?.addAirport(airport);
+    this.settings.playUiClick();
+  }
+
+  isRegionPeer(airport: Airport): boolean {
+    if (!this.selectedAirport || airport === this.selectedAirport) return false;
+    const selRegion = this.getAirportRegion(this.selectedAirport);
+    return !!selRegion && selRegion.getAirports().includes(airport);
+  }
 
   airportNodeRadius(airport: Airport): number {
     return (8 + airport.getCapacity() * 3) * 0.75;
@@ -954,11 +1236,67 @@ export class AirlineNetworkDemoComponent implements OnInit, OnDestroy {
     }));
   }
 
+  networkHovered = false;
+
+  getNetworkBoundingBox(): { x: number; y: number; w: number; h: number } | null {
+    const airports = this.network.getAirports();
+    if (airports.length === 0) return null;
+    const pad = 44;
+    const xs = airports.map(a => a.x);
+    const ys = airports.map(a => a.y);
+    return {
+      x: Math.min(...xs) - pad,
+      y: Math.min(...ys) - pad,
+      w: Math.max(...xs) - Math.min(...xs) + pad * 2,
+      h: Math.max(...ys) - Math.min(...ys) + pad * 2,
+    };
+  }
+
   networkCapacity(): number { return this.network.getCapacity(); }
 
   networkRouteCount(): number { return this.network.getOutgoingRoutes().length; }
 
-  departuresThisHour(): number { return this.activeFlights.length; }
+  // Scheduled departures this hour — always ≤ capacity by construction.
+  // activeFlights.length would exceed capacity because mid-animation flights
+  // from the previous hour are still alive when the next hour dispatches.
+  departuresThisHour(): number { return this.network.getDeparturesAtHour(this.currentHour).length; }
+
+  // Carrier stats — composite-assisted but not pure composite.
+  // Uses getOutgoingRoutes() from the tree, then filters by carrier outside it.
+  carrierActiveFlights(carrier: Carrier): number {
+    return this.network.getDeparturesAtHour(this.currentHour)
+      .filter(d => d.route.carrier.id === carrier.id).length;
+  }
+
+  carrierCapacity(carrier: Carrier): number {
+    // getAirports() recurses through the composite tree — but the carrier filter is external
+    return this.network.getAirports()
+      .filter(a => a.carriers.includes(carrier))
+      .reduce((sum, a) => sum + a.getCapacity(), 0);
+  }
+
+  carrierTooltipOpen: Carrier | null = null;
+  carrierTooltipPos = { top: 0, left: 0 };
+
+  setCarrierTooltip(carrier: Carrier | null, e?: MouseEvent): void {
+    if (carrier) {
+      this.cancelTooltipClose();
+      const rect = (e!.currentTarget as HTMLElement).getBoundingClientRect();
+      this.carrierTooltipPos = { top: rect.top - 6, left: rect.left };
+      this.carrierTooltipOpen = carrier;
+    } else {
+      this.scheduleTooltipClose(() => { this.carrierTooltipOpen = null; });
+    }
+  }
+
+  // Departures scheduled THIS hour from a region — uses region.getOutgoingRoutes()
+  // (Composite → flatMaps to Leaf airports). Bounded by capacity since the schedule
+  // editor enforces the per-airport cap, so current ≤ capacity is always true.
+  regionActiveFlights(region: RegionalNetwork): number {
+    const regionRouteIds = new Set(region.getOutgoingRoutes().map(r => r.id));
+    return this.network.getDeparturesAtHour(this.currentHour)
+      .filter(d => regionRouteIds.has(d.route.id)).length;
+  }
 
   ngOnDestroy(): void {
     this.animationRunning = false;

@@ -577,6 +577,31 @@ export class GofComponent implements OnInit, OnDestroy {
     if (pattern) this.selectPattern(pattern);
   }
 
+  // Power Words tooltip
+  pwTooltipText: string | null = null;
+  pwTooltipPos  = { top: 0, left: 0 };
+
+  onReadmeMouseover(event: MouseEvent): void {
+    const h2 = (event.target as HTMLElement).closest('.rm-h2[data-tooltip]') as HTMLElement | null;
+    if (!h2) {
+      // moved to something that's not a tooltip h2 — clear
+      if (this.pwTooltipText) this.pwTooltipText = null;
+      return;
+    }
+    const rect = h2.getBoundingClientRect();
+    this.pwTooltipText = h2.getAttribute('data-tooltip');
+    this.pwTooltipPos  = { top: rect.bottom + 8, left: rect.left };
+  }
+
+  onReadmeMouseout(event: MouseEvent): void {
+    const related = event.relatedTarget as HTMLElement | null;
+    // Only clear if the mouse left the h2 entirely, not just moved to a child
+    if (related?.closest('.rm-h2[data-tooltip]')) return;
+    if ((event.target as HTMLElement).closest('.rm-h2[data-tooltip]')) {
+      this.pwTooltipText = null;
+    }
+  }
+
   // Expose 'readme' + lang tabs + demo (for Observer) to template
   get allTabs(): string[] {
     const tabs = ['readme', ...this.langs];

@@ -1,0 +1,20 @@
+├─ FullNetworkTotals ✔
+│  ├─ rootCapacity() ✔
+│  ├─ rootRouteCount() ✔
+│  └─ regionCapacityIndependentOfSiblings() ✔
+├─ MutationsPropagateUp ✔
+│  ├─ addAirportIncreasesRootCapacity() ✔
+│  ├─ removeAirportDecreasesRootCapacity() ✔
+│  └─ removeRegionRemovesAllAirports() ✔
+├─ AddingNewRegion ✔
+│  └─ newRegionResolvesFromRoot() ✔
+└─ PrintOutput ✔
+   ├─ rootAppearsFirst() ✔
+   ├─ allRegionsPresent() ✔
+   ├─ allAirportsPresent() ✔
+   └─ airportsIndentedMoreThanRegion() ✔
+
+Test run finished after 75 ms
+[ 11 tests found     ]
+[ 11 tests successful]
+[  0 tests failed    ]

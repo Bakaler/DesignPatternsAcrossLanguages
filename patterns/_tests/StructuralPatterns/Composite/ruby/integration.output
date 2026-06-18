@@ -1,0 +1,23 @@
+
+Full network — totals
+  root get_capacity equals sum of every airport
+  root get_route_count equals sum of every route
+  region capacity is independent of siblings
+
+Full network — mutations propagate to root
+  adding an airport increases root capacity
+  removing an airport decreases root capacity
+  removing a region removes all its airports from totals
+
+Full network — adding a new region
+  new region resolves from root correctly
+
+Full network — print_tree output
+  root network appears first
+  all regions appear in output
+  all airports appear in output
+  airports are indented more than their parent region
+
+Finished in 0.00758 seconds (files took 0.12261 seconds to load)
+11 examples, 0 failures
+

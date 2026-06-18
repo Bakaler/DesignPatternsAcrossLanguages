@@ -137,7 +137,7 @@
         <!-- README -->
         @if (!loading && (activeLang === 'readme' || keepReadme) && readme) {
           <div class="viewer-readme-wrap">
-            <div class="viewer-readme" [innerHTML]="renderedReadme" (click)="onReadmeClick($event)"></div>
+            <div class="viewer-readme" [innerHTML]="renderedReadme" (click)="onReadmeClick($event)" (mouseover)="onReadmeMouseover($event)" (mouseout)="onReadmeMouseout($event)"></div>
             @if (tocSections.length) {
               <nav class="viewer-toc">
                 @for (s of tocSections; track s.index) {
@@ -247,5 +247,14 @@
   }
 
 </div>
+
+<!-- Power Words tooltip — outside all overflow containers -->
+@if (pwTooltipText) {
+  <div class="pw-tooltip"
+       [style.top.px]="pwTooltipPos.top"
+       [style.left.px]="pwTooltipPos.left">
+    {{ pwTooltipText }}
+  </div>
+}
 
   <app-footer />

@@ -1,0 +1,20 @@
+collecting ... collected 17 items
+
+unit.test.py::TestAirport::test_get_name ✓                          [  5%]
+unit.test.py::TestAirport::test_get_capacity ✓                      [ 11%]
+unit.test.py::TestAirport::test_get_route_count_starts_zero ✓       [ 17%]
+unit.test.py::TestAirport::test_get_route_count_increments ✓        [ 23%]
+unit.test.py::TestAirport::test_print_includes_name ✓               [ 29%]
+unit.test.py::TestAirport::test_print_includes_capacity ✓           [ 35%]
+unit.test.py::TestRegionalNetwork::test_get_name ✓                  [ 41%]
+unit.test.py::TestRegionalNetwork::test_get_capacity_sums_airports ✓ [ 47%]
+unit.test.py::TestRegionalNetwork::test_get_route_count_sums_airports ✓ [ 52%]
+unit.test.py::TestRegionalNetwork::test_remove_reduces_capacity ✓   [ 58%]
+unit.test.py::TestRegionalNetwork::test_empty_region ✓              [ 64%]
+unit.test.py::TestRegionalNetwork::test_print_includes_name_and_airports ✓ [ 70%]
+unit.test.py::TestAirportNetwork::test_get_capacity_recurses ✓      [ 76%]
+unit.test.py::TestAirportNetwork::test_get_route_count_recurses ✓   [ 82%]
+unit.test.py::TestAirportNetwork::test_remove_region_updates_totals ✓ [ 88%]
+unit.test.py::TestUniformity::test_same_call_on_leaf_and_composite ✓ [ 94%]
+unit.test.py::TestUniformity::test_three_level_tree_resolves_from_root ✓ [100%]
+

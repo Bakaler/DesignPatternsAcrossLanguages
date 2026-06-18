@@ -1,0 +1,18 @@
+  Passed CompositeIntegrationTests.RootCapacityEqualsAllAirports
+  Passed CompositeIntegrationTests.RootRouteCountEqualsAllRoutes
+  Passed CompositeIntegrationTests.RegionCapacityIndependentOfSiblings
+  Passed CompositeIntegrationTests.AddAirportIncreasesRootCapacity
+  Passed CompositeIntegrationTests.RemoveAirportDecreasesRootCapacity
+  Passed CompositeIntegrationTests.RemoveRegionRemovesAllItsAirports
+  Passed CompositeIntegrationTests.NewRegionResolvesFromRoot
+  Passed CompositeIntegrationTests.PrintRootAppearsFirst
+  Passed CompositeIntegrationTests.PrintAllRegionsPresent
+  Passed CompositeIntegrationTests.PrintAllAirportsPresent
+  Passed CompositeIntegrationTests.PrintAirportsIndentedMoreThanRegion
+
+  Passed! - Failed: 0, Passed: 11, Skipped: 0, Total: 11
+
+  Test Run Successful.
+  Total tests: 11
+  Passed:      11
+  Total time:  0.8 Seconds
